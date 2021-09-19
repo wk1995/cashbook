@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="cashbook_tv_trade_list_total">
+       <item name="android:gravity">center</item>
+       <item name="android:textColor">@color/color_grey_7E797B</item>
+       <item name="android:layout_width">wrap_content</item>
+       <item name="android:layout_height">@dimen/d30dp</item>
+    </style>
+
+    <style name="cashbook_tv_trade_list_item">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+</resources>

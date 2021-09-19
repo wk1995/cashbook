@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".trade.record.CashBookBillListActivity">
+
+    <ImageView
+        android:id="@+id/ivTitleBack"
+        android:layout_width="@dimen/d40dp"
+        android:layout_height="@dimen/d40dp"
+        android:layout_marginStart="@dimen/d15dp"
+        android:layout_marginTop="@dimen/d15dp"
+        android:src="@drawable/common_back_right_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/d10dp"
+        android:text="@string/cashbook_zh_name"
+        android:textSize="@dimen/s20sp"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@id/ivTitleBack"
+        app:layout_constraintStart_toEndOf="@id/ivTitleBack"
+        app:layout_constraintTop_toTopOf="@id/ivTitleBack"/>
+
+    <Button
+        android:id="@+id/btnAddBill"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d50dp"
+        android:background="@android:color/white"
+        android:text="@string/add_bill_record"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/llDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d20dp"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="@id/ivTitleBack"
+        app:layout_constraintTop_toBottomOf="@id/ivTitleBack">
+
+        <TextView
+            android:id="@+id/tvDateYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2020年"/>
+
+        <TextView
+            android:id="@+id/tvDateMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/s30sp"
+            app:layout_constraintEnd_toEndOf="@id/tvDateYear"
+            app:layout_constraintStart_toStartOf="@id/tvDateYear"
+            app:layout_constraintTop_toBottomOf="@id/tvDateYear"
+            tools:text="02"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/d5dp"
+            android:text="@string/common_str_zh_month"
+            app:layout_constraintBottom_toBottomOf="@id/tvDateMonth"
+            app:layout_constraintStart_toEndOf="@id/tvDateMonth" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="@dimen/d1dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/d40dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@id/llDate"
+        app:layout_constraintStart_toEndOf="@id/llDate"
+        app:layout_constraintTop_toTopOf="@id/llDate" />
+
+    <TextView
+        android:id="@+id/tvPayName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/d70dp"
+        android:text="@string/cashbook_zh_pay"
+        app:layout_constraintStart_toEndOf="@id/llDate"
+        app:layout_constraintTop_toTopOf="@id/llDate" />
+
+    <TextView
+        android:id="@+id/tvAllPay"
+        android:layout_width="@dimen/d100dp"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/s20sp"
+        app:layout_constraintBottom_toBottomOf="@id/llDate"
+        app:layout_constraintLeft_toLeftOf="@id/tvPayName"
+        tools:text="6,959.06" />
+
+    <TextView
+        android:id="@+id/tvIncomeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/d40dp"
+        android:text="@string/cashbook_zh_income"
+        app:layout_constraintStart_toEndOf="@id/tvAllPay"
+        app:layout_constraintTop_toTopOf="@id/tvPayName" />
+
+    <TextView
+        android:id="@+id/tvIncome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/tvIncomeName"
+        app:layout_constraintBottom_toBottomOf="@id/tvAllPay"
+        tools:text="2020"/>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tlCashBook"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llDate" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpCashbook"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/btnAddBill"
+        app:layout_constraintTop_toBottomOf="@id/tlCashBook"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

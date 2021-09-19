@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.wk.cashbook">
+
+    <application
+        android:name=".module.WkCashbookApp"
+        android:allowBackup="true"
+        android:fullBackupContent="true"
+        android:icon="@mipmap/module_icon"
+        android:label="@string/module_name"
+        android:theme="@style/Theme.AppCompat"
+        tools:replace="android:label">
+        <activity android:name=".trade.info.TradeRecordInfoActivity"></activity>
+        <activity android:name=".trade.record.CashBookBillListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

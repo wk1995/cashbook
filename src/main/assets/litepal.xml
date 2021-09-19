@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="cashbookDb"/>
+    <version value="1" />
+    <list>
+        <mapping class="com.wk.cashbook.trade.data.TradeAccount" />
+        <mapping class="com.wk.cashbook.trade.data.TradeCategory" />
+        <mapping class="com.wk.cashbook.trade.data.TradeFlag" />
+        <mapping class="com.wk.cashbook.trade.data.TradeRecode" />
+    </list>
+</litepal>
