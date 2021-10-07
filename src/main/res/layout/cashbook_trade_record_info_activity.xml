@@ -7,13 +7,30 @@
     android:paddingStart="@dimen/d15dp"
     android:paddingEnd="@dimen/d15dp"
     tools:context=".trade.info.TradeRecordInfoActivity">
-
-    <com.wk.projects.common.ui.WkCommonActionBar
-        android:id="@+id/abTradeInfoTitle"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_40"
+    <ImageView
+        android:id="@+id/ivBackInfo"
+        android:layout_width="@dimen/d30dp"
+        android:layout_height="@dimen/d30dp"
+        android:layout_marginTop="@dimen/d15dp"
+        android:src="@drawable/common_back_right_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/ivBackInfo"
+        app:layout_constraintBottom_toBottomOf="@id/ivBackInfo"
+        app:layout_constraintStart_toEndOf="@id/ivBackInfo"/>
+    <!--交易时间-->
+    <TextView
+        android:id="@+id/tvTradeInfoTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoAmount"
+        tools:text="时间： 2021 03 01 15:00:00" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTradeInfoRootCategory"
@@ -22,7 +39,7 @@
         android:background="@color/colorAccent"
         app:layout_constraintEnd_toStartOf="@id/tvTradeInfoAccount"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/abTradeInfoTitle" />
+        app:layout_constraintTop_toBottomOf="@id/ivBackInfo" />
     <!--交易账号-->
     <TextView
         android:id="@+id/tvTradeInfoAccount"
@@ -52,15 +69,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tvTradeInfoAmount" />
 
-    <!--交易时间-->
-    <TextView
-        android:id="@+id/tvTradeInfoTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoAmount"
-        tools:text="时间： 2021 03 01 15:00:00" />
 
     <!--具体类别-->
     <androidx.recyclerview.widget.RecyclerView

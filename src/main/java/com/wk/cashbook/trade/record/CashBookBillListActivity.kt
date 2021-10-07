@@ -38,8 +38,11 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         IRvClickListener, BaseSimpleDialog.SimpleOnlyEtDialogListener {
 
     companion object {
+        /**明细*/
         private const val LAYOUT_VIEWPAGER_DETAILED = 0
+        /**类别*/
         private const val LAYOUT_VIEWPAGER_CATEGORY = 1
+        /**账户*/
         private const val LAYOUT_VIEWPAGER_ACCOUNT = 2
     }
 

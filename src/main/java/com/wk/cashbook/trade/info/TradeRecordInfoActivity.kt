@@ -17,12 +17,17 @@ import com.wk.cashbook.databinding.CashbookTradeRecordInfoActivityBinding
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.BaseProjectsActivity
+import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.TimePickerCreator
 import com.wk.projects.common.ui.WkToast
-import java.text.SimpleDateFormat
+import org.litepal.LitePal
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import java.util.*
 
 class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter.ITradeInfoCategoryListener {
 
@@ -58,6 +63,8 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         mBind.rvTradeInfoCategory
     }
 
+    private var id: Long = NumberConstants.number_long_one_Negative
+
     private val mBind by lazy {
         CashbookTradeRecordInfoActivityBinding.inflate(layoutInflater)
     }
@@ -79,23 +86,23 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         GridLayoutManager(this, 4)
     }
 
+    override fun beforeSetContentView() {
+        super.beforeSetContentView()
+        supportActionBar?.hide()
+    }
+
     override fun initResLayId() = mBind.root
 
     override fun bindView(savedInstanceState: Bundle?, mBaseProjectsActivity: BaseProjectsActivity) {
         initView()
         initRootCategoryRv()
         initCategoryRv()
-        var target = intent.getParcelableExtra<TradeRecode>(TradeRecode.TAG)
-        var id = intent.getLongExtra("id",0)
-        val isUpdate = target != null
-        if (target == null) {
-            target = TradeRecode(tradeTime = System.currentTimeMillis())
-        }
-        WkLog.d("target： $target")
-        mTradeRecordInfoPresent = TradeRecordInfoPresent(this, target,id)
-        mTradeRecordInfoPresent.isUpdate=isUpdate
-        mTradeRecordInfoPresent.initRootCategoryAsync()
-        btTradeInfoSave = mBind.btTradeInfoSave
+        initListener()
+        mTradeRecordInfoPresent = TradeRecordInfoPresent(this, intent)
+        mTradeRecordInfoPresent.initData()
+    }
+
+    private fun initListener(){
         btTradeInfoSave.setOnClickListener(this)
         tvTradeInfoTime.setOnClickListener(this)
     }
@@ -109,25 +116,43 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         tvTradeInfoAccount = mBind.tvTradeInfoAccount
     }
 
+    /**
+     * 根类别相关控件
+     * */
     private fun initRootCategoryRv() {
         rvTradeInfoRootCategory.layoutManager = rootCategoryLayoutManage
         rvTradeInfoRootCategory.adapter = mTradeInfoRootCategoryAdapter
     }
 
+    /**类别选择控件*/
     private fun initCategoryRv() {
         val footView = inflater.inflate(R.layout.common_only_text, null)
         mTradeInfoCategoryAdapter.addFootView(footView)
         rvTradeInfoCategory.layoutManager = categoryLayoutManger
         rvTradeInfoCategory.adapter = mTradeInfoCategoryAdapter
-
     }
 
+    /**
+     * 设置根类别列表
+     * */
     @MainThread
-    fun setRootCategory(rootCategories: List<TradeCategory>) {
+    fun setRootCategories(rootCategories: List<TradeCategory>) {
         mTradeInfoRootCategoryAdapter.replaceData(rootCategories)
-        mTradeRecordInfoPresent.currentRootCategory = rootCategories[0]
     }
 
+    /**
+     * 设置选中的根类别
+     * */
+    fun setRootCategory(selectRoot:TradeCategory){
+        WkLog.i("setRootCategory")
+        mTradeInfoRootCategoryAdapter.setSelectTradeCategory(selectRoot.baseObjId)
+        mTradeInfoCategoryAdapter.clear()
+        mTradeRecordInfoPresent.initCategoryAsync(selectRoot)
+    }
+
+    /**
+     * 设置类别列表
+     * */
     fun setCategories(categories: List<TradeCategory>) {
         mTradeInfoCategoryAdapter.replaceData(categories)
     }
@@ -151,9 +176,12 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
 
         // 根类别
         if (tradeInfoCategoryAdapter == mTradeInfoRootCategoryAdapter) {
+            if(mTradeInfoRootCategoryAdapter.getSelectPosition()==position){
+                return
+            }
             //选中类别
-            mTradeInfoRootCategoryAdapter.selectPosition(position)
-            mTradeRecordInfoPresent.currentRootCategory = mTradeInfoRootCategoryAdapter.getItem(position)
+            mTradeInfoRootCategoryAdapter.selectPosition(-1)
+            mTradeRecordInfoPresent.setSelectRootCategory(mTradeInfoRootCategoryAdapter.getItem(position))
         }
     }
 
@@ -169,46 +197,57 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
             }
             R.id.tvTradeInfoTime -> {
                 TimePickerCreator.create(this, R.string.common_str_add, OnTimeSelectListener { date, _ ->
-                    mTradeRecordInfoPresent.setTradeTime(date.time)
+                    mTradeRecordInfoPresent.showTradeTime(date.time)
                 })
             }
         }
     }
 
-    fun setNote(note: String) {
+    fun showNote(note: String) {
         etTradeInfoNote.setText(note)
     }
 
-    fun setAmount(amount: String) {
+    fun showAmount(amount: String) {
         tvTradeInfoAmount.setText(amount)
     }
 
-
-    fun setTradeTime(time: Long) {
+    fun showTradeTime(time: Long) {
         tvTradeInfoTime.text = DateTime.getDateString(time)
     }
 
-    fun setTradeFlag() {
+    fun showTradeFlag() {
 
     }
 
-    fun setTradeAccount(account: Long) {
+    fun showTradeAccount(accountName: String?) {
 
     }
 
+    /**
+     * 设置当前的类别
+     * */
     fun setTradeCategory(categoryId: Long) {
         mTradeInfoCategoryAdapter.setSelectTradeCategory(categoryId)
     }
 
-    fun saveResult(tradeRecode: TradeRecode?) {
-        if (null == tradeRecode) {
+
+
+
+
+
+
+
+
+    fun saveResult(bundle: Bundle?) {
+        if (null == bundle) {
             WkToast.showToast("保存失败")
             return
         }
         val intent1 = Intent()
-        intent1.putExtra(TradeRecode.TAG, tradeRecode)
-        intent1.putExtra(WkStringConstants.STR_POSITION_LOW,
-                intent.getIntExtra(WkStringConstants.STR_POSITION_LOW, -1))
+        intent1.putExtras(bundle)
+//        intent1.putExtra(TradeRecode.TAG, tradeRecode)
+//        intent1.putExtra(WkStringConstants.STR_POSITION_LOW,
+//                intent.getIntExtra(WkStringConstants.STR_POSITION_LOW, -1))
         setResult(2, intent1)
         finish()
     }

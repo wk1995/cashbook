@@ -120,8 +120,11 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecord>,
     }
 
     fun addData(tradeRecode: TradeRecode){
-        mTradeRecords.add(tradeRecode)
-        notifyItemChanged(itemCount)
+        if(!mTradeRecords.contains(tradeRecode)){
+            mTradeRecords.add(tradeRecode)
+            notifyItemChanged(itemCount)
+        }
+
     }
 
     fun replaceData(tradeRecode: TradeRecode,position: Int){

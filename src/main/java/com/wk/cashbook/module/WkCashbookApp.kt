@@ -23,7 +23,7 @@ class WkCashbookApp : BaseApplication() {
         WkProjects.init(this)
                 .withModuleName(getString(R.string.module_name))
                 .configure()
-        Thread{
+        Thread {
             initTradeAccount()
             initTradeCategory()
         }.start()
@@ -33,29 +33,20 @@ class WkCashbookApp : BaseApplication() {
     companion object {
 
         @WorkerThread
-        fun initTradeAccount(): Boolean {
-            val accounts=LitePal.where(TradeAccount.ACCOUNT_NAME+"=?","支付宝").find(TradeAccount::class.java)
-            if(accounts.isNotEmpty()){
-                return true
+        fun initTradeAccount() {
+            val accounts = LitePal.where(TradeAccount.ACCOUNT_NAME + "=?", "支付宝").find(TradeAccount::class.java)
+            if (accounts.isEmpty()) {
+                val initAccounts = ArrayList<TradeAccount>()
+                initAccounts.add(TradeAccount(accountName = "支付宝"))
+                initAccounts.add(TradeAccount(accountName = "微信"))
+                initAccounts.add(TradeAccount(accountName = "银行卡"))
+                LitePal.saveAll(initAccounts)
             }
-            val initAccounts = ArrayList<TradeAccount>()
-            initAccounts.add(TradeAccount(accountName = "支付宝"))
-            initAccounts.add(TradeAccount(accountName = "微信"))
-            initAccounts.add(TradeAccount(accountName = "银行卡"))
-            return LitePal.saveAll(initAccounts)
         }
 
         @WorkerThread
-        fun initTradeCategory():Boolean {
-            val accounts=LitePal.where(TradeCategory.CATEGORY_NAME+"=?","支出").find(TradeCategory::class.java)
-            if(accounts.isNotEmpty()){
-                return true
-            }
-            val initCategories = ArrayList<TradeCategory>()
-            initCategories.add(TradeCategory(categoryName = "支出"))
-            initCategories.add(TradeCategory(categoryName = "收入"))
-            initCategories.add(TradeCategory(categoryName = "内部转账"))
-            return LitePal.saveAll(initCategories)
+        fun initTradeCategory() {
+            TradeCategory.initCategoryConfig()
         }
 
     }

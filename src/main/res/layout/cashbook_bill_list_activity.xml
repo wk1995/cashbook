@@ -12,6 +12,7 @@
         android:layout_height="@dimen/d40dp"
         android:layout_marginStart="@dimen/d15dp"
         android:layout_marginTop="@dimen/d15dp"
+        android:visibility="invisible"
         android:src="@drawable/common_back_right_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

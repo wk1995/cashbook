@@ -1,11 +1,13 @@
 package com.wk.cashbook.trade.data
 
 import androidx.annotation.WorkerThread
+import com.wk.cashbook.CashBookConfig
 import com.wk.projects.common.constant.DataBaseConstants
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
 import org.litepal.LitePal
 import org.litepal.crud.LitePalSupport
+import org.litepal.extension.findAsync
 
 /**
  * @author      :wangkang_shenlong
@@ -28,6 +30,8 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
         const val CREATE_TIME = "createtime"
         const val PARENT_ID = "parentid"
         const val NOTE = "note"
+
+        const val INVALID_ID = NumberConstants.number_long_one_Negative
 
 
         /**
@@ -53,9 +57,32 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
 
         @WorkerThread
         fun getCategory(id: Long): TradeCategory? {
-            return LitePal.find(TradeCategory::class.java,id)
+            return LitePal.find(TradeCategory::class.java, id)
 
         }
+
+        fun initCategoryConfig() {
+            LitePal.where("$CATEGORY_NAME=?", "支出")
+                    .findAsync(TradeCategory::class.java).listen {
+                        if (it.isEmpty()) {
+                            initRootTradeCategory()
+                        } else {
+                            CashBookConfig.setDefaultCategoryId(it[0].baseObjId)
+                        }
+                    }
+        }
+
+        private fun initRootTradeCategory() {
+            val initCategories = ArrayList<TradeCategory>()
+            val defaultCategory = TradeCategory(categoryName = "支出")
+            initCategories.add(defaultCategory)
+            initCategories.add(TradeCategory(categoryName = "收入"))
+            initCategories.add(TradeCategory(categoryName = "内部转账"))
+            LitePal.saveAllAsync(initCategories).listen {
+                CashBookConfig.setDefaultCategoryId(defaultCategory.baseObjId)
+            }
+        }
+
 
     }
 

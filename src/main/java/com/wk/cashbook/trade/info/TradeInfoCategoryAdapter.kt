@@ -5,6 +5,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.TradeCategory
+import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.log.WkLog
 
 /**
@@ -40,7 +41,6 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
     class CategoryVH(rootView: View) : RecyclerView.ViewHolder(rootView)
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        WkLog.d("onBindViewHolder","wk1995")
         if (isHeader(position) || isFoot(position)) {
             if (holder is CategoryVH) {
                 val tvCommon = holder.itemView.findViewById<TextView>(R.id.tvCommon)
@@ -68,6 +68,8 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
     }
 
 
+    fun getSelectPosition()=selectPosition
+
     /**
      * 选择，需要还原上一个，
      * */
@@ -94,6 +96,7 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
         for(i in 0 until categories.size){
             if(categoryId==categories[i].baseObjId){
                 selectPosition(i)
+                return
             }
         }
     }
@@ -134,12 +137,24 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
 
     /**替换数据*/
     fun replaceData(categories: List<TradeCategory>) {
+        WkLog.i("replaceData")
         this.categories.clear()
         this.categories.addAll(categories)
         setSelectTradeCategory(selectedId)
         notifyDataSetChanged()
     }
 
+    fun clear(){
+        this.categories.clear()
+        resetData()
+        notifyDataSetChanged()
+    }
+
+    private fun resetData(){
+        selectPosition= NumberConstants.number_int_one_Negative
+        lastSelectPosition= NumberConstants.number_int_one_Negative
+        selectedId=NumberConstants.number_long_one_Negative
+    }
 
     /**添加数据*/
     fun addCategory(category: TradeCategory) {

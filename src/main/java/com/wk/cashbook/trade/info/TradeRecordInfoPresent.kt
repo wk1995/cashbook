@@ -1,7 +1,8 @@
 package com.wk.cashbook.trade.info
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.BaseSimpleDialog
@@ -9,81 +10,154 @@ import com.wk.projects.common.SimpleOnlyEtDialog
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.ui.WkToast
+import org.litepal.LitePal
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
+
 
 /**
- * @author      :wangkang_shenlong
+ * @author      :wangkang
  * email        :shenlong.wang@tuya.com
  * create date  : 2021/03/16
  * desc         :
- * @param currentTradeRecode  当前的交易记录
  */
 
-class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordInfoActivity, private val currentTradeRecode: TradeRecode,val id:Long)
+class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordInfoActivity,
+                             private val intent: Intent)
     : BaseSimpleDialog.SimpleOnlyEtDialogListener {
+    private val mSubscriptions by lazy { CompositeSubscription() }
 
-    var isUpdate=false
+    private val mTradeInfoModel by lazy {
+        TradeInfoModel(intent, this)
+    }
 
-    /**当前的根类别*/
-    var currentRootCategory: TradeCategory? = null
-        set(value) {
-            field = value
-            initCategoryAsync(field)
-        }
+    fun initData() {
+        initRootCategoryAsync()
+        mTradeInfoModel.initData()
+    }
+
+    fun onDestroy() {
+        mSubscriptions.clear()
+    }
+
+    /**显示备注*/
+    fun showNote(note: String) {
+        mTradeRecordInfoActivity.showNote(note)
+    }
+
+    /**显示金额*/
+    fun showAmount(amount: String) {
+        mTradeRecordInfoActivity.showAmount(amount)
+    }
+
+    /**显示交易时间*/
+    fun showTradeTime(time: Long) {
+        mTradeRecordInfoActivity.showTradeTime(time)
+    }
 
 
-    init {
-        currentTradeRecode.apply {
-            mTradeRecordInfoActivity.setAmount(amount.toString())
-            mTradeRecordInfoActivity.setNote(tradeNote)
-            mTradeRecordInfoActivity.setTradeFlag()
-            mTradeRecordInfoActivity.setTradeTime(tradeTime)
-            mTradeRecordInfoActivity.setTradeAccount(accountId)
-            mTradeRecordInfoActivity.setTradeCategory(categoryId)
-        }
+    /**显示标签*/
+    fun showTradeFlag() {
+
+    }
+
+    /**
+     * 显示当前的类别
+     * */
+    fun showTradeCategory(categoryId: Long) {
+        mTradeRecordInfoActivity.setTradeCategory(categoryId)
+    }
+
+    /**
+     * 显示根类别
+     * */
+    fun showRootCategory(categoryId: Long) {
+        WkLog.i("showRootCategory")
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeCategory> {
+            it.onNext(LitePal.find(TradeCategory::class.java, categoryId))
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    val parentId = it.parentId
+                    //表示还有父类
+                    if (parentId != TradeCategory.INVALID_ID) {
+                        showRootCategory(parentId)
+                    } else {//表示已经是根类了
+                        WkLog.i("showRootCategory:  ${it.baseObjId}")
+                        mTradeInfoModel.setRootCategory(it)
+                        mTradeRecordInfoActivity.setRootCategory(it)
+                    }
+                }
+        )
 
     }
 
 
-    fun setTradeTime(time: Long) {
-        WkLog.d("修改之前： $currentTradeRecode")
-        currentTradeRecode.tradeTime = time
-        WkLog.d("修改之后： $currentTradeRecode")
-        mTradeRecordInfoActivity.setTradeTime(time)
+    /**
+     * 设置账号
+     * */
+    fun showTradeAccount(accountId: Long) {
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeAccount> { t ->
+            t?.onNext(
+                    LitePal.find(TradeAccount::class.java, accountId)
+            )
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    mTradeRecordInfoActivity.showTradeAccount(it?.accountName)
+                }
+        )
     }
+
 
     /**
      * 获取最顶的类别
      * 支出，收入，内部转账
      * */
-
-    fun initRootCategoryAsync() {
-        Observable.create(Observable.OnSubscribe<List<TradeCategory>> { t ->
+    private fun initRootCategoryAsync() {
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<List<TradeCategory>> { t ->
             t?.onNext(TradeCategory.getRootCategory())
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    WkLog.d(it.toString())
-                    mTradeRecordInfoActivity.setRootCategory(it)
+                    mTradeRecordInfoActivity.setRootCategories(it)
+                    mTradeInfoModel.showRootCategory()
                 }
+        )
     }
 
 
-    private fun initCategoryAsync(parent: TradeCategory?) {
-        Observable.create(Observable.OnSubscribe<List<TradeCategory>> { t ->
+    /**
+     * 显示当前的类别
+     * @param parent 当前根类别
+     * */
+    fun initCategoryAsync(parent: TradeCategory?) {
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<List<TradeCategory>> { t ->
             t?.onNext(TradeCategory.getSubCategory(parent))
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     WkLog.d(it.toString())
                     mTradeRecordInfoActivity.setCategories(it)
+                    mTradeInfoModel.showTradeCategory()
                 }
+        )
     }
 
-    fun setCategory(category: TradeCategory) {
-        currentTradeRecode.categoryId = category.baseObjId
+    /**
+     * 设置当前交易的类别
+     * */
+    fun setCategory(category: TradeCategory?) {
+        val selectCategoryId = category?.baseObjId ?: return
+        mTradeInfoModel.setCategoryId(selectCategoryId)
+        mTradeRecordInfoActivity.setTradeCategory(selectCategoryId)
+    }
+
+    fun setSelectRootCategory(category: TradeCategory?) {
+        mTradeRecordInfoActivity.setRootCategory(category ?: return)
+        mTradeInfoModel.setRootCategory(category)
     }
 
     /**添加类别的弹窗*/
@@ -93,11 +167,12 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
     }
 
 
-    /**保存新类别*/
-    private fun saveNewCategory(categoryName: String) {
+    /**创建新类别*/
+    private fun createNewCategory(categoryName: String) {
         val newCategory = TradeCategory(categoryName, System.currentTimeMillis(),
-                currentRootCategory?.baseObjId ?: NumberConstants.number_long_one_Negative)
-        Observable.create(Observable.OnSubscribe<Boolean> { t ->
+                mTradeInfoModel.getRootCategory()?.baseObjId
+                        ?: NumberConstants.number_long_one_Negative)
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<Boolean> { t ->
             t?.onNext(newCategory.save())
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -108,6 +183,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                         WkToast.showToast("失败")
                     }
                 }
+        )
     }
 
     override fun ok(bundle: Bundle?): Boolean {
@@ -116,7 +192,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
             WkToast.showToast("不能为空")
             return true
         }
-        saveNewCategory(textString)
+        createNewCategory(textString)
         return false
     }
 
@@ -126,33 +202,22 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     /**保存 \ 更新*/
     fun saveTradeRecode(bundle: Bundle? = null) {
-        Observable.create(Observable.OnSubscribe<Boolean> { t ->
-            currentTradeRecode.apply {
-                val originTradeNote = currentTradeRecode.tradeNote
-                val tradeNote = bundle?.getString(TradeRecode.TRADE_NOTE,
-                        originTradeNote) ?: originTradeNote
-                this.tradeNote = tradeNote
-                val originAmount = currentTradeRecode.amount
-                val tradeAmount = bundle?.getDouble(TradeRecode.AMOUNT,
-                        originAmount) ?: originAmount
-                this.amount = tradeAmount
-            }
-//            WkLog.d("保存的： $currentTradeRecode")
-            val result =if(id==0L){
-                currentTradeRecode.save()
-            }else{
-                currentTradeRecode.update(id)>0
-            }
-            t?.onNext(result)
+        val tradeNote = bundle?.getString(TradeRecode.TRADE_NOTE)
+        val tradeAmount = bundle?.getDouble(TradeRecode.AMOUNT)
+        mTradeInfoModel.setAmount(tradeAmount)
+        mTradeInfoModel.setNote(tradeNote)
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<Boolean> { t ->
+            t?.onNext(mTradeInfoModel.saveOrUpdate())
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     mTradeRecordInfoActivity.saveResult(if (it) {
-                        currentTradeRecode
+                        mTradeInfoModel.getBundle()
                     } else {
                         null
                     })
-                }
 
+                }
+        )
     }
 }
