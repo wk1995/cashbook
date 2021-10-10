@@ -22,6 +22,7 @@ import com.wk.cashbook.trade.info.TradeRecordInfoActivity
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.communication.IRvClickListener
+import com.wk.projects.common.communication.constant.IFAFlag
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.constant.WkStringConstants.STR_INT_ZERO
@@ -96,7 +97,16 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         initView()
         initListener()
         initTime()
+    }
 
+    override fun onStart() {
+        super.onStart()
+        mCashBookBillPresent.initSubscriptions()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mCashBookBillPresent.onStop()
     }
 
     private fun initView() {
@@ -220,10 +230,16 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
                 }
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val tradeRecode = data?.getParcelableExtra<TradeRecode>(TradeRecode.TAG) ?: return
+        val id = data.getLongExtra(TradeRecode.TRADE_RECODE_ID,NumberConstants.number_long_zero)
+        if(id==NumberConstants.number_long_zero){
+            return
+        }
         val position=data.getIntExtra(WkStringConstants.STR_POSITION_LOW,-1)
+        tradeRecode.assignBaseObjId(id)
         if(position==-1) {
             cashListAdapter.addData(tradeRecode)
         }else{
@@ -237,7 +253,19 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         startActivityForResult(intent, 1)
     }
 
-    override fun onItemLongClick(bundle: Bundle?, vararg any: Any?) {
+    override fun onItemLongClick(bundle: Bundle?, vararg any: Any?):Boolean {
+        DeleteCashBookDialog.create(bundle).show(supportFragmentManager)
+        return true
+    }
+
+    override fun communication(flag: Int, bundle: Bundle?, any: Any?) {
+        super.communication(flag, bundle, any)
+        if(flag== IFAFlag.DELETE_ITEM_DIALOG) {
+            mCashBookBillPresent.deleteItem(bundle)
+        }
+    }
+    fun removeData(position:Int){
+        cashListAdapter.remove(position)
     }
 
     override fun ok(bundle: Bundle?): Boolean {

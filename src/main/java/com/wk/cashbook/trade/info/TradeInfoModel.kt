@@ -6,6 +6,9 @@ import com.wk.cashbook.CashBookConfig
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeCategory.Companion.INVALID_ID
 import com.wk.cashbook.trade.data.TradeRecode
+import com.wk.cashbook.trade.data.TradeRecode.CREATOR.TRADE_RECODE_ID
+import com.wk.projects.common.constant.NumberConstants
+import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.log.WkLog
 
 /**
@@ -21,7 +24,11 @@ class TradeInfoModel(private val intent: Intent,
 
 
     private val mCurrentTradeRecode by lazy {
-        intent.getParcelableExtra(TradeRecode.TAG) ?: TradeRecode(System.currentTimeMillis())
+        val id = intent.getLongExtra(TRADE_RECODE_ID, NumberConstants.number_long_zero)
+        val mCurrentTradeRecode = intent.getParcelableExtra(TradeRecode.TAG)
+                ?: TradeRecode(System.currentTimeMillis())
+        mCurrentTradeRecode.assignBaseObjId(id)
+        mCurrentTradeRecode
     }
 
     /**
@@ -36,10 +43,10 @@ class TradeInfoModel(private val intent: Intent,
 
     fun initData() {
         //没有类别，默认是支出
-        val categoryId=mCurrentTradeRecode.categoryId
+        val categoryId = mCurrentTradeRecode.categoryId
         WkLog.i("initData categoryId: $categoryId")
-        if(categoryId==INVALID_ID){
-            mCurrentTradeRecode.categoryId=CashBookConfig.getDefaultCategoryId()
+        if (categoryId == INVALID_ID) {
+            mCurrentTradeRecode.categoryId = CashBookConfig.getDefaultCategoryId()
         }
         mCurrentTradeRecode.apply {
             mTradeRecordInfoPresent.showAmount(amount.toString())
@@ -50,40 +57,43 @@ class TradeInfoModel(private val intent: Intent,
         }
     }
 
-    fun setCategoryId(categoryId:Long){
-        mCurrentTradeRecode.categoryId=categoryId
+    fun setCategoryId(categoryId: Long) {
+        mCurrentTradeRecode.categoryId = categoryId
     }
 
-    fun setRootCategory(rootCategory:TradeCategory){
-        mSelectRootCategory=rootCategory
+    fun setRootCategory(rootCategory: TradeCategory) {
+        mSelectRootCategory = rootCategory
     }
 
-    fun getRootCategory()=mSelectRootCategory
+    fun getRootCategory() = mSelectRootCategory
 
-    fun showTradeCategory(categoryId:Long=mCurrentTradeRecode.categoryId){
+    fun showTradeCategory(categoryId: Long = mCurrentTradeRecode.categoryId) {
         WkLog.i("showTradeCategory:  $categoryId")
         mTradeRecordInfoPresent.showTradeCategory(categoryId)
     }
 
-    fun showRootCategory(categoryId:Long=mCurrentTradeRecode.categoryId){
+    fun showRootCategory(categoryId: Long = mCurrentTradeRecode.categoryId) {
         mTradeRecordInfoPresent.showRootCategory(categoryId)
     }
 
 
-    fun setAmount(amount:Double?){
-        mCurrentTradeRecode.amount=amount?:return
+    fun setAmount(amount: Double?) {
+        mCurrentTradeRecode.amount = amount ?: return
     }
 
-    fun setNote(note:String?){
-        mCurrentTradeRecode.tradeNote=note?:return
+    fun setNote(note: String?) {
+        mCurrentTradeRecode.tradeNote = note ?: return
     }
 
-    fun saveOrUpdate()=mCurrentTradeRecode.saveOrUpdate()
+    fun saveOrUpdate() = mCurrentTradeRecode.saveOrUpdate("id = ?",mCurrentTradeRecode.baseObjId.toString() )
 
 
-    fun getBundle():Bundle{
-        val bundle= Bundle()
+    fun getBundle(): Bundle {
+        val bundle = Bundle()
         bundle.putParcelable(TradeRecode.TAG, mCurrentTradeRecode)
+        bundle.putLong(TRADE_RECODE_ID, mCurrentTradeRecode.baseObjId)
+        bundle.putInt(WkStringConstants.STR_POSITION_LOW,
+                intent.getIntExtra(WkStringConstants.STR_POSITION_LOW, -1))
         return bundle
     }
 

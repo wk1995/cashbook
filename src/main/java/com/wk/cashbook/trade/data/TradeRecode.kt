@@ -81,7 +81,7 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
 
         fun getTradeRecodes(vararg conditions: String?): MutableList<TradeRecode> =
             LitePal.where(*conditions).find(TradeRecode::class.java)
-
+        const val TRADE_RECODE_ID="trade_recode_id"
         const val TRADE_TIME="tradetime"
         const val ACCOUNT_ID="accountid"
         const val CATEGORY_ID="categoryid"

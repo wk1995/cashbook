@@ -10,7 +10,7 @@ import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.ITradeRecord
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.communication.IRvClickListener
-import com.wk.projects.common.configuration.WkConfiguration
+import com.wk.projects.common.communication.constant.BundleKey
 import com.wk.projects.common.constant.WkStringConstants.STR_POSITION_LOW
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
@@ -87,10 +87,17 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecord>,
                         itemView.setOnClickListener{
                             val bundle=Bundle()
                             bundle.putParcelable(TradeRecode.TAG,tradeRecord)
-                            bundle.putInt(STR_POSITION_LOW,position)
-                            bundle.putLong("id",tradeRecord.baseObjId)
+                            bundle.putInt(STR_POSITION_LOW,getRealPosition(position))
+                            bundle.putLong(TradeRecode.TRADE_RECODE_ID,tradeRecord.baseObjId)
                             WkLog.d("click id: ${tradeRecord.baseObjId}")
                             rvItemListener?.onItemClick(bundle)
+                        }
+                        itemView.setOnLongClickListener {
+                            val bundle=Bundle()
+                            bundle.putInt(STR_POSITION_LOW,getRealPosition(position))
+                            bundle.putLong(TradeRecode.TRADE_RECODE_ID,tradeRecord.baseObjId)
+                            bundle.putString(BundleKey.LIST_ITEM_NAME,tradeRecord.tradeNote)
+                            return@setOnLongClickListener rvItemListener?.onItemLongClick(bundle)?:false
                         }
                         tvTradeAmount.text=amount.toString()
                         tvTradeNote.text=note
@@ -125,6 +132,11 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecord>,
             notifyItemChanged(itemCount)
         }
 
+    }
+
+    fun remove(position: Int){
+        mTradeRecords.remove(mTradeRecords[position])
+        notifyDataSetChanged()
     }
 
     fun replaceData(tradeRecode: TradeRecode,position: Int){
