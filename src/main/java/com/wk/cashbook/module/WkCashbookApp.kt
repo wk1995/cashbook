@@ -34,14 +34,7 @@ class WkCashbookApp : BaseApplication() {
 
         @WorkerThread
         fun initTradeAccount() {
-            val accounts = LitePal.where(TradeAccount.ACCOUNT_NAME + "=?", "支付宝").find(TradeAccount::class.java)
-            if (accounts.isEmpty()) {
-                val initAccounts = ArrayList<TradeAccount>()
-                initAccounts.add(TradeAccount(accountName = "支付宝"))
-                initAccounts.add(TradeAccount(accountName = "微信"))
-                initAccounts.add(TradeAccount(accountName = "银行卡"))
-                LitePal.saveAll(initAccounts)
-            }
+
         }
 
         @WorkerThread
