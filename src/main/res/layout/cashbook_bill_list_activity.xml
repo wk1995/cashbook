@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,21 +13,49 @@
         android:layout_height="@dimen/d40dp"
         android:layout_marginStart="@dimen/d15dp"
         android:layout_marginTop="@dimen/d15dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:src="@drawable/common_back_right_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glItemListPositionVFlag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/d55dp"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glItemListPositionHStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/d15dp"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glItemListPositionHEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/d15dp"/>
+    <ImageView
+        android:id="@+id/ivAccounts"
+        android:layout_width="@dimen/d40dp"
+        android:layout_height="@dimen/d40dp"
+        android:layout_marginTop="@dimen/d15dp"
+        android:layout_marginEnd="@dimen/d15dp"
+        android:contentDescription="@string/cashbook_description_accounts"
+        android:src="@drawable/cashbook_account_pic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/d10dp"
         android:text="@string/cashbook_zh_name"
         android:textSize="@dimen/s20sp"
+        android:layout_marginTop="@dimen/d15dp"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="@id/ivTitleBack"
-        app:layout_constraintStart_toEndOf="@id/ivTitleBack"
-        app:layout_constraintTop_toTopOf="@id/ivTitleBack"/>
+        app:layout_constraintStart_toEndOf="@id/glItemListPositionHStart"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
         android:id="@+id/btnAddBill"
@@ -44,8 +73,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/d20dp"
         android:orientation="vertical"
-        app:layout_constraintLeft_toLeftOf="@id/ivTitleBack"
-        app:layout_constraintTop_toBottomOf="@id/ivTitleBack">
+        app:layout_constraintLeft_toLeftOf="@id/glItemListPositionHStart"
+        app:layout_constraintTop_toBottomOf="@id/glItemListPositionVFlag">
 
         <TextView
             android:id="@+id/tvDateYear"
@@ -131,5 +160,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/btnAddBill"
-        app:layout_constraintTop_toBottomOf="@id/tlCashBook"/>
+        app:layout_constraintTop_toBottomOf="@id/tlCashBook"
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="10dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

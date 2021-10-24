@@ -17,6 +17,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.wk.cashbook.R
 import com.wk.cashbook.databinding.CashbookBillListActivityBinding
+import com.wk.cashbook.trade.account.list.AccountListActivity
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.info.TradeRecordInfoActivity
 import com.wk.projects.common.BaseProjectsActivity
@@ -77,10 +78,16 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     /**返回*/
     private lateinit var ivTitleBack: ImageView
 
+    /**
+     * 账户
+     * */
+    private lateinit var ivAccounts:ImageView
     private lateinit var btnAddBill: Button
 
     private lateinit var vpCashbook: ViewPager2
     private lateinit var tlCashBook: TabLayout
+
+
 
     private lateinit var mCashBookBillPresent: CashBookBillPresent
 
@@ -110,6 +117,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     }
 
     private fun initView() {
+        ivAccounts=mBind.ivAccounts
         llDate = mBind.llDate
         tvDateYear = mBind.tvDateYear
         tvDateMonth = mBind.tvDateMonth
@@ -174,6 +182,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     }
 
     private fun initListener() {
+        ivAccounts.setOnClickListener(this)
         llDate.setOnClickListener(this)
         ivTitleBack.setOnClickListener(this)
         btnAddBill.setOnClickListener(this)
@@ -212,6 +221,10 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
             R.id.btnAddBill -> {
                 val intene = Intent(this, TradeRecordInfoActivity::class.java)
                 startActivityForResult(intene, 1)
+            }
+            R.id.ivAccounts->{
+                val intent = Intent(this, AccountListActivity::class.java)
+                startActivity(intent)
             }
         }
     }

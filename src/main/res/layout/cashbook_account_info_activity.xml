@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".trade.account.AccountInfoActivity">
+    <LinearLayout
+        android:id="@+id/vgTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/viewTitleLeft1"
+            android:layout_width="@dimen/d40dp"
+            android:layout_height="@dimen/d40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/d5dp"
+            android:layout_marginBottom="@dimen/d5dp"
+            android:layout_marginStart="@dimen/d5dp"
+            android:src="@drawable/common_back_right_arrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/viewTitleLeft2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/s20sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/d10dp"
+            android:text="@string/cashbook_money_detail"
+            app:layout_constraintTop_toTopOf="@id/ivAccountListBack"
+            app:layout_constraintStart_toEndOf="@id/ivAccountListBack"
+            app:layout_constraintBottom_toBottomOf="@id/ivAccountListBack"/>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/etAccountName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cashbook_account_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vgTitle"/>
+    <EditText
+        android:id="@+id/etAccountMoney"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cashbook_account_money"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etAccountName"/>
+    <Button
+        android:id="@+id/btnAccountSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/common_str_save"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

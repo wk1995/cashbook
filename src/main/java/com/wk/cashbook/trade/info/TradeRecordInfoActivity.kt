@@ -230,14 +230,6 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         mTradeInfoCategoryAdapter.setSelectTradeCategory(categoryId)
     }
 
-
-
-
-
-
-
-
-
     fun saveResult(bundle: Bundle?) {
         if (null == bundle) {
             WkToast.showToast("保存失败")

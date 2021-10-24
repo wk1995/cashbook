@@ -8,4 +8,11 @@
     <string name="cashbook_internal_transfer">内部转账</string>
     <string name="cashbook_no_select_account">不选择账户</string>
     <string name="cashbook_delete_item">删除该项目</string>
+    <string name="cashbook_description_accounts">accounts</string>
+    <string name="cashbook_all_amount">总资产</string>
+    <string name="cashbook_activity_title_amount_manager">资产管理</string>
+    <string name="cashbook_money_detail">资产渠道详情</string>
+    <string name="cashbook_account_name">账户名</string>
+    <string name="cashbook_account_money">余额</string>
+
 </resources>

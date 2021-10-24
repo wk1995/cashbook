@@ -11,6 +11,8 @@
         android:label="@string/module_name"
         android:theme="@style/Theme.AppCompat"
         tools:replace="android:label">
+        <activity android:name=".trade.account.AccountInfoActivity" />
+        <activity android:name=".trade.account.list.AccountListActivity" />
         <activity android:name=".trade.info.TradeRecordInfoActivity" />
         <activity android:name=".trade.record.CashBookBillListActivity">
             <intent-filter>
