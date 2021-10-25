@@ -4,9 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/common_white_C9C9C9"
     android:paddingStart="@dimen/d15dp"
     android:paddingEnd="@dimen/d15dp"
     tools:context=".trade.info.TradeRecordInfoActivity">
+
+    <Button
+        android:id="@+id/btTradeInfoSave"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40dp"
+        android:background="@null"
+        android:text="@string/common_str_save"
+        android:textColor="@color/common_black_2B2A2A"
+        android:textSize="@dimen/s20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--备注-->
+    <EditText
+        android:id="@+id/etTradeInfoNote"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d200dp"
+        android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
+        android:gravity="start|top"
+        android:hint="@string/common_str_note"
+        android:textColorHint="@color/color_grey_7E797B"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btTradeInfoSave" />
+
+    <!-- 交易金 额-->
+    <EditText
+        android:id="@+id/tvTradeInfoAmount"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d60dp"
+        android:layout_marginTop="@dimen/d10dp"
+        android:paddingStart="@dimen/d5dp"
+        android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
+        android:inputType="number"
+        android:hint="@string/common_str_amount_zero"
+        android:textColorHint="@color/common_black_2B2A2A"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoTime" />
+
+    <!--返回-->
     <ImageView
         android:id="@+id/ivBackInfo"
         android:layout_width="@dimen/d30dp"
@@ -14,89 +55,65 @@
         android:layout_marginTop="@dimen/d15dp"
         android:src="@drawable/common_back_right_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="@id/ivBackInfo"
-        app:layout_constraintBottom_toBottomOf="@id/ivBackInfo"
-        app:layout_constraintStart_toEndOf="@id/ivBackInfo"/>
+
     <!--交易时间-->
     <TextView
         android:id="@+id/tvTradeInfoTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoAmount"
-        tools:text="时间： 2021 03 01 15:00:00" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvTradeInfoRootCategory"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/d80dp"
         android:layout_height="@dimen/d40dp"
-        android:background="@color/colorAccent"
-        app:layout_constraintEnd_toStartOf="@id/tvTradeInfoAccount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivBackInfo" />
-    <!--交易账号-->
+        android:layout_marginTop="@dimen/d20dp"
+        android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
+        android:gravity="center"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintStart_toStartOf="@id/ivBackInfo"
+        app:layout_constraintTop_toBottomOf="@id/ivBackInfo"
+        tools:text="10-25" />
+
+    <!--交易账户-->
     <TextView
         android:id="@+id/tvTradeInfoAccount"
-        android:layout_width="@dimen/d100dp"
+        android:layout_width="@dimen/d80dp"
         android:layout_height="0dp"
+        android:layout_marginStart="@dimen/d10dp"
+        android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
         android:gravity="center"
         android:text="@string/cashbook_no_select_account"
-        app:layout_constraintBottom_toBottomOf="@id/rvTradeInfoRootCategory"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/rvTradeInfoRootCategory" />
-    <!-- 交易金 额-->
-    <EditText
-        android:id="@+id/tvTradeInfoAmount"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d60dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rvTradeInfoRootCategory"
-        tools:text="0.00" />
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintBottom_toBottomOf="@id/tvTradeInfoTime"
+        app:layout_constraintStart_toEndOf="@id/tvTradeInfoTime"
+        app:layout_constraintTop_toTopOf="@id/tvTradeInfoTime" />
 
     <!--交易标签-->
     <TextView
         android:id="@+id/tvTradeInfoFlag"
         android:layout_width="9dp"
         android:layout_height="13dp"
-        android:text="#"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/tvTradeInfoAmount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tvTradeInfoAmount" />
 
+    <!--根类别-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTradeInfoRootCategory"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/d10dp"
+        app:layout_constraintBottom_toBottomOf="@id/ivBackInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivBackInfo"
+        app:layout_constraintTop_toTopOf="@id/ivBackInfo" />
 
     <!--具体类别-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTradeInfoCategory"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/d200dp"
-        android:background="@color/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoTime" />
-
-    <!--保存-->
-    <Button
-        android:id="@+id/btTradeInfoSave"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d40dp"
-        android:text="@string/common_str_save"
-        android:textColor="@color/common_red_ED0763"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-    <!--备注-->
-    <EditText
-        android:id="@+id/etTradeInfoNote"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/d200dp"
-        android:gravity="start|top"
-        android:hint="@string/common_str_note"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rvTradeInfoCategory"
-        app:layout_constraintBottom_toTopOf="@id/btTradeInfoSave"/>
-
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/d10dp"
+        android:layout_marginTop="@dimen/d10dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoAmount"
+        app:layout_constraintBottom_toTopOf="@id/etTradeInfoNote"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

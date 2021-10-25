@@ -57,7 +57,7 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
         if(adapter==mChooseAccountAdapter) {
-            mTradeRecordInfoPresent?.setAccount(mChooseAccountAdapter.getItemId(position))
+            mTradeRecordInfoPresent?.showTradeAccount(mChooseAccountAdapter.getItemId(position))
             disMiss()
         }
     }

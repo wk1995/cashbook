@@ -1,5 +1,6 @@
 package com.wk.cashbook.trade.info
 
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -26,9 +27,12 @@ class TradeInfoRootCategoryAdapter(private var categories: MutableList<TradeCate
         if (viewType == VIEW_TYPE_ITEM) {
             val rootView = LayoutInflater.from(parent.context).inflate(R.layout.common_only_text, parent, false)
             val tvCommon = rootView.findViewById<TextView>(R.id.tvCommon)
+            tvCommon.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+            tvCommon.setPadding(0,0,0,0)
+            tvCommon.gravity=Gravity.CENTER
             val lp = tvCommon.layoutParams
-            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT
-            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            lp.width = parent.context.resources.getDimensionPixelOffset(R.dimen.d60dp)
+            lp.height = ViewGroup.LayoutParams.MATCH_PARENT
             tvCommon.layoutParams = lp
             tvCommon.gravity=Gravity.CENTER
             return RootCategoryVH(rootView, tvCommon)

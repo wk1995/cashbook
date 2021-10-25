@@ -2,19 +2,26 @@ package com.wk.cashbook.trade.info
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
+import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.SimpleOnlyEtDialog
+import com.wk.projects.common.configuration.WkConfiguration
+import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.log.WkLog
+import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.WkToast
 import org.litepal.LitePal
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -57,28 +64,14 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     /**显示交易时间*/
     fun showTradeTime(time: Long) {
-        mTradeRecordInfoActivity.showTradeTime(time)
+        mTradeRecordInfoActivity.showTradeTime(
+                DateTime.getDateString(time, SimpleDateFormat("MM-dd", Locale.getDefault()))
+        )
     }
 
 
     /**显示标签*/
     fun showTradeFlag() {
-
-    }
-
-
-    fun setAccount(accountId: Long) {
-        mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeAccount> {
-            it.onNext(LitePal.find(TradeAccount::class.java, accountId))
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (it != null) {
-                        mTradeInfoModel.setAccount(accountId)
-                        mTradeRecordInfoActivity.showTradeAccount(it.accountName)
-                    }
-                }
-        )
 
     }
 
@@ -125,7 +118,13 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    mTradeRecordInfoActivity.showTradeAccount(it?.accountName)
+                    val accountName = it?.accountName
+                    mTradeRecordInfoActivity.showTradeAccount(
+                            if (TextUtils.isEmpty(accountName)) {
+                                WkProjects.getApplication().getString(R.string.cashbook_no_select_account)
+                            } else {
+                                accountName
+                            })
                 }
         )
     }

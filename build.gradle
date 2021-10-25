@@ -70,7 +70,7 @@ android {
             } else {
                 manifest.srcFile 'src/main/AndroidManifest.xml'
                 java {
-                    exclude 'com.wk.cashbook.module/WkCashbookApp'
+                    exclude 'com.wk.cashbook.module/WkCashbookApp' // 不想包含文件的路径
                 }
             }
         }

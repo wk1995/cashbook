@@ -1,12 +1,17 @@
 package com.wk.cashbook.trade.info
 
+import android.util.TypedValue
 import android.view.*
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.TradeCategory
+import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.log.WkLog
+import com.wk.projects.common.resource.WkContextCompat
 
 /**
  * @author      :wangkang_shenlong
@@ -20,10 +25,7 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
                                     private val mTradeInfoCategoryListener: ITradeInfoCategoryListener? = null)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        private const val VIEW_TYPE_FOOT = -1
-        private const val VIEW_TYPE_HEADER = -3
         const val VIEW_TYPE_ITEM = -2
-
     }
 
     interface ITradeInfoCategoryListener {
@@ -35,7 +37,7 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
 
     private var selectPosition: Int = -1
     private var lastSelectPosition: Int = -1
-    private var selectedId=-1L
+    private var selectedId = -1L
 
     class RootCategoryVH(rootView: View, val tvCommon: TextView) : RecyclerView.ViewHolder(rootView)
     class CategoryVH(rootView: View) : RecyclerView.ViewHolder(rootView)
@@ -44,7 +46,6 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
         if (isHeader(position) || isFoot(position)) {
             if (holder is CategoryVH) {
                 val tvCommon = holder.itemView.findViewById<TextView>(R.id.tvCommon)
-                tvCommon.setBackgroundResource(R.color.colorAccent)
                 tvCommon?.text = "+"
                 tvCommon?.gravity = Gravity.CENTER
                 tvCommon.setOnClickListener {
@@ -55,10 +56,16 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
             val category = categories[position]
             if (holder is RootCategoryVH) {
                 holder.tvCommon.text = category.categoryName
-                if (selectPosition==position) {
-                    holder.tvCommon.setBackgroundResource(R.color.design_default_color_background)
+                if (selectPosition == position) {
+                    holder.tvCommon.setBackgroundResource(R.color.common_black_2B2A2A)
+                    holder.tvCommon.setTextColor(
+                            WkContextCompat.getColor(WkProjects.getApplication(), R.color.common_white_C9C9C9)
+                    )
                 } else {
-                    holder.tvCommon.setBackgroundResource(R.color.colorAccent)
+                    holder.tvCommon.setBackgroundResource(R.color.common_white_C9C9C9)
+                    holder.tvCommon.setTextColor(
+                            WkContextCompat.getColor(WkProjects.getApplication(), R.color.common_black_2B2A2A)
+                    )
                 }
                 holder.tvCommon.setOnClickListener {
                     mTradeInfoCategoryListener?.itemClick(this, holder.tvCommon, position)
@@ -68,14 +75,14 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
     }
 
 
-    fun getSelectPosition()=selectPosition
+    fun getSelectPosition() = selectPosition
 
     /**
      * 选择，需要还原上一个，
      * */
     fun selectPosition(position: Int): TradeCategory {
         val target = categories[position]
-        if (position==selectPosition) {
+        if (position == selectPosition) {
             return target
         }
         lastSelectPosition = selectPosition
@@ -91,16 +98,15 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
 
     /**设置类别*/
     fun setSelectTradeCategory(categoryId: Long) {
-        selectedId=categoryId
-        WkLog.d("categoryId: $categoryId","wk1995")
-        for(i in 0 until categories.size){
-            if(categoryId==categories[i].baseObjId){
+        selectedId = categoryId
+        WkLog.d("categoryId: $categoryId", "wk1995")
+        for (i in 0 until categories.size) {
+            if (categoryId == categories[i].baseObjId) {
                 selectPosition(i)
                 return
             }
         }
     }
-
 
     override fun getItemViewType(position: Int): Int {
         if (isFoot(position) || isHeader(position)) {
@@ -119,6 +125,7 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
         if (viewType == VIEW_TYPE_ITEM) {
             val rootView = LayoutInflater.from(parent.context).inflate(R.layout.common_only_text, parent, false)
             val tvCommon = rootView.findViewById<TextView>(R.id.tvCommon)
+            tvCommon.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             val lp = tvCommon.layoutParams
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -129,7 +136,7 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
         if (viewType < headerViews.size) {
             return CategoryVH(headerViews[viewType] ?: throw Exception("viewType: $viewType"))
         }
-        val footType = viewType - categories.size - headerViews.size;
+        val footType = viewType - categories.size - headerViews.size
         return CategoryVH(footViews[footType] ?: throw Exception("viewType: $footType"))
     }
 
@@ -144,16 +151,16 @@ open class TradeInfoCategoryAdapter(private var categories: MutableList<TradeCat
         notifyDataSetChanged()
     }
 
-    fun clear(){
+    fun clear() {
         this.categories.clear()
         resetData()
         notifyDataSetChanged()
     }
 
-    private fun resetData(){
-        selectPosition= NumberConstants.number_int_one_Negative
-        lastSelectPosition= NumberConstants.number_int_one_Negative
-        selectedId=NumberConstants.number_long_one_Negative
+    private fun resetData() {
+        selectPosition = NumberConstants.number_int_one_Negative
+        lastSelectPosition = NumberConstants.number_int_one_Negative
+        selectedId = NumberConstants.number_long_one_Negative
     }
 
     /**添加数据*/

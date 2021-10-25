@@ -2,8 +2,10 @@ package com.wk.cashbook.trade.info
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -64,8 +66,6 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         mBind.rvTradeInfoCategory
     }
 
-    private var id: Long = NumberConstants.number_long_one_Negative
-
     private val mBind by lazy {
         CashbookTradeRecordInfoActivityBinding.inflate(layoutInflater)
     }
@@ -90,6 +90,8 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
     override fun beforeSetContentView() {
         super.beforeSetContentView()
         supportActionBar?.hide()
+        //键盘不会顶按钮上去，即键盘会覆盖在页面上
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     override fun initResLayId() = mBind.root
@@ -216,8 +218,8 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         tvTradeInfoAmount.setText(amount)
     }
 
-    fun showTradeTime(time: Long) {
-        tvTradeInfoTime.text = DateTime.getDateString(time)
+    fun showTradeTime(timeString: String) {
+        tvTradeInfoTime.text = timeString
     }
 
     fun showTradeFlag() {
