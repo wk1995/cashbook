@@ -85,6 +85,10 @@ class TradeInfoModel(private val intent: Intent,
         mCurrentTradeRecode.tradeNote = note ?: return
     }
 
+    fun setAccount(accountId:Long){
+        mCurrentTradeRecode.accountId=accountId
+    }
+
     fun saveOrUpdate() = mCurrentTradeRecode.saveOrUpdate("id = ?",mCurrentTradeRecode.baseObjId.toString() )
 
 

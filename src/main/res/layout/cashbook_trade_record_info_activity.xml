@@ -43,7 +43,7 @@
     <!--交易账号-->
     <TextView
         android:id="@+id/tvTradeInfoAccount"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/d100dp"
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/cashbook_no_select_account"

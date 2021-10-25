@@ -16,6 +16,7 @@ import com.wk.cashbook.R
 import com.wk.cashbook.databinding.CashbookTradeRecordInfoActivityBinding
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
+import com.wk.cashbook.trade.info.account.ChooseAccountDialog
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
@@ -105,6 +106,7 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
     private fun initListener(){
         btTradeInfoSave.setOnClickListener(this)
         tvTradeInfoTime.setOnClickListener(this)
+        tvTradeInfoAccount.setOnClickListener(this)
     }
 
     private fun initView() {
@@ -200,6 +202,9 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
                     mTradeRecordInfoPresent.showTradeTime(date.time)
                 })
             }
+            R.id.tvTradeInfoAccount->{
+                ChooseAccountDialog.create(null,mTradeRecordInfoPresent).show(this)
+            }
         }
     }
 
@@ -220,7 +225,7 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
     }
 
     fun showTradeAccount(accountName: String?) {
-
+        tvTradeInfoAccount.text=accountName
     }
 
     /**

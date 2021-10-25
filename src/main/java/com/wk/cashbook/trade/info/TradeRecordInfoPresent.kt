@@ -19,8 +19,11 @@ import rx.subscriptions.CompositeSubscription
 
 /**
  * @author      :wangkang
+ *
  * email        :shenlong.wang@tuya.com
+ *
  * create date  : 2021/03/16
+ *
  * desc         :
  */
 
@@ -60,6 +63,22 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     /**显示标签*/
     fun showTradeFlag() {
+
+    }
+
+
+    fun setAccount(accountId: Long) {
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeAccount> {
+            it.onNext(LitePal.find(TradeAccount::class.java, accountId))
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (it != null) {
+                        mTradeInfoModel.setAccount(accountId)
+                        mTradeRecordInfoActivity.showTradeAccount(it.accountName)
+                    }
+                }
+        )
 
     }
 
