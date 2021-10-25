@@ -16,6 +16,7 @@ import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.WkToast
 import org.litepal.LitePal
+import org.litepal.extension.runInTransaction
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -118,6 +119,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    mTradeInfoModel.setAccount(accountId)
                     val accountName = it?.accountName
                     mTradeRecordInfoActivity.showTradeAccount(
                             if (TextUtils.isEmpty(accountName)) {
@@ -224,8 +226,36 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         val tradeAmount = bundle?.getDouble(TradeRecode.AMOUNT)
         mTradeInfoModel.setAmount(tradeAmount)
         mTradeInfoModel.setNote(tradeNote)
+
         mSubscriptions.add(Observable.create(Observable.OnSubscribe<Boolean> { t ->
-            t?.onNext(mTradeInfoModel.saveOrUpdate())
+            t?.onNext(
+                    LitePal.runInTransaction {
+                        val saveSuccess = mTradeInfoModel.saveOrUpdate()
+                        if (!saveSuccess) {
+                            return@runInTransaction false
+                        }
+                        val account = LitePal.find(TradeAccount::class.java, mTradeInfoModel.getAccountId())
+                        val isExist = account != null
+                        if (!isExist) {
+                            return@runInTransaction false
+                        }
+                        val rootCategory = mTradeInfoModel.getRootCategory()
+                        when (rootCategory?.categoryName) {
+                            "支出" -> {
+                                account.amount -= mTradeInfoModel.getMoney()
+                            }
+                            "收入" -> {
+                                account.amount += mTradeInfoModel.getMoney()
+                            }
+                            "内部转账" -> {
+                            }
+                            else -> {
+                                return@runInTransaction false
+                            }
+                        }
+                        account.save()
+                    }
+            )
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

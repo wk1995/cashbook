@@ -37,10 +37,6 @@ class TradeInfoModel(private val intent: Intent,
     var mSelectRootCategory: TradeCategory? = null
 
 
-    /**当前的交易类型*/
-    var currentTradeCategory: TradeCategory? = null
-
-
     fun initData() {
         //没有类别，默认是支出
         val categoryId = mCurrentTradeRecode.categoryId
@@ -91,6 +87,9 @@ class TradeInfoModel(private val intent: Intent,
 
     fun saveOrUpdate() = mCurrentTradeRecode.saveOrUpdate("id = ?",mCurrentTradeRecode.baseObjId.toString() )
 
+    fun getAccountId()=mCurrentTradeRecode.accountId
+
+    fun getMoney()=mCurrentTradeRecode.amount
 
     fun getBundle(): Bundle {
         val bundle = Bundle()
