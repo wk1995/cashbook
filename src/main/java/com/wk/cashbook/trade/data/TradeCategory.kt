@@ -33,6 +33,9 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
 
         const val INVALID_ID = NumberConstants.number_long_one_Negative
 
+        const val DEFAULT_ROOT_CATEGORY_PAY="支出"
+        const val DEFAULT_ROOT_CATEGORY_COME_IN="收入"
+        const val DEFAULT_ROOT_CATEGORY_INTERNAL_TRANSFER="内部转账"
 
         /**
          * 获取最顶的类别
@@ -62,7 +65,7 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
         }
 
         fun initCategoryConfig() {
-            LitePal.where("$CATEGORY_NAME=?", "支出")
+            LitePal.where("$CATEGORY_NAME=?", DEFAULT_ROOT_CATEGORY_PAY)
                     .findAsync(TradeCategory::class.java).listen {
                         if (it.isEmpty()) {
                             initRootTradeCategory()
@@ -74,14 +77,16 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
 
         private fun initRootTradeCategory() {
             val initCategories = ArrayList<TradeCategory>()
-            val defaultCategory = TradeCategory(categoryName = "支出")
+            val defaultCategory = TradeCategory(categoryName = DEFAULT_ROOT_CATEGORY_PAY)
             initCategories.add(defaultCategory)
-            initCategories.add(TradeCategory(categoryName = "收入"))
-            initCategories.add(TradeCategory(categoryName = "内部转账"))
+            initCategories.add(TradeCategory(categoryName = DEFAULT_ROOT_CATEGORY_COME_IN))
+            initCategories.add(TradeCategory(categoryName = DEFAULT_ROOT_CATEGORY_INTERNAL_TRANSFER))
             LitePal.saveAllAsync(initCategories).listen {
                 CashBookConfig.setDefaultCategoryId(defaultCategory.baseObjId)
             }
         }
+
+
 
 
     }
@@ -90,6 +95,11 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
     public override fun getBaseObjId(): Long {
         return super.getBaseObjId()
     }
+
+    fun isPay()=categoryName==DEFAULT_ROOT_CATEGORY_PAY
+
+    fun isComeIn()=categoryName==DEFAULT_ROOT_CATEGORY_COME_IN
+    fun isInternalTransfer()=categoryName==DEFAULT_ROOT_CATEGORY_INTERNAL_TRANSFER
 
 
 }

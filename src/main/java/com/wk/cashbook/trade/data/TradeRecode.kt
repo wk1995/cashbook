@@ -2,6 +2,7 @@ package com.wk.cashbook.trade.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.WorkerThread
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
 import org.litepal.LitePal
@@ -81,6 +82,19 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
 
         fun getTradeRecodes(vararg conditions: String?): MutableList<TradeRecode> =
             LitePal.where(*conditions).find(TradeRecode::class.java)
+
+        @WorkerThread
+        fun getRootTradeCategory(categoryId: Long):TradeCategory{
+            val tradeCategory=LitePal.find(TradeCategory::class.java,categoryId)
+            val parentId=tradeCategory.parentId
+            return if(parentId==TradeCategory.INVALID_ID){
+                tradeCategory
+            }else{
+                getRootTradeCategory(parentId)
+            }
+
+        }
+
         const val TRADE_RECODE_ID="trade_recode_id"
         const val TRADE_TIME="tradetime"
         const val ACCOUNT_ID="accountid"
