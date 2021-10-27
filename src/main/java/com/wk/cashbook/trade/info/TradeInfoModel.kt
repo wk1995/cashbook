@@ -34,7 +34,7 @@ class TradeInfoModel(private val intent: Intent,
     /**
      * 选择的根类别
      * */
-    var mSelectRootCategory: TradeCategory? = null
+    private var mSelectRootCategory: TradeCategory? = null
 
 
     fun initData() {
@@ -85,9 +85,15 @@ class TradeInfoModel(private val intent: Intent,
         mCurrentTradeRecode.accountId=accountId
     }
 
+    fun setReceiveAccountId(accountId:Long){
+        mCurrentTradeRecode.receiveAccountId=accountId
+    }
+
     fun saveOrUpdate() = mCurrentTradeRecode.saveOrUpdate("id = ?",mCurrentTradeRecode.baseObjId.toString() )
 
     fun getAccountId()=mCurrentTradeRecode.accountId
+
+    fun getReceiveAccountId()=mCurrentTradeRecode.receiveAccountId
 
     fun getMoney()=mCurrentTradeRecode.amount
 

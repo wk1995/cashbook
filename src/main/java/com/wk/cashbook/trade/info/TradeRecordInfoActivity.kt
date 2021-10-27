@@ -2,7 +2,6 @@ package com.wk.cashbook.trade.info
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -13,24 +12,15 @@ import androidx.annotation.MainThread
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bigkoo.pickerview.listener.OnTimeSelectListener
 import com.wk.cashbook.R
 import com.wk.cashbook.databinding.CashbookTradeRecordInfoActivityBinding
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.info.account.ChooseAccountDialog
 import com.wk.projects.common.BaseProjectsActivity
-import com.wk.projects.common.constant.NumberConstants
-import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.log.WkLog
-import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.TimePickerCreator
 import com.wk.projects.common.ui.WkToast
-import org.litepal.LitePal
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import java.util.*
 
 class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter.ITradeInfoCategoryListener {
 
@@ -54,6 +44,9 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
 
     /**账户*/
     private lateinit var tvTradeInfoAccount: TextView
+
+    /**账户名称*/
+    private lateinit var tvTradeInfoToAccount: TextView
 
     /**
      * 支出，收入，内部转账
@@ -105,10 +98,11 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         mTradeRecordInfoPresent.initData()
     }
 
-    private fun initListener(){
+    private fun initListener() {
         btTradeInfoSave.setOnClickListener(this)
         tvTradeInfoTime.setOnClickListener(this)
         tvTradeInfoAccount.setOnClickListener(this)
+        tvTradeInfoToAccount.setOnClickListener(this)
     }
 
     private fun initView() {
@@ -118,6 +112,26 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         tvTradeInfoTime = mBind.tvTradeInfoTime
         tvTradeInfoFlag = mBind.tvTradeInfoFlag
         tvTradeInfoAccount = mBind.tvTradeInfoAccount
+        tvTradeInfoToAccount = mBind.tvTradeInfoToAccount
+        tvTradeInfoToAccount.visibility = View.GONE
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mTradeRecordInfoPresent.onDestroy()
+    }
+
+    /**
+     * 内部转账view
+     * @param isInternalTransfer 是否时内部转账，true 是
+     * */
+    fun initInternalTransferView(isInternalTransfer: Boolean) {
+        tvTradeInfoToAccount.visibility = if (isInternalTransfer) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
     }
 
     /**
@@ -130,10 +144,10 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
 
     /**类别选择控件*/
     private fun initCategoryRv() {
-        val footView = inflater.inflate(R.layout.common_only_text, null)
-        mTradeInfoCategoryAdapter.addFootView(footView)
         rvTradeInfoCategory.layoutManager = categoryLayoutManger
         rvTradeInfoCategory.adapter = mTradeInfoCategoryAdapter
+        val footView = inflater.inflate(R.layout.common_only_text, rvTradeInfoCategory, false)
+        mTradeInfoCategoryAdapter.addFootView(footView)
     }
 
     /**
@@ -147,7 +161,7 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
     /**
      * 设置选中的根类别
      * */
-    fun setRootCategory(selectRoot:TradeCategory){
+    fun setRootCategory(selectRoot: TradeCategory) {
         WkLog.i("setRootCategory")
         mTradeInfoRootCategoryAdapter.setSelectTradeCategory(selectRoot.baseObjId)
         mTradeInfoCategoryAdapter.clear()
@@ -180,7 +194,7 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
 
         // 根类别
         if (tradeInfoCategoryAdapter == mTradeInfoRootCategoryAdapter) {
-            if(mTradeInfoRootCategoryAdapter.getSelectPosition()==position){
+            if (mTradeInfoRootCategoryAdapter.getSelectPosition() == position) {
                 return
             }
             //选中类别
@@ -200,12 +214,18 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
                 mTradeRecordInfoPresent.saveTradeRecode(bundle)
             }
             R.id.tvTradeInfoTime -> {
-                TimePickerCreator.create(this, R.string.common_str_add, OnTimeSelectListener { date, _ ->
+                TimePickerCreator.create(this, R.string.common_str_add) { date, _ ->
                     mTradeRecordInfoPresent.showTradeTime(date.time)
-                })
+                }
             }
-            R.id.tvTradeInfoAccount->{
-                ChooseAccountDialog.create(null,mTradeRecordInfoPresent).show(this)
+            R.id.tvTradeInfoAccount -> {
+                val bundle=Bundle()
+                ChooseAccountDialog.create(bundle, mTradeRecordInfoPresent).show(this)
+            }
+            R.id.tvTradeInfoToAccount -> {
+                val bundle=Bundle()
+                bundle.putInt("accountType",1)
+                ChooseAccountDialog.create(bundle, mTradeRecordInfoPresent).show(this)
             }
         }
     }
@@ -227,8 +247,13 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
     }
 
     fun showTradeAccount(accountName: String?) {
-        tvTradeInfoAccount.text=accountName
+        tvTradeInfoAccount.text = accountName
     }
+
+    fun showTradeToAccount(accountName: String?) {
+        tvTradeInfoToAccount.text = accountName
+    }
+
 
     /**
      * 设置当前的类别

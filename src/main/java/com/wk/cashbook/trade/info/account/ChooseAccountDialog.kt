@@ -8,7 +8,6 @@ import com.wk.cashbook.R
 import com.wk.cashbook.trade.account.list.AccountListShowBean
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.info.TradeRecordInfoPresent
-import com.wk.cashbook.trade.record.ChooseMonthDialog
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.ui.recycler.IRvClickListener
 import org.litepal.LitePal
@@ -57,7 +56,8 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
         if(adapter==mChooseAccountAdapter) {
-            mTradeRecordInfoPresent?.showTradeAccount(mChooseAccountAdapter.getItemId(position))
+            arguments?.putLong(TradeAccount.ACCOUNT_ID,mChooseAccountAdapter.getItemId(position))
+            mTradeRecordInfoPresent?.showTradeAccount(arguments)
             disMiss()
         }
     }

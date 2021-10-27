@@ -9,7 +9,6 @@ import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.SimpleOnlyEtDialog
-import com.wk.projects.common.configuration.WkConfiguration
 import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.log.WkLog
@@ -73,7 +72,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     /**显示标签*/
     fun showTradeFlag() {
-
+        mTradeRecordInfoActivity.showTradeFlag()
     }
 
     /**
@@ -99,8 +98,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                         showRootCategory(parentId)
                     } else {//表示已经是根类了
                         WkLog.i("showRootCategory:  ${it.baseObjId}")
-                        mTradeInfoModel.setRootCategory(it)
-                        mTradeRecordInfoActivity.setRootCategory(it)
+                        setSelectRootCategory(it)
                     }
                 }
         )
@@ -111,7 +109,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
     /**
      * 设置账号
      * */
-    fun showTradeAccount(accountId: Long) {
+    fun showTradeAccount(accountId: Long,accountType:Int=0) {
         mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeAccount> { t ->
             t?.onNext(
                     LitePal.find(TradeAccount::class.java, accountId)
@@ -119,16 +117,34 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    mTradeInfoModel.setAccount(accountId)
                     val accountName = it?.accountName
-                    mTradeRecordInfoActivity.showTradeAccount(
-                            if (TextUtils.isEmpty(accountName)) {
-                                WkProjects.getApplication().getString(R.string.cashbook_no_select_account)
-                            } else {
-                                accountName
-                            })
+                    if(accountType==1){
+                        mTradeInfoModel.setReceiveAccountId(accountId)
+                        mTradeRecordInfoActivity.showTradeToAccount(
+                                if (TextUtils.isEmpty(accountName)) {
+                                    WkProjects.getApplication().getString(R.string.cashbook_no_select_account)
+                                } else {
+                                    accountName
+                                })
+                    }else{
+                        mTradeInfoModel.setAccount(accountId)
+                        mTradeRecordInfoActivity.showTradeAccount(
+                                if (TextUtils.isEmpty(accountName)) {
+                                    WkProjects.getApplication().getString(R.string.cashbook_no_select_account)
+                                } else {
+                                    accountName
+                                })
+                    }
+
+
                 }
         )
+    }
+
+    fun showTradeAccount(bundle: Bundle?) {
+        val accountType=bundle?.getInt("accountType")?:0
+        val accountId = bundle?.getLong(TradeAccount.ACCOUNT_ID)?:return
+        showTradeAccount(accountId,accountType)
     }
 
 
@@ -176,9 +192,18 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
     }
 
     fun setSelectRootCategory(category: TradeCategory?) {
+        val isInternalTransfer=isInternalTrans(category)
+        if(!isInternalTransfer){
+            mTradeInfoModel.setReceiveAccountId(-1)
+        }else{
+            showTradeAccount(mTradeInfoModel.getReceiveAccountId(),1)
+        }
+        mTradeRecordInfoActivity.initInternalTransferView(isInternalTransfer)
         mTradeRecordInfoActivity.setRootCategory(category ?: return)
         mTradeInfoModel.setRootCategory(category)
     }
+
+    private fun isInternalTrans(category: TradeCategory?)=category?.categoryName == "内部转账"
 
     /**添加类别的弹窗*/
     fun showAddCategoryDialog() {
@@ -235,11 +260,13 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                             return@runInTransaction false
                         }
                         val account = LitePal.find(TradeAccount::class.java, mTradeInfoModel.getAccountId())
+
                         val isExist = account != null
                         if (!isExist) {
                             return@runInTransaction false
                         }
                         val rootCategory = mTradeInfoModel.getRootCategory()
+
                         when (rootCategory?.categoryName) {
                             "支出" -> {
                                 account.amount -= mTradeInfoModel.getMoney()
@@ -248,6 +275,13 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                 account.amount += mTradeInfoModel.getMoney()
                             }
                             "内部转账" -> {
+                                val receiveAccount = LitePal.find(TradeAccount::class.java, mTradeInfoModel.getReceiveAccountId())
+                                        ?: return@runInTransaction false
+                                account.amount -= mTradeInfoModel.getMoney()
+                                receiveAccount.amount += mTradeInfoModel.getMoney()
+                                if(!receiveAccount.save()){
+                                    return@runInTransaction false
+                                }
                             }
                             else -> {
                                 return@runInTransaction false

@@ -39,6 +39,7 @@
         android:layout_height="@dimen/d60dp"
         android:layout_marginTop="@dimen/d10dp"
         android:paddingStart="@dimen/d5dp"
+        android:paddingEnd="@dimen/d5dp"
         android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
         android:inputType="number"
         android:hint="@string/common_str_amount_zero"
@@ -85,6 +86,19 @@
         app:layout_constraintStart_toEndOf="@id/tvTradeInfoTime"
         app:layout_constraintTop_toTopOf="@id/tvTradeInfoTime" />
 
+    <!--交易账户-->
+    <TextView
+        android:id="@+id/tvTradeInfoToAccount"
+        android:layout_width="@dimen/d80dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/d10dp"
+        android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
+        android:gravity="center"
+        android:text="@string/cashbook_no_select_account"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintBottom_toBottomOf="@id/tvTradeInfoTime"
+        app:layout_constraintStart_toEndOf="@id/tvTradeInfoAccount"
+        app:layout_constraintTop_toTopOf="@id/tvTradeInfoTime" />
     <!--交易标签-->
     <TextView
         android:id="@+id/tvTradeInfoFlag"
