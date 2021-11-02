@@ -3,6 +3,7 @@ package com.wk.cashbook.trade.info
 import android.content.Intent
 import android.os.Bundle
 import com.wk.cashbook.CashBookConfig
+import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeCategory.Companion.INVALID_ID
 import com.wk.cashbook.trade.data.TradeRecode
@@ -34,7 +35,17 @@ class TradeInfoModel(private val intent: Intent,
     /**
      * 选择的根类别
      * */
-    private var mSelectRootCategory: TradeCategory? = null
+    private var mSelectRootCategoryId=CashBookConfig.getDefaultCategoryId()
+
+    // 根类别，出账账户，入账账户，金额
+
+    var originRootCategoryId:Long=INVALID_ID
+
+    var originAccountId:Long=TradeAccount.INVALID_ID
+
+     var originReceiveId:Long=TradeAccount.INVALID_ID
+
+    var originAmount:Double=NumberConstants.number_double_zero
 
 
     fun initData() {
@@ -45,6 +56,9 @@ class TradeInfoModel(private val intent: Intent,
             mCurrentTradeRecode.categoryId = CashBookConfig.getDefaultCategoryId()
         }
         mCurrentTradeRecode.apply {
+            originAmount=amount
+            originReceiveId=receiveAccountId
+            originAccountId=accountId
             mTradeRecordInfoPresent.showAmount(amount.toString())
             mTradeRecordInfoPresent.showNote(tradeNote)
             mTradeRecordInfoPresent.showTradeFlag()
@@ -58,18 +72,18 @@ class TradeInfoModel(private val intent: Intent,
     }
 
     fun setRootCategory(rootCategory: TradeCategory) {
-        mSelectRootCategory = rootCategory
+        mSelectRootCategoryId = rootCategory.baseObjId
     }
 
-    fun getRootCategory() = mSelectRootCategory
+    fun getRootCategoryId() = mSelectRootCategoryId
 
     fun showTradeCategory(categoryId: Long = mCurrentTradeRecode.categoryId) {
         WkLog.i("showTradeCategory:  $categoryId")
         mTradeRecordInfoPresent.showTradeCategory(categoryId)
     }
 
-    fun showRootCategory(categoryId: Long = mCurrentTradeRecode.categoryId) {
-        mTradeRecordInfoPresent.showRootCategory(categoryId)
+    fun initRootCategory(categoryId: Long = mCurrentTradeRecode.categoryId) {
+        mTradeRecordInfoPresent.initRootCategory(categoryId)
     }
 
 

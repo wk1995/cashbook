@@ -33,9 +33,9 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
 
         const val INVALID_ID = NumberConstants.number_long_one_Negative
 
-        const val DEFAULT_ROOT_CATEGORY_PAY="支出"
-        const val DEFAULT_ROOT_CATEGORY_COME_IN="收入"
-        const val DEFAULT_ROOT_CATEGORY_INTERNAL_TRANSFER="内部转账"
+        const val DEFAULT_ROOT_CATEGORY_PAY = "支出"
+        const val DEFAULT_ROOT_CATEGORY_COME_IN = "收入"
+        const val DEFAULT_ROOT_CATEGORY_INTERNAL_TRANSFER = "内部转账"
 
         /**
          * 获取最顶的类别
@@ -87,6 +87,9 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
         }
 
 
+        fun isPay(categoryName: String) = categoryName == DEFAULT_ROOT_CATEGORY_PAY
+        fun isComeIn(categoryName: String) = categoryName == DEFAULT_ROOT_CATEGORY_COME_IN
+        fun isInternalTransfer(categoryName: String) = categoryName == DEFAULT_ROOT_CATEGORY_INTERNAL_TRANSFER
 
 
     }
@@ -96,11 +99,12 @@ data class TradeCategory(val categoryName: String, val createTime: Long = Number
         return super.getBaseObjId()
     }
 
-    fun isPay()=categoryName==DEFAULT_ROOT_CATEGORY_PAY
+    fun isPay() = isPay(categoryName)
 
-    fun isComeIn()=categoryName==DEFAULT_ROOT_CATEGORY_COME_IN
-    fun isInternalTransfer()=categoryName==DEFAULT_ROOT_CATEGORY_INTERNAL_TRANSFER
+    fun isComeIn() = isComeIn(categoryName)
+    fun isInternalTransfer() = isInternalTransfer(categoryName)
 
+    fun isRootCategory() = parentId == INVALID_ID
 
 }
 
