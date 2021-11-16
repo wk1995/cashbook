@@ -28,6 +28,7 @@
         android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
         android:gravity="start|top"
         android:hint="@string/common_str_note"
+        android:padding="@dimen/d5dp"
         android:textColorHint="@color/color_grey_7E797B"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btTradeInfoSave" />
@@ -43,7 +44,7 @@
         android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
         android:inputType="number"
         android:hint="@string/common_str_amount_zero"
-        android:textColorHint="@color/common_black_2B2A2A"
+        android:textColorHint="@color/color_grey_7E797B"
         android:textColor="@color/common_black_2B2A2A"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTradeInfoTime" />

@@ -103,6 +103,8 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     /**
      * 设置账号
+     *
+     *
      * */
     fun showTradeAccount(accountId: Long, accountType: Int = 0) {
         mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeAccount> { t ->
@@ -200,7 +202,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
     }
 
     private fun isInternalTrans(category: TradeCategory?) =
-            category?.parentId == TradeAccount.INVALID_ID && category.categoryName == "内部转账"
+            category?.parentId == TradeCategory.INVALID_ID && category.categoryName == "内部转账"
 
     /**添加类别的弹窗*/
     fun showAddCategoryDialog() {
