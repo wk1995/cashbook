@@ -710,18 +710,18 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
     private fun internalTransferReceiveAccount(): Boolean {
         val receiveAccountId = mTradeInfoModel.getReceiveAccountId()
         val originReceiveId = mTradeInfoModel.originReceiveId
+        WkLog.i("receiveAccountId is $receiveAccountId  originReceiveId:  $originReceiveId")
+        //如果消费金额也发生变化,原接受账号要减掉原来的金额
+        val amount = mTradeInfoModel.getMoney()
+        val origin = mTradeInfoModel.originAmount
+        val receiveAccount = LitePal.find(TradeAccount::class.java, mTradeInfoModel.getReceiveAccountId())
+        if (receiveAccount == null) {
+            WkLog.i("receiveAccount is null")
+            return false
+        }
 
         if (receiveAccountId != originReceiveId) {
             WkLog.i("账户2发生改变")
-            val receiveAccount = LitePal.find(TradeAccount::class.java, mTradeInfoModel.getReceiveAccountId())
-            if (receiveAccount == null) {
-                WkLog.i("receiveAccount is null")
-                return false
-            }
-            //如果消费金额也发生变化,原接受账号要减掉原来的金额
-            val amount = mTradeInfoModel.getMoney()
-            val origin = mTradeInfoModel.originAmount
-
             if (originReceiveId > TradeAccount.INVALID_ID) {
                 WkLog.i("原账户2有效")
                 val originReceiveAccount = LitePal.find(TradeAccount::class.java, mTradeInfoModel.originReceiveId)
@@ -730,8 +730,8 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                     return false
                 }
 
-                receiveAccount.amount -= amount
-                originReceiveAccount.amount += origin
+                receiveAccount.amount += amount
+                originReceiveAccount.amount -= origin
                 if (!receiveAccount.save() || !originReceiveAccount.save()) {
                     WkLog.e("账户2保存失败")
                     return false
@@ -739,13 +739,21 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
             } else {
                 WkLog.i("原账户2无效")
                 if (amount != origin) {
-                    receiveAccount.amount -= amount
-                    receiveAccount.amount += origin
+                    receiveAccount.amount += amount
+                    receiveAccount.amount -= origin
                     if (!receiveAccount.save()) {
                         WkLog.e("receiveAccount 保存失败")
                         return false
                     }
                 }
+            }
+        }else{
+            WkLog.i("账户2没有发生改变")
+            receiveAccount.amount += amount
+            receiveAccount.amount -= origin
+            if (!receiveAccount.save()) {
+                WkLog.e("账户2保存失败")
+                return false
             }
         }
         return true
