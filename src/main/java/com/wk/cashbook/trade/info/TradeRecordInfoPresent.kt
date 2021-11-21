@@ -278,12 +278,21 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         return account.save() && originAccount.save()
     }
 
+    /**
+     * 涉及到内部转账时，原账户1，2，如果与现账户相等，
+     * 保存一个账户数据时，后一个账户需要重新获取数据再进行操作
+     * */
+    private fun checkAccount(needCheckAccount: TradeAccount, vararg accountIds: Long): TradeAccount {
+        val needCheckAccountId = needCheckAccount.baseObjId
+        if (accountIds.contains(needCheckAccountId)) {
+            return LitePal.find(TradeAccount::class.java, needCheckAccountId)
+        }
+        return needCheckAccount
+    }
+
 
     /**
      * 保存 \ 更新
-     *
-     *
-     *
      *
      * */
     fun saveTradeRecode(bundle: Bundle? = null) {
@@ -299,114 +308,198 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                         val rootCategoryId = mTradeInfoModel.getRootCategoryId()
                         val rootCategory = LitePal.find(TradeCategory::class.java, rootCategoryId)
                         val accountId = mTradeInfoModel.getAccountId()
-                        //说明有使用账户
-                        if (accountId > TradeAccount.INVALID_ID) {
-                            val account = LitePal.find(TradeAccount::class.java, accountId)
-                            if (account == null) {
-                                WkLog.i("TradeAccount is null")
-                                return@runInTransaction false
-                            }
-                            if (rootCategory == null) {
-                                WkLog.i("rootCategory is null")
-                                return@runInTransaction false
-                            }
-                            val originRootCategoryId = mTradeInfoModel.originRootCategoryId
-                            val originAccountId = mTradeInfoModel.originAccountId
-                            val origin = mTradeInfoModel.originAmount
-                            val amount = mTradeInfoModel.getMoney()
-                            if (rootCategoryId == originRootCategoryId) {
-                                WkLog.i("根类别未发生变化")
-                                if (accountId != originAccountId) {
-                                    if (originAccountId > TradeAccount.INVALID_ID) {
-                                        WkLog.i("账户发生变化")
-                                        val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
-                                        if (originAccount == null) {
-                                            WkLog.i("originAccount is null")
-                                            return@runInTransaction false
-                                        }
 
-                                        if (rootCategory.isPay() || rootCategory.isInternalTransfer()) {
-                                            account.amount -= amount
-                                            originAccount.amount += origin
-                                        }
-                                        if (rootCategory.isComeIn()) {
-                                            account.amount += amount
-                                            originAccount.amount -= origin
-                                        }
+                        if (accountId <= TradeAccount.INVALID_ID) {
+                            WkLog.i("accountId is invalid")
+                        }
+                        var account = LitePal.find(TradeAccount::class.java, accountId)
+                        if (account == null) {
+                            WkLog.i("TradeAccount is null")
+                            return@runInTransaction false
+                        }
+                        if (rootCategory == null) {
+                            WkLog.i("rootCategory is null")
+                            return@runInTransaction false
+                        }
+                        val originRootCategoryId = mTradeInfoModel.originRootCategoryId
+                        val originAccountId = mTradeInfoModel.originAccountId
+                        val origin = mTradeInfoModel.originAmount
+                        val amount = mTradeInfoModel.getMoney()
+                        if (rootCategoryId == originRootCategoryId) {
+                            WkLog.i("根类别未发生变化")
+                            if (accountId != originAccountId) {
+                                if (originAccountId > TradeAccount.INVALID_ID) {
+                                    WkLog.i("账户发生变化")
+                                    val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                    if (originAccount == null) {
+                                        WkLog.i("originAccount is null")
+                                        return@runInTransaction false
+                                    }
 
-                                        if (!account.save() || !originAccount.save()) {
-                                            WkLog.e("账户数据更新失败")
-                                            return@runInTransaction false
-                                        }
-                                    } else {
-                                        WkLog.i("新增了账户")
-                                        if (rootCategory.isPay() || rootCategory.isInternalTransfer()) {
-                                            account.amount -= amount
-                                        }
-                                        if (rootCategory.isComeIn()) {
-                                            account.amount += amount
-                                        }
+                                    if (rootCategory.isPay() || rootCategory.isInternalTransfer()) {
+                                        account.amount -= amount
+                                        originAccount.amount += origin
+                                    }
+                                    if (rootCategory.isComeIn()) {
+                                        account.amount += amount
+                                        originAccount.amount -= origin
+                                    }
 
-                                        if (!account.save()) {
-                                            WkLog.e("账户数据更新失败")
-                                            return@runInTransaction false
-                                        }
+                                    if (!account.save() || !originAccount.save()) {
+                                        WkLog.e("账户数据更新失败")
+                                        return@runInTransaction false
                                     }
                                 } else {
-                                    WkLog.i("账户没有发生变化")
-                                    if (origin != amount) {
-                                        WkLog.i("金额发生变化")
-                                        if (rootCategory.isPay() || rootCategory.isInternalTransfer()) {
-                                            account.amount += origin
-                                            account.amount -= amount
-                                        }
-
-                                        if (rootCategory.isComeIn()) {
-                                            account.amount -= origin
-                                            account.amount += amount
-                                        }
-                                        if (!account.save()) {
-                                            return@runInTransaction false
-                                        }
+                                    WkLog.i("新增了账户")
+                                    if (rootCategory.isPay() || rootCategory.isInternalTransfer()) {
+                                        account.amount -= amount
                                     }
-                                }
+                                    if (rootCategory.isComeIn()) {
+                                        account.amount += amount
+                                    }
 
-                                //如果是内部转账
-                                if (rootCategory.isInternalTransfer()) {
-                                    WkLog.i("根类别是内部转账")
-                                    if (!internalTransferReceiveAccount()) {
+                                    if (!account.save()) {
+                                        WkLog.e("账户数据更新失败")
                                         return@runInTransaction false
                                     }
                                 }
                             } else {
-                                WkLog.i("根类别发生了变化")
-                                //说明根类别发生变化
-                                // 说明是更新，而不是保存
-                                if (originRootCategoryId > TradeCategory.INVALID_ID) {
-                                    WkLog.i("原根类别有效")
-                                    val originRootCategory = LitePal.find(TradeCategory::class.java, originRootCategoryId)
-                                    if (originRootCategory == null) {
-                                        WkLog.i("originRootCategory is null")
+                                WkLog.i("账户没有发生变化")
+                                if (origin != amount) {
+                                    WkLog.i("金额发生变化")
+                                    if (rootCategory.isPay() || rootCategory.isInternalTransfer()) {
+                                        account.amount += origin
+                                        account.amount -= amount
+                                    }
+
+                                    if (rootCategory.isComeIn()) {
+                                        account.amount -= origin
+                                        account.amount += amount
+                                    }
+                                    if (!account.save()) {
                                         return@runInTransaction false
                                     }
-                                    when {
-                                        rootCategory.isComeIn() -> {
-                                            WkLog.i("当前类别属于收入")
-                                            if (originRootCategory.isPay()) {
-                                                WkLog.i("由支出变为收入")
-                                                //账户是否发生变化
-                                                if (accountId == originAccountId) {
-                                                    WkLog.i("账户1 未改变")
-                                                    if (origin != amount) {
-                                                        account.amount += origin
-                                                        account.amount += amount
-                                                        if (!account.save()) {
-                                                            return@runInTransaction false
-                                                        }
-                                                    }
+                                }
+                            }
 
-                                                } else {
-                                                    //以前有账户
+                            //如果是内部转账
+                            if (rootCategory.isInternalTransfer()) {
+                                WkLog.i("根类别是内部转账")
+                                if (!internalTransferReceiveAccount()) {
+                                    return@runInTransaction false
+                                }
+                            }
+                        } else {
+                            WkLog.i("根类别发生了变化")
+                            //说明根类别发生变化
+                            // 说明是更新，而不是保存
+                            if (originRootCategoryId > TradeCategory.INVALID_ID) {
+                                WkLog.i("原根类别有效")
+                                val originRootCategory = LitePal.find(TradeCategory::class.java, originRootCategoryId)
+                                if (originRootCategory == null) {
+                                    WkLog.i("originRootCategory is null")
+                                    return@runInTransaction false
+                                }
+                                when {
+                                    rootCategory.isComeIn() -> {
+                                        WkLog.i("当前类别属于收入")
+                                        if (originRootCategory.isPay()) {
+                                            WkLog.i("由支出变为收入")
+                                            //账户是否发生变化
+                                            if (accountId == originAccountId) {
+                                                WkLog.i("账户1 未改变")
+                                                account.amount += origin
+                                                account.amount += amount
+                                                if (!account.save()) {
+                                                    return@runInTransaction false
+                                                }
+                                            } else {
+                                                //以前有账户
+                                                if (originAccountId > TradeAccount.INVALID_ID) {
+                                                    WkLog.i("原账户1 有效")
+                                                    val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                    if (originAccount == null) {
+                                                        WkLog.i("originAccount is null")
+                                                        return@runInTransaction false
+                                                    }
+                                                    originAccount.amount += origin
+                                                    if (!originAccount.save()) {
+                                                        return@runInTransaction false
+                                                    }
+                                                }
+                                                account.amount += amount
+                                                if (!account.save()) {
+                                                    WkLog.i("账户1 保存失败")
+                                                    return@runInTransaction false
+                                                }
+                                            }
+
+                                        }
+                                        if (originRootCategory.isInternalTransfer()) {
+                                            WkLog.i("由内部转账变为收入")
+                                            mTradeInfoModel.setReceiveAccountId(TradeAccount.INVALID_ID)
+                                            val originReceiveAccountId = mTradeInfoModel.originReceiveId
+                                            if (originReceiveAccountId > TradeAccount.INVALID_ID) {
+                                                WkLog.i("原 账户2 有效")
+                                                val originReceiveAccount = LitePal.find(TradeAccount::class.java, originReceiveAccountId)
+                                                if (originReceiveAccount == null) {
+                                                    WkLog.i("originReceiveAccount is null")
+                                                    return@runInTransaction false
+                                                }
+                                                originReceiveAccount.amount -= origin
+                                                if (!originReceiveAccount.save()) {
+                                                    WkLog.i("原 账户2 保存失败")
+                                                    return@runInTransaction false
+                                                }
+                                            }
+                                            if (originAccountId != accountId) {
+                                                WkLog.i("账户1 发生改变")
+                                                if (originAccountId > TradeAccount.INVALID_ID) {
+                                                    WkLog.i("原 账户1 有效")
+                                                    val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                    if (originAccount == null) {
+                                                        WkLog.i("originAccount is null")
+                                                        return@runInTransaction false
+                                                    }
+                                                    originAccount.amount += origin
+                                                    if (!originAccount.save()) {
+                                                        WkLog.i("原 账户1 保存失败")
+                                                        return@runInTransaction false
+                                                    }
+                                                }
+                                                account = checkAccount(account, originReceiveAccountId)
+                                                account.amount += amount
+                                            } else {
+                                                WkLog.i("账户1 没有发生改变")
+                                                account.amount += origin
+                                                account.amount += amount
+                                            }
+                                            if (!account.save()) {
+                                                WkLog.i("账户1 保存失败")
+                                                return@runInTransaction false
+                                            }
+
+                                        }
+                                    }
+                                    rootCategory.isPay() -> {
+                                        WkLog.i("当前类别属于支出")
+                                        when {
+                                            originRootCategory.isInternalTransfer() -> {
+                                                WkLog.i("内部转账->支出")
+                                                mTradeInfoModel.setReceiveAccountId(TradeAccount.INVALID_ID)
+                                                val originReceiveAccountId = mTradeInfoModel.originReceiveId
+                                                val originReceiveAccount = LitePal.find(TradeAccount::class.java, originReceiveAccountId)
+                                                if (originReceiveAccount == null) {
+                                                    WkLog.i("originReceiveAccount is null originReceiveAccountId is $originReceiveAccountId")
+                                                    return@runInTransaction false
+                                                }
+                                                originReceiveAccount.amount -= origin
+                                                if (!originReceiveAccount.save()) {
+                                                    WkLog.i("原账户2 保存失败")
+                                                    return@runInTransaction false
+                                                }
+                                                if (originAccountId != accountId) {
+                                                    WkLog.i("账户1 发生了改变")
                                                     if (originAccountId > TradeAccount.INVALID_ID) {
                                                         WkLog.i("原账户1 有效")
                                                         val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
@@ -418,165 +511,82 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                                         if (!originAccount.save()) {
                                                             return@runInTransaction false
                                                         }
+
                                                     }
-                                                    account.amount += amount
+                                                    account = checkAccount(account, originReceiveAccountId)
+                                                    account.amount -= amount
                                                     if (!account.save()) {
-                                                        WkLog.i("账户1 保存失败")
+                                                        WkLog.e("account save fail")
                                                         return@runInTransaction false
                                                     }
+                                                } else {
+                                                    WkLog.i("账户1 没有发生改变")
+                                                    if (amount != origin) {
+                                                        WkLog.i("金额发生改变")
+                                                        account.amount += origin
+                                                        account.amount -= amount
+                                                        if (!account.save()) {
+                                                            WkLog.e("account save fail")
+                                                            return@runInTransaction false
+                                                        }
+                                                    }
                                                 }
-
 
                                             }
-                                            if (originRootCategory.isInternalTransfer()) {
-                                                WkLog.i("由内部转账变为收入")
-                                                mTradeInfoModel.setReceiveAccountId(TradeAccount.INVALID_ID)
-                                                val originReceiveAccountId = mTradeInfoModel.originReceiveId
-                                                if (originReceiveAccountId > TradeAccount.INVALID_ID) {
-                                                    WkLog.i("原 账户2 有效")
-                                                    val originReceiveAccount = LitePal.find(TradeAccount::class.java, originReceiveAccountId)
-                                                    if (originReceiveAccount == null) {
-                                                        WkLog.i("originReceiveAccount is null")
-                                                        return@runInTransaction false
-                                                    }
-                                                    originReceiveAccount.amount -= origin
-                                                    if (!originReceiveAccount.save()) {
-                                                        WkLog.i("原 账户2 保存失败")
-                                                        return@runInTransaction false
-                                                    }
-                                                }
+                                            //收入->支出
+                                            originRootCategory.isComeIn() -> {
+                                                WkLog.i("收入->支出")
                                                 if (originAccountId != accountId) {
-                                                    WkLog.i("账户1 发生改变")
+                                                    WkLog.i("账户1 发生了改变")
                                                     if (originAccountId > TradeAccount.INVALID_ID) {
-                                                        WkLog.i("原 账户1 有效")
+                                                        WkLog.i("原账户1 有效")
                                                         val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
                                                         if (originAccount == null) {
                                                             WkLog.i("originAccount is null")
                                                             return@runInTransaction false
                                                         }
-                                                        originAccount.amount += origin
+                                                        originAccount.amount -= origin
                                                         if (!originAccount.save()) {
-                                                            WkLog.i("原 账户1 保存失败")
+                                                            WkLog.i("originAccount save fail")
                                                             return@runInTransaction false
                                                         }
                                                     }
-                                                    account.amount += amount
+                                                    account.amount -= amount
+                                                    if (!account.save()) {
+                                                        WkLog.i("account save fail")
+                                                        return@runInTransaction false
+                                                    }
+
                                                 } else {
                                                     WkLog.i("账户1 没有发生改变")
-                                                    account.amount += origin
-                                                    account.amount += amount
-                                                }
-                                                if (!account.save()) {
-                                                    WkLog.i("账户1 保存失败")
-                                                    return@runInTransaction false
+                                                    account.amount -= origin
+                                                    account.amount -= amount
+                                                    if (!account.save()) {
+                                                        WkLog.i("account save fail")
+                                                        return@runInTransaction false
+                                                    }
                                                 }
 
                                             }
-                                        }
-                                        rootCategory.isPay() -> {
-                                            WkLog.i("当前类别属于支出")
-                                            when {
-                                                originRootCategory.isInternalTransfer() -> {
-                                                    WkLog.i("内部转账->支出")
-                                                    mTradeInfoModel.setReceiveAccountId(TradeAccount.INVALID_ID)
-                                                    val originReceiveAccountId = mTradeInfoModel.originReceiveId
-                                                    val originReceiveAccount = LitePal.find(TradeAccount::class.java, originReceiveAccountId)
-                                                    if (originReceiveAccount == null) {
-                                                        WkLog.i("originReceiveAccount is null originReceiveAccountId is $originReceiveAccountId")
-                                                        return@runInTransaction false
-                                                    }
-                                                    originReceiveAccount.amount -= origin
-                                                    if (!originReceiveAccount.save()) {
-                                                        WkLog.i("原账户2 保存失败")
-                                                        return@runInTransaction false
-                                                    }
-                                                    if (originAccountId != accountId) {
-                                                        WkLog.i("账户1 发生了改变")
-                                                        if (originAccountId > TradeAccount.INVALID_ID) {
-                                                            WkLog.i("原账户1 有效")
-                                                            val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
-                                                            if (originAccount == null) {
-                                                                WkLog.i("originAccount is null")
-                                                                return@runInTransaction false
-                                                            }
-                                                            originAccount.amount += origin
-                                                            if (!originAccount.save()) {
-                                                                return@runInTransaction false
-                                                            }
-
-                                                        }
-                                                        account.amount -= amount
-                                                        if (!account.save()) {
-                                                            return@runInTransaction false
-                                                        }
-                                                    } else {
-                                                        WkLog.i("账户1 没有发生改变")
-                                                        if (amount != origin) {
-                                                            WkLog.i("金额发生改变")
-                                                            account.amount += origin
-                                                            account.amount -= amount
-                                                        }
-                                                    }
-
-                                                }
-                                                //收入->支出
-                                                originRootCategory.isComeIn() -> {
-                                                    WkLog.i("收入->支出")
-                                                    if (originAccountId != accountId) {
-                                                        WkLog.i("账户1 发生了改变")
-                                                        if (originAccountId > TradeAccount.INVALID_ID) {
-                                                            WkLog.i("原账户1 有效")
-                                                            val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
-                                                            if (originAccount == null) {
-                                                                WkLog.i("originAccount is null")
-                                                                return@runInTransaction false
-                                                            }
-                                                            originAccount.amount -= origin
-                                                            if (!originAccount.save()) {
-                                                                WkLog.i("originAccount save fail")
-                                                                return@runInTransaction false
-                                                            }
-                                                        }
-                                                        account.amount -= amount
-                                                        if (!account.save()) {
-                                                            WkLog.i("account save fail")
-                                                            return@runInTransaction false
-                                                        }
-
-                                                    } else {
-                                                        WkLog.i("账户1 没有发生改变")
-                                                        if (amount != origin) {
-                                                            WkLog.i("金额发生改变")
-                                                            account.amount -= origin
-                                                            account.amount -= amount
-                                                        }
-                                                        if (!account.save()) {
-                                                            WkLog.i("account save fail")
-                                                            return@runInTransaction false
-                                                        }
-                                                    }
-
-                                                }
-                                                else -> {
-                                                    WkLog.i("originRootCategory is invalid")
-                                                    return@runInTransaction false
-                                                }
+                                            else -> {
+                                                WkLog.i("originRootCategory is invalid")
+                                                return@runInTransaction false
                                             }
-
                                         }
 
-                                        rootCategory.isInternalTransfer() -> {
-                                            WkLog.i("rootCategory.isInternalTransfer")
-                                            when {
-                                                //支出->内部转账
-                                                originRootCategory.isPay() -> {
-                                                    WkLog.i("支出->内部转账")
-                                                    if (originAccountId <= TradeAccount.INVALID_ID) {
+                                    }
+
+                                    rootCategory.isInternalTransfer() -> {
+                                        WkLog.i("rootCategory.isInternalTransfer")
+                                        when {
+                                            //支出->内部转账
+                                            originRootCategory.isPay() -> {
+                                                WkLog.i("支出->内部转账")
+
+                                                if (accountId != originAccountId) {
+                                                    WkLog.i("accountId != originAccountId")
+                                                    if (originAccountId > TradeAccount.INVALID_ID) {
                                                         WkLog.i(" originAccountId is valid")
-
-                                                    }
-                                                    if (accountId != originAccountId) {
-                                                        WkLog.i("accountId != originAccountId")
                                                         val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
                                                         if (originAccount == null) {
                                                             WkLog.i("originAccount is null")
@@ -587,113 +597,105 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                                             WkLog.i("originAccount.save fail")
                                                             return@runInTransaction false
                                                         }
+                                                    }
+                                                    account.amount -= amount
+                                                    if (!account.save()) {
+                                                        WkLog.i("account.save fail")
+                                                        return@runInTransaction false
+                                                    }
+                                                } else {
+                                                    WkLog.i("accountId == originAccountId")
+                                                    if (origin != amount) {
+                                                        WkLog.i("origin!=amount")
+                                                        account.amount += origin
                                                         account.amount -= amount
                                                         if (!account.save()) {
                                                             WkLog.i("account.save fail")
                                                             return@runInTransaction false
                                                         }
-                                                    } else {
-                                                        WkLog.i("accountId == originAccountId")
-                                                        if (origin != amount) {
-                                                            WkLog.i("origin!=amount")
-                                                            account.amount += origin
-                                                            account.amount -= amount
-                                                            if (!account.save()) {
-                                                                WkLog.i("account.save fail")
-                                                                return@runInTransaction false
-                                                            }
-                                                        }
-                                                    }
-
-
-                                                    val receiveId = mTradeInfoModel.getReceiveAccountId()
-                                                    if (receiveId <= TradeAccount.INVALID_ID) {
-                                                        WkLog.i("receiveId is invalid")
-                                                        return@runInTransaction false
-                                                    }
-                                                    val receiveAccount = LitePal.find(TradeAccount::class.java, receiveId)
-                                                    if (receiveAccount == null) {
-                                                        WkLog.i("receiveAccount == null")
-                                                        return@runInTransaction false
-                                                    }
-                                                    receiveAccount.amount += amount
-                                                    if (!receiveAccount.save()) {
-                                                        WkLog.i("receiveAccount.save fail")
-                                                        return@runInTransaction false
                                                     }
                                                 }
-                                                //收入->内部转账
-                                                originRootCategory.isComeIn() -> {
-                                                    if (accountId != originAccountId) {
-                                                        WkLog.i("accountId != originAccountId")
-                                                        if (originAccountId > TradeAccount.INVALID_ID) {
-                                                            WkLog.i(" originAccountId is valid")
-                                                            val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
-                                                            if (originAccount == null) {
-                                                                WkLog.i("originAccount is null")
-                                                                return@runInTransaction false
-                                                            }
-                                                            originAccount.amount -= origin
-                                                            if (!originAccount.save()) {
-                                                                return@runInTransaction false
-                                                            }
-                                                        }
-                                                        account.amount -= origin
-                                                        if (!account.save()) {
-                                                            return@runInTransaction false
-                                                        }
-                                                    } else {
-                                                        WkLog.i("accountId == originAccountId")
-                                                        if (origin != amount) {
-                                                            WkLog.i("origin!=amount")
-                                                            account.amount -= origin
-                                                            account.amount -= amount
-                                                            if (!account.save()) {
-                                                                WkLog.i("account.save fail")
-                                                                return@runInTransaction false
-                                                            }
-                                                        }
-                                                    }
-                                                    val receiveId = mTradeInfoModel.getReceiveAccountId()
-                                                    if (receiveId <= TradeAccount.INVALID_ID) {
-                                                        WkLog.i("receiveId is invalid")
-                                                        return@runInTransaction false
-                                                    }
-                                                    val receiveAccount = LitePal.find(TradeAccount::class.java, receiveId)
-                                                    if (receiveAccount == null) {
-                                                        WkLog.i("receiveAccount is null")
-                                                        return@runInTransaction false
-                                                    }
-                                                    receiveAccount.amount += amount
-                                                    if (!receiveAccount.save()) {
-                                                        WkLog.i("receiveAccount.save fail")
-                                                        return@runInTransaction false
-                                                    }
+
+
+                                                val receiveId = mTradeInfoModel.getReceiveAccountId()
+                                                if (receiveId <= TradeAccount.INVALID_ID) {
+                                                    WkLog.i("receiveId is invalid")
+                                                    return@runInTransaction false
                                                 }
-                                                else -> {
-                                                    WkLog.i("originRootCategory is invalid")
+                                                val receiveAccount = LitePal.find(TradeAccount::class.java, receiveId)
+                                                if (receiveAccount == null) {
+                                                    WkLog.i("receiveAccount == null")
+                                                    return@runInTransaction false
+                                                }
+                                                receiveAccount.amount += amount
+                                                if (!receiveAccount.save()) {
+                                                    WkLog.i("receiveAccount.save fail")
                                                     return@runInTransaction false
                                                 }
                                             }
-                                        }
-                                        else -> {
-                                            WkLog.i("rootCategory is invalid")
-                                            return@runInTransaction false
+                                            //收入->内部转账
+                                            originRootCategory.isComeIn() -> {
+                                                if (accountId != originAccountId) {
+                                                    WkLog.i("accountId != originAccountId")
+                                                    if (originAccountId > TradeAccount.INVALID_ID) {
+                                                        WkLog.i(" originAccountId is valid")
+                                                        val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                        if (originAccount == null) {
+                                                            WkLog.i("originAccount is null")
+                                                            return@runInTransaction false
+                                                        }
+                                                        originAccount.amount -= origin
+                                                        if (!originAccount.save()) {
+                                                            return@runInTransaction false
+                                                        }
+                                                    }
+                                                    account.amount -= amount
+                                                    if (!account.save()) {
+                                                        WkLog.i("account.save fail")
+                                                        return@runInTransaction false
+                                                    }
+                                                } else {
+                                                    WkLog.i("accountId == originAccountId")
+                                                    account.amount -= origin
+                                                    account.amount -= amount
+                                                    if (!account.save()) {
+                                                        WkLog.i("account.save fail")
+                                                        return@runInTransaction false
+                                                    }
+                                                }
+                                                val receiveId = mTradeInfoModel.getReceiveAccountId()
+                                                if (receiveId <= TradeAccount.INVALID_ID) {
+                                                    WkLog.i("receiveId is invalid")
+                                                    return@runInTransaction false
+                                                }
+                                                val receiveAccount = LitePal.find(TradeAccount::class.java, receiveId)
+                                                if (receiveAccount == null) {
+                                                    WkLog.i("receiveAccount is null")
+                                                    return@runInTransaction false
+                                                }
+                                                receiveAccount.amount += amount
+                                                if (!receiveAccount.save()) {
+                                                    WkLog.i("receiveAccount.save fail")
+                                                    return@runInTransaction false
+                                                }
+                                            }
+                                            else -> {
+                                                WkLog.i("originRootCategory is invalid")
+                                                return@runInTransaction false
+                                            }
                                         }
                                     }
-                                } else {
-                                    WkLog.e("originRootCategoryId: <=  TradeCategory.INVALID_ID")
-                                    return@runInTransaction false
+                                    else -> {
+                                        WkLog.i("rootCategory is invalid")
+                                        return@runInTransaction false
+                                    }
                                 }
-                            }
-
-                        } else {
-                            //内部转账时，账户一定要有效
-                            if(rootCategory.isInternalTransfer()){
-                                WkLog.i("rootCategory is isInternalTransfer && accountId is invalid")
+                            } else {
+                                WkLog.e("originRootCategoryId: <=  TradeCategory.INVALID_ID")
                                 return@runInTransaction false
                             }
                         }
+
 
                         mTradeInfoModel.saveOrUpdate()
 

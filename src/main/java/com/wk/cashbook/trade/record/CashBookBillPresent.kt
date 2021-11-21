@@ -56,7 +56,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     WkLog.i("deleteItem result : $it")
-                    if (it ) {
+                    if (it) {
                         mCashBookBillListActivity?.removeData(position)
                     }
                 }
@@ -75,20 +75,20 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
      *
      *
      * */
-    private fun deleteByItemSql(tradeRecodeId:Long) =
+    private fun deleteByItemSql(tradeRecodeId: Long) =
             LitePal.runInTransaction {
                 val tradeRecode = LitePal.find(TradeRecode::class.java, tradeRecodeId)
-
-                        if(tradeRecode==null){
-                            WkToast.showToast("tradeRecode ==null")
-                            return@runInTransaction false
-                        }
+                if (tradeRecode == null) {
+                    WkToast.showToast("tradeRecode ==null")
+                    return@runInTransaction false
+                }
 
                 val account = LitePal.find(TradeAccount::class.java, tradeRecode.accountId)
                 if (account != null) {
                     val rootCategory = TradeRecode.getRootTradeCategory(tradeRecode.categoryId)
                     when {
                         rootCategory.isComeIn() -> {
+                            WkLog.i("删除的交易属于收入")
                             account.amount -= tradeRecode.amount
                             if (!account.save()) {
                                 WkToast.showToast("收入交易保存失败")
@@ -96,6 +96,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                             }
                         }
                         rootCategory.isPay() -> {
+                            WkLog.i("删除的交易属于支出")
                             account.amount += tradeRecode.amount
                             if (!account.save()) {
                                 WkToast.showToast("支出交易保存失败")
@@ -103,6 +104,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                             }
                         }
                         rootCategory.isInternalTransfer() -> {
+                            WkLog.i("删除的交易属于内部转账")
                             val receiveAccount = LitePal.find(TradeAccount::class.java, tradeRecode.receiveAccountId)
                             if (receiveAccount == null) {
                                 WkToast.showToast("属于内部交易，但没有交易对象 删除失败")

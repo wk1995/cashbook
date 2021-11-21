@@ -137,6 +137,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
                 val rvCommon = rootView.findViewById<RecyclerView>(R.id.rvCommon)
                 rvCommon?.apply {
                     val linearLayoutManager=LinearLayoutManager(context)
+                    linearLayoutManager.reverseLayout=true
                     layoutManager = linearLayoutManager
                     adapter = cashListAdapter
                     setBackgroundColor(WkContextCompat.getColor(this@CashBookBillListActivity, android.R.color.white))
