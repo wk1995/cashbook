@@ -35,17 +35,17 @@ class TradeInfoModel(private val intent: Intent,
     /**
      * 选择的根类别
      * */
-    private var mSelectRootCategoryId=CashBookConfig.getDefaultCategoryId()
+    private var mSelectRootCategoryId = CashBookConfig.getDefaultCategoryId()
 
     // 根类别，出账账户，入账账户，金额
 
-    var originRootCategoryId:Long=INVALID_ID
+    var originRootCategoryId: Long = INVALID_ID
 
-    var originAccountId:Long=TradeAccount.INVALID_ID
+    var originAccountId: Long = TradeAccount.INVALID_ID
 
-     var originReceiveId:Long=TradeAccount.INVALID_ID
+    var originReceiveId: Long = TradeAccount.INVALID_ID
 
-    var originAmount:Double=NumberConstants.number_double_zero
+    var originAmount: Double = NumberConstants.number_double_zero
 
 
     fun initData() {
@@ -56,9 +56,9 @@ class TradeInfoModel(private val intent: Intent,
             mCurrentTradeRecode.categoryId = CashBookConfig.getDefaultCategoryId()
         }
         mCurrentTradeRecode.apply {
-            originAmount=amount
-            originReceiveId=receiveAccountId
-            originAccountId=accountId
+            originAmount = amount
+            originReceiveId = receiveAccountId
+            originAccountId = accountId
             mTradeRecordInfoPresent.showAmount(amount.toString())
             mTradeRecordInfoPresent.showNote(tradeNote)
             mTradeRecordInfoPresent.showTradeFlag()
@@ -69,10 +69,12 @@ class TradeInfoModel(private val intent: Intent,
 
     fun setCategoryId(categoryId: Long) {
         mCurrentTradeRecode.categoryId = categoryId
+
     }
 
     fun setRootCategory(rootCategory: TradeCategory) {
         mSelectRootCategoryId = rootCategory.baseObjId
+        mCurrentTradeRecode.categoryId = mSelectRootCategoryId
     }
 
     fun getRootCategoryId() = mSelectRootCategoryId
@@ -95,21 +97,21 @@ class TradeInfoModel(private val intent: Intent,
         mCurrentTradeRecode.tradeNote = note ?: return
     }
 
-    fun setAccount(accountId:Long){
-        mCurrentTradeRecode.accountId=accountId
+    fun setAccount(accountId: Long) {
+        mCurrentTradeRecode.accountId = accountId
     }
 
-    fun setReceiveAccountId(accountId:Long){
-        mCurrentTradeRecode.receiveAccountId=accountId
+    fun setReceiveAccountId(accountId: Long) {
+        mCurrentTradeRecode.receiveAccountId = accountId
     }
 
-    fun saveOrUpdate() = mCurrentTradeRecode.saveOrUpdate("id = ?",mCurrentTradeRecode.baseObjId.toString() )
+    fun saveOrUpdate() = mCurrentTradeRecode.saveOrUpdate("id = ?", mCurrentTradeRecode.baseObjId.toString())
 
-    fun getAccountId()=mCurrentTradeRecode.accountId
+    fun getAccountId() = mCurrentTradeRecode.accountId
 
-    fun getReceiveAccountId()=mCurrentTradeRecode.receiveAccountId
+    fun getReceiveAccountId() = mCurrentTradeRecode.receiveAccountId
 
-    fun getMoney()=mCurrentTradeRecode.amount
+    fun getMoney() = mCurrentTradeRecode.amount
 
     fun getBundle(): Bundle {
         val bundle = Bundle()
