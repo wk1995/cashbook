@@ -92,9 +92,13 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    WkLog.i("initRootCategory:  ${it.categoryName}")
-                    mTradeInfoModel.originRootCategoryId = it.baseObjId
-                    setSelectRootCategory(it)
+                    if(it==null){
+                        mTradeRecordInfoActivity.finish()
+                    }else {
+                        WkLog.i("initRootCategory:  ${it.categoryName}")
+                        mTradeInfoModel.originRootCategoryId = it.baseObjId
+                        setSelectRootCategory(it)
+                    }
                 }
         )
 

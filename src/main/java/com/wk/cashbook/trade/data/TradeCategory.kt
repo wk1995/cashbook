@@ -22,7 +22,7 @@ import org.litepal.extension.findAsync
 
 
 data class TradeCategory(val categoryName: String, val createTime: Long = NumberConstants.number_long_zero,
-                         var parentId: Long = NumberConstants.number_long_one_Negative,
+                         var parentId: Long = INVALID_ID,
                          var note: String = WkStringConstants.STR_EMPTY) : LitePalSupport() {
 
     companion object {

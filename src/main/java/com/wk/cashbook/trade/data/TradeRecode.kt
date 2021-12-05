@@ -84,13 +84,17 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
             LitePal.where(*conditions).find(TradeRecode::class.java)
 
         @WorkerThread
-        fun getRootTradeCategory(categoryId: Long):TradeCategory{
+        fun getRootTradeCategory(categoryId: Long):TradeCategory?{
             val tradeCategory=LitePal.find(TradeCategory::class.java,categoryId)
-            val parentId=tradeCategory.parentId
-            return if(parentId==TradeCategory.INVALID_ID){
-                tradeCategory
-            }else{
-                getRootTradeCategory(parentId)
+            return if(tradeCategory==null){
+                null
+            }else {
+                val parentId = tradeCategory.parentId
+                if (parentId == TradeCategory.INVALID_ID) {
+                    tradeCategory
+                } else {
+                    getRootTradeCategory(parentId)
+                }
             }
 
         }

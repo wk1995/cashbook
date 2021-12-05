@@ -30,9 +30,6 @@ import com.wk.projects.common.constant.WkStringConstants.STR_INT_ZERO
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.time.date.DateTime
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -100,20 +97,21 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     override fun initResLayId() = mBind.root
 
     override fun bindView(savedInstanceState: Bundle?, mBaseProjectsActivity: BaseProjectsActivity) {
-        initData(System.currentTimeMillis())
         initView()
         initListener()
         initTime()
+        mCashBookBillPresent.initSubscriptions()
+        initData(System.currentTimeMillis())
     }
 
     override fun onStart() {
         super.onStart()
-        mCashBookBillPresent.initSubscriptions()
+        mCashBookBillPresent.initTotalData(System.currentTimeMillis())
     }
 
-    override fun onStop() {
-        super.onStop()
-        mCashBookBillPresent.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
+        mCashBookBillPresent.onDestroy()
     }
 
     private fun initView() {
@@ -213,6 +211,12 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     override fun onTabSelected(tab: TabLayout.Tab?) {
     }
 
+    fun initTotalData(totalData:Pair<Double,Double>){
+        tvAllPay.text=totalData.second.toString()
+        tvIncome.text=totalData.first.toString()
+    }
+
+
     override fun onClick(v: View?) {
         super.onClick(v)
         when (v?.id) {
@@ -231,17 +235,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     }
 
     private fun initData(time:Long) {
-        val startTime=DateTime.getMonthStart(time)
-        val endTime=DateTime.getMonthEnd(time)
-        WkLog.i("initData startTime: ${DateTime.getDateString(startTime)}, endTime: ${DateTime.getDateString(endTime)}")
-        Observable.create(Observable.OnSubscribe<List<TradeRecode>> { t ->
-            t?.onNext(TradeRecode.getTradeRecodes("${TradeRecode.TRADE_TIME}>? and ${TradeRecode.TRADE_TIME}<?",startTime.toString(),endTime.toString()))
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    WkLog.d("交易记录： $it")
-                    cashListAdapter.replaceList(it)
-                }
+      mCashBookBillPresent.initCashBookList(time)
     }
 
 
@@ -260,6 +254,11 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
             cashListAdapter.replaceData(tradeRecode,position)
         }
     }
+
+    fun replaceRecodeList(data:List<TradeRecode>){
+        cashListAdapter.replaceList(data)
+    }
+
 
     override fun onItemClick(bundle: Bundle?, vararg any: Any?) {
         val intent = Intent(this, TradeRecordInfoActivity::class.java)
