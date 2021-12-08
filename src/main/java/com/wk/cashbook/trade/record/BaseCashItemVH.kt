@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 sealed class BaseCashItemVH(rootView: View) : RecyclerView.ViewHolder(rootView)
 
 class CashTotalItemVH(rootView: View, val tvBillTotalDay: TextView,
-                      val tvTradeTotalWeek: TextView,
                       val tvAllIncomeValue: TextView,
                       val tvAllPayValue: TextView)
     : BaseCashItemVH(rootView)

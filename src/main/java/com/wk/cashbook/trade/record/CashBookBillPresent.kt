@@ -133,6 +133,12 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                     }
                     val amount = cursor.getDouble(2)
                     val tradeNote = cursor.getString(3)
+                    val showText = if (tradeNote.isEmpty()) {
+                        val categoryName = cursor.getString(5)
+                        categoryName
+                    } else {
+                        tradeNote
+                    }
                     val rootCategoryName = cursor.getString(4)
                     val tradeType = when {
                         TradeCategory.isComeIn(rootCategoryName) -> {
@@ -148,7 +154,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                         }
                     }
                     val tradeRecodeShowBean =
-                            TradeRecodeShowBean(tradeRecodeId, amount, tradeNote, tradeTime, tradeType)
+                            TradeRecodeShowBean(tradeRecodeId, amount, showText, tradeTime, tradeType)
                     showBeans.add(tradeRecodeShowBean)
                 }
             }

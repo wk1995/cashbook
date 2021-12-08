@@ -27,8 +27,8 @@ public class CashBookSql {
      *
      * id,tradetime,amount,tradenote,categoryname
      * */
-    public static final String SQL_QUERY_TRADE_RECODE_GROUP_DATE=" select a.id,a.tradetime,a.amount,a.tradenote,c.categoryname from traderecode a \n" +
-            " join (select id,(CASE  WHEN parentid<=-1 THEN  id ELSE parentid END) AS topid from tradecategory) b \n" +
+    public static final String SQL_QUERY_TRADE_RECODE_GROUP_DATE=" select a.id,a.tradetime,a.amount,a.tradenote,c.categoryname,b.categoryname from traderecode a \n" +
+            " join (select id,categoryname,(CASE  WHEN parentid<=-1 THEN  id ELSE parentid END) AS topid from tradecategory) b \n" +
             " join tradecategory c\n" +
             " on b.topid=c.id and a.categoryid=b.id\n" +
             " where a.tradetime>? and a.tradetime<? " +

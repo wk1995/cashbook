@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -60,6 +61,10 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         CashListAdapter(ArrayList(), this)
     }
 
+    private val pad by lazy {
+        resources.getDimensionPixelOffset(R.dimen.d15dp)
+    }
+
     /**时间*/
     private lateinit var llDate: ConstraintLayout
 
@@ -87,7 +92,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     private lateinit var vpCashbook: ViewPager2
     private lateinit var tlCashBook: TabLayout
 
-    private var selectTime=System.currentTimeMillis()
+    private var selectTime = System.currentTimeMillis()
 
 
     private lateinit var mCashBookBillPresent: CashBookBillPresent
@@ -135,14 +140,14 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
                 val rootView = LayoutInflater.from(parent.context).inflate(
                         getLayoutId(viewType), parent, false)
-                val rvCommon = rootView.findViewById<RecyclerView>(R.id.rvCommon)
-                rvCommon?.apply {
+                rootView.findViewById<RecyclerView>(R.id.rvCommon)?.apply {
                     val linearLayoutManager = LinearLayoutManager(context)
-//                    linearLayoutManager.stackFromEnd=true
-//                    linearLayoutManager.reverseLayout=true
                     layoutManager = linearLayoutManager
                     adapter = cashListAdapter
-                    setBackgroundColor(WkContextCompat.getColor(this@CashBookBillListActivity, android.R.color.white))
+                    addItemDecoration(CashBookListItemDecoration(this@CashBookBillListActivity))
+                    setBackgroundColor(WkContextCompat.getColor(this@CashBookBillListActivity,
+                            R.color.common_white_FFFCFC))
+                    setPadding(pad, 0, pad, 0)
                     addItemDecoration(DividerItemDecoration(context, linearLayoutManager.orientation))
                 }
                 return CardViewHolder(rootView)
@@ -178,7 +183,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         }.attach()
     }
 
-    private fun initTime(selectTime:Long) {
+    private fun initTime(selectTime: Long) {
         val yearAndMonth = mCashBookBillPresent.getYearAndMonth(selectTime)
         tvDateYear.text = yearAndMonth.first.toString()
         tvDateMonth.text = yearAndMonth.second.toString()
@@ -294,7 +299,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         tvDateMonth.text = month
         tvDateYear.text = year
         WkLog.d("year: $year  month:  $month  time: ${DateTime.getDateString(calendar.timeInMillis)}")
-        selectTime=calendar.timeInMillis
+        selectTime = calendar.timeInMillis
         initData()
         return false
     }

@@ -14,5 +14,8 @@
     <string name="cashbook_money_detail">资产渠道详情</string>
     <string name="cashbook_account_name">账户名</string>
     <string name="cashbook_account_money">余额</string>
+    <string name="cashbook_zh_pay_desc">支出：</string>
+    <string name="cashbook_zh_income_desc">收入：</string>
+    <string name="cashbook_title_day_info_format">%s日-%s</string>
 
 </resources>

@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.wk.cashbook.CashBookConfig
+import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
@@ -13,6 +15,8 @@ import com.wk.cashbook.trade.record.bean.TradeRecodeShowBean
 import com.wk.cashbook.trade.record.bean.TradeRecodeShowTitleBean
 import com.wk.projects.common.communication.IRvClickListener
 import com.wk.projects.common.communication.constant.BundleKey
+import com.wk.projects.common.configuration.WkConfiguration
+import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.constant.WkStringConstants.STR_POSITION_LOW
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
@@ -42,15 +46,13 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
         if (TYPE_TOTAL_ITEM == viewType) {
             val rootView = layoutInflater.inflate(R.layout.cashbook_bill_total_item, parent, false)
             val tvBillTotalDay = rootView.findViewById<TextView>(R.id.tvBillTotalDay)
-            val tvTradeTotalWeek = rootView.findViewById<TextView>(R.id.tvTradeTotalWeek)
             val tvAllIncomeValue = rootView.findViewById<TextView>(R.id.tvAllIncomeValue)
             val tvAllPayValue = rootView.findViewById<TextView>(R.id.tvAllPayValue)
-            return CashTotalItemVH(rootView, tvBillTotalDay, tvTradeTotalWeek, tvAllIncomeValue, tvAllPayValue)
+            return CashTotalItemVH(rootView, tvBillTotalDay, tvAllIncomeValue, tvAllPayValue)
         }
 
         if (TYPE_LIST_ITEM == viewType) {
             val rootView = layoutInflater.inflate(R.layout.cashbook_bill_list_item, parent, false)
-            rootView.setBackgroundResource(R.color.common_white_F1F0F0)
             val ivTradeType = rootView.findViewById<ImageView>(R.id.ivTradeType)
             val tvTradeNote = rootView.findViewById<TextView>(R.id.tvTradeNote)
             val tvTradeAmount = rootView.findViewById<TextView>(R.id.tvTradeAmount)
@@ -69,13 +71,14 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
                     val date = Date(tradeRecodeShowBean.mDayEndTime)
                     val allPay = tradeRecodeShowBean.mPayAmount
                     val allIncome = tradeRecodeShowBean.mInComeAmount
-                    val week = WeekUtil.getWeek(date).name
+                    val week = WeekUtil.getWeek(date).chinese
                     val dayOfMonth = DayUtil.getDayOfMonth(date)
                     holder.apply {
                         tvAllIncomeValue.text = allIncome.toString()
                         tvAllPayValue.text = allPay.toString()
-                        tvTradeTotalWeek.text = week
-                        tvBillTotalDay.text = dayOfMonth.toString()
+                        tvBillTotalDay.text =
+                                String.format(WkProjects.getApplication().getString(R.string.cashbook_title_day_info_format,
+                                        dayOfMonth.toString(), week))
                     }
 
                 }
@@ -103,6 +106,21 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
                         }
                         tvTradeAmount.text = amount.toString()
                         tvTradeNote.text = note
+                        ivTradeType.setImageResource(
+                                when(tradeRecodeShowBean.mTradeType){
+                                    CashBookConstants.TYPE_ROOT_CATEGORY_INCOME->{
+                                        R.drawable.cashbook_trade_type_income
+                                    }
+                                    CashBookConstants.TYPE_ROOT_CATEGORY_PAY->{
+                                        R.drawable.cashbook_trade_type_pay
+                                    }
+                                    else->{
+                                        R.drawable.cashbook_trade_type_income
+                                    }
+                                }
+
+
+                        )
                     }
                 }
             }
@@ -121,6 +139,8 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
             TYPE_TOTAL_ITEM
         }
     }
+
+    fun isTitle(position: Int) = getItemViewType(position) == TYPE_TOTAL_ITEM
 
     fun replaceList(tradeRecords: List<ITradeRecodeShowBean>) {
         mTradeRecords.clear()
