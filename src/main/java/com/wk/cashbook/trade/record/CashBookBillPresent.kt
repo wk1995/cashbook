@@ -1,11 +1,16 @@
 package com.wk.cashbook.trade.record
 
-import android.database.Cursor
+import android.content.Intent
 import android.os.Bundle
+import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.CashBookSql
+import com.wk.cashbook.CashBookSql.SQL_QUERY_TRADE_RECODE_GROUP_DATE
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
+import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
+import com.wk.cashbook.trade.record.bean.TradeRecodeShowBean
+import com.wk.cashbook.trade.record.bean.TradeRecodeShowTitleBean
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.log.WkLog
@@ -18,6 +23,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import rx.subscriptions.CompositeSubscription
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author      :wangkang_shenlong
@@ -37,8 +43,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
     /**
      * 获取当前日期的年，月份
      * */
-    fun getYearAndMonth(): Pair<Int, Int> {
-        val currentTime = System.currentTimeMillis()
+    fun getYearAndMonth(currentTime:Long): Pair<Int, Int> {
         val can = Calendar.getInstance()
         can.timeInMillis = currentTime
         val year = can.get(Calendar.YEAR)
@@ -66,23 +71,15 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
         )
     }
 
-    fun initData(time: Long) {
+    fun initTotalData(time: Long) {
         val startTime = DateTime.getMonthStart(time)
         val endTime = DateTime.getMonthEnd(time)
-        WkLog.i("startTime: $startTime  endTime  $endTime")
         initTotalData(startTime, endTime)
-        initCashBookList(startTime, endTime)
-    }
-
-    fun initTotalData(time: Long){
-        val startTime = DateTime.getMonthStart(time)
-        val endTime = DateTime.getMonthEnd(time)
-        initTotalData(startTime,endTime)
     }
 
 
     private fun initTotalData(startTime: Long, endTime: Long) {
-        mSubscriptions?.add(Observable.create(Observable.OnSubscribe<Pair<Double,Double>> { t ->
+        mSubscriptions?.add(Observable.create(Observable.OnSubscribe<Pair<Double, Double>> { t ->
             val cursor = LitePal.findBySQL(CashBookSql.SQL_QUERY_SUM_AMOUNT_CATEGORY,
                     startTime.toString(), endTime.toString())
             var comeIn = 0.0
@@ -101,7 +98,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                     }
                 }
             }
-            t.onNext(Pair(comeIn,pay))
+            t.onNext(Pair(comeIn, pay))
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -111,17 +108,51 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
 
     }
 
-    fun initCashBookList(time: Long){
+    /**交易记录列表*/
+    fun initCashBookList(time: Long) {
         val startTime = DateTime.getMonthStart(time)
         val endTime = DateTime.getMonthEnd(time)
         initCashBookList(startTime, endTime)
     }
 
     private fun initCashBookList(startTime: Long, endTime: Long) {
-
-        WkLog.i("initData startTime: ${DateTime.getDateString(startTime)}, endTime: ${DateTime.getDateString(endTime)}")
-        mSubscriptions?.add(Observable.create(Observable.OnSubscribe<List<TradeRecode>> { t ->
-            t?.onNext(TradeRecode.getTradeRecodes("${TradeRecode.TRADE_TIME}>? and ${TradeRecode.TRADE_TIME}<?", startTime.toString(), endTime.toString()))
+        WkLog.i("initData startTime: ${DateTime.getDateString(startTime)}, " +
+                "endTime: ${DateTime.getDateString(endTime)}")
+        mSubscriptions?.add(Observable.create(Observable.OnSubscribe<List<ITradeRecodeShowBean>> { t ->
+            val cursor = LitePal.findBySQL(SQL_QUERY_TRADE_RECODE_GROUP_DATE, startTime.toString(), endTime.toString())
+            val showBeans = ArrayList<ITradeRecodeShowBean>()
+            var tradeRecodeShowTitleBean = TradeRecodeShowTitleBean()
+            if (cursor.count != 0) {
+                while (cursor.moveToNext()) {
+                    val tradeRecodeId = cursor.getLong(0)
+                    val tradeTime = cursor.getLong(1)
+                    val dayEndTime = DateTime.getDayEnd(tradeTime)
+                    if (tradeRecodeShowTitleBean.mDayEndTime != dayEndTime) {
+                        tradeRecodeShowTitleBean = TradeRecodeShowTitleBean(mDayEndTime = dayEndTime)
+                        showBeans.add(tradeRecodeShowTitleBean)
+                    }
+                    val amount = cursor.getDouble(2)
+                    val tradeNote = cursor.getString(3)
+                    val rootCategoryName = cursor.getString(4)
+                    val tradeType = when {
+                        TradeCategory.isComeIn(rootCategoryName) -> {
+                            tradeRecodeShowTitleBean.addInComeAmount(amount)
+                            CashBookConstants.TYPE_ROOT_CATEGORY_INCOME
+                        }
+                        TradeCategory.isInternalTransfer(rootCategoryName) -> {
+                            CashBookConstants.TYPE_ROOT_CATEGORY_INTERNAL_TRANSFER
+                        }
+                        else -> {
+                            tradeRecodeShowTitleBean.addPayAmount(amount)
+                            CashBookConstants.TYPE_ROOT_CATEGORY_PAY
+                        }
+                    }
+                    val tradeRecodeShowBean =
+                            TradeRecodeShowBean(tradeRecodeId, amount, tradeNote, tradeTime, tradeType)
+                    showBeans.add(tradeRecodeShowBean)
+                }
+            }
+            t.onNext(showBeans)
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -191,6 +222,40 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                 return@runInTransaction LitePal.delete(TradeRecode::class.java, tradeRecodeId) > 0
             }
 
+    fun updateData( data: Intent?){
+        val tradeRecodeId=data?.getLongExtra(TradeRecodeShowBean.TRADE_RECODE_ID,TradeRecode.INVALID_ID)?:return
+        if(tradeRecodeId==TradeRecode.INVALID_ID){
+            WkLog.e("tradeRecodeId is INVALID_ID")
+            return
+        }
+        if(tradeRecodeId==TradeRecode.INIT_ID){
+            WkLog.e("tradeRecodeId is INIT_ID")
+            return
+        }
+//        val position=data.getIntExtra(WkStringConstants.STR_POSITION_LOW,NumberConstants.number_int_one_Negative)
+        mCashBookBillListActivity?.initData()
+        /*if(position==-1) {
+            mCashBookBillListActivity?.initData()
+            return
+        }
+        val tradeTime=data.getLongExtra(TradeRecodeShowBean.TRADE_TIME,NumberConstants.number_long_zero)
+        val tradeRecodeShowBean =mCashBookBillListActivity?.getData(position)?:return
+        if(tradeRecodeShowBean.getTradeTime()!=tradeTime){
+            mCashBookBillListActivity.initData()
+        }else{//表示没有修改时间
+            // 但如果修改了类型，则标题中的数据也需要变化，这点cover不到，所以还是直接更新所有数据
+            val amount=data.getDoubleExtra(TradeRecodeShowBean.AMOUNT,NumberConstants.number_double_zero)
+            val showName=data.getStringExtra(TradeRecodeShowBean.SHOW_NAME)?:WkStringConstants.STR_EMPTY
+            val tradeType=data.getIntExtra(TradeRecodeShowBean.TRADE_TYPE,CashBookConstants.TYPE_ROOT_CATEGORY_UNKNOWN)
+            if(tradeType==CashBookConstants.TYPE_ROOT_CATEGORY_UNKNOWN){
+                return
+            }
+            val tradeShowBean=TradeRecodeShowBean(tradeRecodeId,amount,showName,tradeTime,tradeType)
+            mCashBookBillListActivity.replaceData(tradeShowBean,
+                    position,tradeRecodeShowBean.getTradeTime()!=tradeTime)
+        }*/
+
+    }
 
     fun onDestroy() {
         mSubscriptions?.unsubscribe()

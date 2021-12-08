@@ -34,54 +34,15 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
                        var relationTradeId: Long = NumberConstants.number_long_one_Negative
 ) : LitePalSupport(), ITradeRecord {
 
-
-    constructor(parcel: Parcel) : this(
-            parcel.readLong(),
-            parcel.readLong(),
-            parcel.readLong(),
-            parcel.readArrayList(Long::class.java.classLoader) as ArrayList<Long>,
-            parcel.readDouble(),
-            parcel.readString() ?: WkStringConstants.STR_EMPTY,
-            parcel.readLong(),
-            parcel.readLong()) {
-    }
-
     public override fun getBaseObjId(): Long {
         return super.getBaseObjId()
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeLong(tradeTime)
-        parcel.writeLong(accountId)
-        parcel.writeLong(categoryId)
-        parcel.writeList(flagIds)
-        parcel.writeDouble(amount)
-        parcel.writeString(tradeNote)
-        parcel.writeLong(receiveAccountId)
-        parcel.writeLong(relationTradeId)
-    }
-
-    override fun describeContents(): Int {
-        return 0
     }
 
     override fun toString(): String {
         return "TradeRecode(baseObjId=${baseObjId}, tradeTime=$tradeTime, accountId=$accountId, categoryId=$categoryId, flagIds=$flagIds, amount=$amount, tradeNote='$tradeNote', receiveAccountId=$receiveAccountId, relationTradeId=$relationTradeId)"
     }
 
-    companion object CREATOR : Parcelable.Creator<TradeRecode> {
-        override fun createFromParcel(parcel: Parcel): TradeRecode {
-            return TradeRecode(parcel)
-        }
-
-        override fun newArray(size: Int): Array<TradeRecode?> {
-            return arrayOfNulls(size)
-        }
-
-        val TAG: String = TradeRecode::class.java.simpleName
-
-        fun getTradeRecodes(vararg conditions: String?): MutableList<TradeRecode> =
-            LitePal.where(*conditions).find(TradeRecode::class.java)
+    companion object{
 
         @WorkerThread
         fun getRootTradeCategory(categoryId: Long):TradeCategory?{
@@ -108,7 +69,9 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
         const val TRADE_NOTE="tradenote"
         const val RECEIVE_ACCOUNT_ID="receiveaccountid"
         const val RELATION_TRADE_ID="relationtradeid"
+        const val INVALID_ID = NumberConstants.number_long_one_Negative
+        /**初始id，新建对象，id都为这个0*/
+        const val INIT_ID=NumberConstants.number_long_zero
     }
-
 
 }

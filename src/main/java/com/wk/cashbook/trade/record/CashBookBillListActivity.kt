@@ -20,6 +20,7 @@ import com.wk.cashbook.databinding.CashbookBillListActivityBinding
 import com.wk.cashbook.trade.account.list.AccountListActivity
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.info.TradeRecordInfoActivity
+import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.communication.IRvClickListener
@@ -39,8 +40,10 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     companion object {
         /**明细*/
         private const val LAYOUT_VIEWPAGER_DETAILED = 0
+
         /**类别*/
         private const val LAYOUT_VIEWPAGER_CATEGORY = 1
+
         /**账户*/
         private const val LAYOUT_VIEWPAGER_ACCOUNT = 2
     }
@@ -54,7 +57,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         arrayOf(R.string.common_str_zh_detailed, R.string.common_str_zh_category, R.string.common_str_zh_account)
     }
     private val cashListAdapter by lazy {
-        CashListAdapter(ArrayList(),this)
+        CashListAdapter(ArrayList(), this)
     }
 
     /**时间*/
@@ -78,12 +81,13 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     /**
      * 账户
      * */
-    private lateinit var ivAccounts:ImageView
+    private lateinit var ivAccounts: ImageView
     private lateinit var btnAddBill: Button
 
     private lateinit var vpCashbook: ViewPager2
     private lateinit var tlCashBook: TabLayout
 
+    private var selectTime=System.currentTimeMillis()
 
 
     private lateinit var mCashBookBillPresent: CashBookBillPresent
@@ -99,9 +103,9 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     override fun bindView(savedInstanceState: Bundle?, mBaseProjectsActivity: BaseProjectsActivity) {
         initView()
         initListener()
-        initTime()
+        initTime(selectTime)
         mCashBookBillPresent.initSubscriptions()
-        initData(System.currentTimeMillis())
+        initData()
     }
 
     override fun onStart() {
@@ -115,7 +119,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     }
 
     private fun initView() {
-        ivAccounts=mBind.ivAccounts
+        ivAccounts = mBind.ivAccounts
         llDate = mBind.llDate
         tvDateYear = mBind.tvDateYear
         tvDateMonth = mBind.tvDateMonth
@@ -130,16 +134,16 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         vpCashbook.adapter = object : RecyclerView.Adapter<CardViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
                 val rootView = LayoutInflater.from(parent.context).inflate(
-                        getLayoutId(viewType)
-                        , parent, false)
+                        getLayoutId(viewType), parent, false)
                 val rvCommon = rootView.findViewById<RecyclerView>(R.id.rvCommon)
                 rvCommon?.apply {
-                    val linearLayoutManager=LinearLayoutManager(context)
-                    linearLayoutManager.reverseLayout=true
+                    val linearLayoutManager = LinearLayoutManager(context)
+//                    linearLayoutManager.stackFromEnd=true
+//                    linearLayoutManager.reverseLayout=true
                     layoutManager = linearLayoutManager
                     adapter = cashListAdapter
                     setBackgroundColor(WkContextCompat.getColor(this@CashBookBillListActivity, android.R.color.white))
-                    addItemDecoration(DividerItemDecoration(context,linearLayoutManager.orientation))
+                    addItemDecoration(DividerItemDecoration(context, linearLayoutManager.orientation))
                 }
                 return CardViewHolder(rootView)
             }
@@ -174,8 +178,8 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         }.attach()
     }
 
-    private fun initTime() {
-        val yearAndMonth = mCashBookBillPresent.getYearAndMonth()
+    private fun initTime(selectTime:Long) {
+        val yearAndMonth = mCashBookBillPresent.getYearAndMonth(selectTime)
         tvDateYear.text = yearAndMonth.first.toString()
         tvDateMonth.text = yearAndMonth.second.toString()
     }
@@ -211,9 +215,9 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     override fun onTabSelected(tab: TabLayout.Tab?) {
     }
 
-    fun initTotalData(totalData:Pair<Double,Double>){
-        tvAllPay.text=totalData.second.toString()
-        tvIncome.text=totalData.first.toString()
+    fun initTotalData(totalData: Pair<Double, Double>) {
+        tvAllPay.text = totalData.second.toString()
+        tvIncome.text = totalData.first.toString()
     }
 
 
@@ -221,44 +225,43 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         super.onClick(v)
         when (v?.id) {
             R.id.llDate -> {
-                ChooseMonthDialog.create(simpleOnlyEtDialogListener=this).show(this)
+                ChooseMonthDialog.create(simpleOnlyEtDialogListener = this).show(this)
             }
             R.id.btnAddBill -> {
                 val intene = Intent(this, TradeRecordInfoActivity::class.java)
                 startActivityForResult(intene, 1)
             }
-            R.id.ivAccounts->{
+            R.id.ivAccounts -> {
                 val intent = Intent(this, AccountListActivity::class.java)
                 startActivity(intent)
             }
         }
     }
 
-    private fun initData(time:Long) {
-      mCashBookBillPresent.initCashBookList(time)
+    fun initData() {
+        mCashBookBillPresent.initCashBookList(selectTime)
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val tradeRecode = data?.getParcelableExtra<TradeRecode>(TradeRecode.TAG) ?: return
-        val id = data.getLongExtra(TradeRecode.TRADE_RECODE_ID,NumberConstants.number_long_zero)
-        if(id==NumberConstants.number_long_zero){
-            return
-        }
-        val position=data.getIntExtra(WkStringConstants.STR_POSITION_LOW,-1)
-        tradeRecode.assignBaseObjId(id)
-        if(position==-1) {
-            cashListAdapter.addData(tradeRecode)
-        }else{
-            cashListAdapter.replaceData(tradeRecode,position)
-        }
+        mCashBookBillPresent.updateData(data)
+
     }
 
-    fun replaceRecodeList(data:List<TradeRecode>){
+    fun replaceRecodeList(data: List<ITradeRecodeShowBean>) {
         cashListAdapter.replaceList(data)
     }
 
+    fun getData(position: Int) = cashListAdapter.getData(position)
+
+    fun addData(tradeRecodeShowBean: ITradeRecodeShowBean) {
+        cashListAdapter.addData(tradeRecodeShowBean)
+    }
+
+    fun replaceData(tradeRecodeShowBean: ITradeRecodeShowBean, position: Int, needSort: Boolean = false) {
+        cashListAdapter.replaceData(tradeRecodeShowBean, position, needSort)
+    }
 
     override fun onItemClick(bundle: Bundle?, vararg any: Any?) {
         val intent = Intent(this, TradeRecordInfoActivity::class.java)
@@ -266,33 +269,35 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         startActivityForResult(intent, 1)
     }
 
-    override fun onItemLongClick(bundle: Bundle?, vararg any: Any?):Boolean {
+    override fun onItemLongClick(bundle: Bundle?, vararg any: Any?): Boolean {
         DeleteCashBookDialog.create(bundle).show(supportFragmentManager)
         return true
     }
 
     override fun communication(flag: Int, bundle: Bundle?, any: Any?) {
         super.communication(flag, bundle, any)
-        if(flag== IFAFlag.DELETE_ITEM_DIALOG) {
+        if (flag == IFAFlag.DELETE_ITEM_DIALOG) {
             mCashBookBillPresent.deleteItem(bundle)
         }
     }
-    fun removeData(position:Int){
+
+    fun removeData(position: Int) {
         cashListAdapter.remove(position)
     }
 
     override fun ok(bundle: Bundle?): Boolean {
-        val year=bundle?.getString("year")?:return false
-        val month=bundle.getString("month")?:return false
-        val calendar=Calendar.getInstance()
-        calendar.set(Calendar.YEAR,year.toInt())
-        calendar.set(Calendar.MONTH,month.toInt()-1)
-        tvDateMonth.text=month
-        tvDateYear.text=year
+        val year = bundle?.getString("year") ?: return false
+        val month = bundle.getString("month") ?: return false
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, year.toInt())
+        calendar.set(Calendar.MONTH, month.toInt() - 1)
+        tvDateMonth.text = month
+        tvDateYear.text = year
         WkLog.d("year: $year  month:  $month  time: ${DateTime.getDateString(calendar.timeInMillis)}")
-        initData(calendar.timeInMillis)
+        selectTime=calendar.timeInMillis
+        initData()
         return false
     }
 
-    override fun cancel(bundle: Bundle?)=false
+    override fun cancel(bundle: Bundle?) = false
 }

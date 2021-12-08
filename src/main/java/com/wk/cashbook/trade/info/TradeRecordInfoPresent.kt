@@ -11,6 +11,8 @@ import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.SimpleOnlyEtDialog
 import com.wk.projects.common.configuration.WkProjects
+import com.wk.projects.common.constant.NumberConstants
+import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.WkToast
@@ -40,13 +42,31 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
     private val mSubscriptions by lazy { CompositeSubscription() }
 
     private val mTradeInfoModel by lazy {
-        TradeInfoModel(intent, this)
+        TradeInfoModel(this)
     }
 
     fun initData() {
+        val id = intent.getLongExtra(TradeRecode.TRADE_RECODE_ID, NumberConstants.number_long_zero)
+        if (id <= TradeRecode.INIT_ID) {
+            initData(TradeRecode(DateTime.getDayStart(System.currentTimeMillis())))
+        } else {
+            mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeRecode> {
+                it.onNext(LitePal.find(TradeRecode::class.java, id))
+            }).subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        initData(it)
+                    })
+        }
+    }
+
+    @WorkerThread
+    private fun initData(tradeRecode: TradeRecode) {
+        mTradeInfoModel.mCurrentTradeRecode = tradeRecode
         mTradeInfoModel.initData()
         initRootCategoriesAsync()
     }
+
 
     fun onDestroy() {
         mSubscriptions.clear()
@@ -64,6 +84,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     /**显示交易时间*/
     fun showTradeTime(time: Long) {
+        mTradeInfoModel.setTradeTime(time)
         mTradeRecordInfoActivity.showTradeTime(
                 DateTime.getDateString(time, SimpleDateFormat("MM-dd", Locale.getDefault()))
         )
@@ -92,9 +113,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if(it==null){
+                    if (it == null) {
                         mTradeRecordInfoActivity.finish()
-                    }else {
+                    } else {
                         WkLog.i("initRootCategory:  ${it.categoryName}")
                         mTradeInfoModel.originRootCategoryId = it.baseObjId
                         setSelectRootCategory(it)
@@ -203,6 +224,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         mTradeRecordInfoActivity.initInternalTransferView(isInternalTransfer)
         mTradeRecordInfoActivity.setRootCategory(category)
         mTradeInfoModel.setRootCategory(category)
+        mTradeInfoModel.mSelectRootCategoryName=category.categoryName
     }
 
     private fun isInternalTrans(category: TradeCategory?) =
@@ -247,40 +269,40 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         return false
     }
 
-    /**
-     * @param originAccountId 原账户id
-     * @param accountId 最终选择的账户id
-     * @param isPayToComeIn  originAccountId 该账户是否相对的从收入变为了支出
-     *
-     * */
-    @WorkerThread
-    fun saveAccount(originAccountId: Long, accountId: Long, isPayToComeIn: Boolean): Boolean {
+    /*  /**
+       * @param originAccountId 原账户id
+       * @param accountId 最终选择的账户id
+       * @param isPayToComeIn  originAccountId 该账户是否相对的从收入变为了支出
+       *
+       * */
+      @WorkerThread
+      fun saveAccount(originAccountId: Long, accountId: Long, isPayToComeIn: Boolean): Boolean {
 
-        // 说明是更新，而不是保存
-        if (originAccountId <= TradeAccount.INVALID_ID) {
-            return true
-        }
-        //说明未发生改变
-        if (accountId == originAccountId) {
-            return true
-        }
-        val account = LitePal.find(TradeAccount::class.java, accountId)
-        if (account == null) {
-            WkLog.i("TradeAccount is null")
-            return false
-        }
+          // 说明是更新，而不是保存
+          if (originAccountId <= TradeAccount.INVALID_ID) {
+              return true
+          }
+          //说明未发生改变
+          if (accountId == originAccountId) {
+              return true
+          }
+          val account = LitePal.find(TradeAccount::class.java, accountId)
+          if (account == null) {
+              WkLog.i("TradeAccount is null")
+              return false
+          }
 
-        val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
-        if (originAccount == null) {
-            WkLog.i("originAccount is null")
-            return false
-        }
-        val amount = mTradeInfoModel.getMoney()
-        val origin = mTradeInfoModel.originAmount
-        account.amount -= amount
-        originAccount.amount += origin
-        return account.save() && originAccount.save()
-    }
+          val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+          if (originAccount == null) {
+              WkLog.i("originAccount is null")
+              return false
+          }
+          val amount = mTradeInfoModel.getMoney()
+          val origin = mTradeInfoModel.originAmount
+          account.amount -= amount
+          originAccount.amount += origin
+          return account.save() && originAccount.save()
+      }*/
 
     /**
      * 涉及到内部转账时，原账户1，2，如果与现账户相等，
@@ -708,8 +730,11 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    mTradeRecordInfoActivity.saveResult(if (it) {
-                        mTradeInfoModel.getBundle()
+                    mTradeRecordInfoActivity.goToCashBookList(if (it) {
+                        val result = mTradeInfoModel.getTradeShowBeanInfo()
+                        result.putInt(WkStringConstants.STR_POSITION_LOW,
+                                intent.getIntExtra(WkStringConstants.STR_POSITION_LOW, -1))
+                        result
                     } else {
                         null
                     })

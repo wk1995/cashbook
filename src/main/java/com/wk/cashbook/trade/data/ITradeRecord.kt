@@ -10,4 +10,4 @@ import android.os.Parcelable
  */
 
 
-interface ITradeRecord:Parcelable
+interface ITradeRecord

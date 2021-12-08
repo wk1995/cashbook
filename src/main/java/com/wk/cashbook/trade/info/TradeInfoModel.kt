@@ -1,15 +1,14 @@
 package com.wk.cashbook.trade.info
 
-import android.content.Intent
 import android.os.Bundle
 import com.wk.cashbook.CashBookConfig
+import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeCategory.Companion.INVALID_ID
 import com.wk.cashbook.trade.data.TradeRecode
-import com.wk.cashbook.trade.data.TradeRecode.CREATOR.TRADE_RECODE_ID
+import com.wk.cashbook.trade.record.bean.TradeRecodeShowBean
 import com.wk.projects.common.constant.NumberConstants
-import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.log.WkLog
 
 /**
@@ -20,22 +19,15 @@ import com.wk.projects.common.log.WkLog
  */
 
 
-class TradeInfoModel(private val intent: Intent,
-                     private val mTradeRecordInfoPresent: TradeRecordInfoPresent) {
-
-
-    private val mCurrentTradeRecode by lazy {
-        val id = intent.getLongExtra(TRADE_RECODE_ID, NumberConstants.number_long_zero)
-        val mCurrentTradeRecode = intent.getParcelableExtra(TradeRecode.TAG)
-                ?: TradeRecode(System.currentTimeMillis())
-        mCurrentTradeRecode.assignBaseObjId(id)
-        mCurrentTradeRecode
-    }
+class TradeInfoModel(private val mTradeRecordInfoPresent: TradeRecordInfoPresent) {
+    var mCurrentTradeRecode: TradeRecode = TradeRecode()
 
     /**
      * 选择的根类别
      * */
     private var mSelectRootCategoryId = CashBookConfig.getDefaultCategoryId()
+
+    var mSelectRootCategoryName: String = ""
 
     // 根类别，出账账户，入账账户，金额
 
@@ -54,6 +46,7 @@ class TradeInfoModel(private val intent: Intent,
         WkLog.i("initData categoryId: $categoryId")
         if (categoryId == INVALID_ID) {
             mCurrentTradeRecode.categoryId = CashBookConfig.getDefaultCategoryId()
+            mSelectRootCategoryName = TradeCategory.DEFAULT_ROOT_CATEGORY_PAY
         }
         mCurrentTradeRecode.apply {
             originAmount = amount
@@ -69,12 +62,20 @@ class TradeInfoModel(private val intent: Intent,
 
     fun setCategoryId(categoryId: Long) {
         mCurrentTradeRecode.categoryId = categoryId
+    }
 
+    fun setTradeTime(tradeTime:Long){
+        mCurrentTradeRecode.tradeTime=tradeTime
     }
 
     fun setRootCategory(rootCategory: TradeCategory) {
-        mSelectRootCategoryId = rootCategory.baseObjId
-        mCurrentTradeRecode.categoryId = mSelectRootCategoryId
+        val rootCategoryId = rootCategory.baseObjId
+        if (mSelectRootCategoryId != rootCategoryId) {
+            mCurrentTradeRecode.categoryId = rootCategoryId
+        }
+        mSelectRootCategoryId = rootCategoryId
+        mSelectRootCategoryName = rootCategory.categoryName
+
     }
 
     fun getRootCategoryId() = mSelectRootCategoryId
@@ -113,12 +114,26 @@ class TradeInfoModel(private val intent: Intent,
 
     fun getMoney() = mCurrentTradeRecode.amount
 
-    fun getBundle(): Bundle {
+    fun getTradeShowBeanInfo(): Bundle {
         val bundle = Bundle()
-        bundle.putParcelable(TradeRecode.TAG, mCurrentTradeRecode)
-        bundle.putLong(TRADE_RECODE_ID, mCurrentTradeRecode.baseObjId)
-        bundle.putInt(WkStringConstants.STR_POSITION_LOW,
-                intent.getIntExtra(WkStringConstants.STR_POSITION_LOW, -1))
+        bundle.putLong(TradeRecodeShowBean.TRADE_RECODE_ID, mCurrentTradeRecode.baseObjId)
+        bundle.putLong(TradeRecodeShowBean.TRADE_TIME, mCurrentTradeRecode.tradeTime)
+        bundle.putDouble(TradeRecodeShowBean.AMOUNT, mCurrentTradeRecode.amount)
+        bundle.putString(TradeRecodeShowBean.SHOW_NAME, mCurrentTradeRecode.tradeNote)
+        bundle.putInt(TradeRecodeShowBean.TRADE_TYPE, when {
+            TradeCategory.isPay(mSelectRootCategoryName) -> {
+                CashBookConstants.TYPE_ROOT_CATEGORY_PAY
+            }
+            TradeCategory.isComeIn(mSelectRootCategoryName) -> {
+                CashBookConstants.TYPE_ROOT_CATEGORY_INCOME
+            }
+            TradeCategory.isInternalTransfer(mSelectRootCategoryName) -> {
+                CashBookConstants.TYPE_ROOT_CATEGORY_INTERNAL_TRANSFER
+            }
+            else -> {
+                CashBookConstants.TYPE_ROOT_CATEGORY_UNKNOWN
+            }
+        })
         return bundle
     }
 

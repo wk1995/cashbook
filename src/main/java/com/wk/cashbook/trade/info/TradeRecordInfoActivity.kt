@@ -19,6 +19,7 @@ import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.info.account.ChooseAccountDialog
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.log.WkLog
+import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.TimePickerCreator
 import com.wk.projects.common.ui.WkToast
 
@@ -211,11 +212,12 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
                 val bundle = Bundle()
                 bundle.putDouble(TradeRecode.AMOUNT, amount.toDouble())
                 bundle.putString(TradeRecode.TRADE_NOTE, note)
+                bundle.putString(TradeRecode.TRADE_TIME, note)
                 mTradeRecordInfoPresent.saveTradeRecode(bundle)
             }
             R.id.tvTradeInfoTime -> {
                 TimePickerCreator.create(this, R.string.common_str_add) { date, _ ->
-                    mTradeRecordInfoPresent.showTradeTime(date.time)
+                    mTradeRecordInfoPresent.showTradeTime(DateTime.getDayStart(date.time))
                 }
             }
             R.id.tvTradeInfoAccount -> {
@@ -262,16 +264,13 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         mTradeInfoCategoryAdapter.setSelectTradeCategory(categoryId)
     }
 
-    fun saveResult(bundle: Bundle?) {
+    fun goToCashBookList(bundle: Bundle?) {
         if (null == bundle) {
             WkToast.showToast("保存失败")
             return
         }
         val intent1 = Intent()
         intent1.putExtras(bundle)
-//        intent1.putExtra(TradeRecode.TAG, tradeRecode)
-//        intent1.putExtra(WkStringConstants.STR_POSITION_LOW,
-//                intent.getIntExtra(WkStringConstants.STR_POSITION_LOW, -1))
         setResult(2, intent1)
         finish()
     }
