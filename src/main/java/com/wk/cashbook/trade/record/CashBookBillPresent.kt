@@ -43,7 +43,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
     /**
      * 获取当前日期的年，月份
      * */
-    fun getYearAndMonth(currentTime:Long): Pair<Int, Int> {
+    fun getYearAndMonth(currentTime: Long): Pair<Int, Int> {
         val can = Calendar.getInstance()
         can.timeInMillis = currentTime
         val year = can.get(Calendar.YEAR)
@@ -222,13 +222,18 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                 return@runInTransaction LitePal.delete(TradeRecode::class.java, tradeRecodeId) > 0
             }
 
-    fun updateData( data: Intent?){
-        val tradeRecodeId=data?.getLongExtra(TradeRecodeShowBean.TRADE_RECODE_ID,TradeRecode.INVALID_ID)?:return
-        if(tradeRecodeId==TradeRecode.INVALID_ID){
+    fun updateData(data: Intent?) {
+        val tradeRecodeId = data?.getLongExtra(TradeRecodeShowBean.TRADE_RECODE_ID, TradeRecode.INVALID_ID)
+        if (tradeRecodeId == null) {
+            WkLog.e("tradeRecodeId is null")
+            return
+        }
+
+        if (tradeRecodeId == TradeRecode.INVALID_ID) {
             WkLog.e("tradeRecodeId is INVALID_ID")
             return
         }
-        if(tradeRecodeId==TradeRecode.INIT_ID){
+        if (tradeRecodeId == TradeRecode.INIT_ID) {
             WkLog.e("tradeRecodeId is INIT_ID")
             return
         }
