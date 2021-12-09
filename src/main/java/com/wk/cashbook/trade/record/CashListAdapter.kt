@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.wk.cashbook.CashBookConfig
 import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.TradeRecode
@@ -15,7 +14,6 @@ import com.wk.cashbook.trade.record.bean.TradeRecodeShowBean
 import com.wk.cashbook.trade.record.bean.TradeRecodeShowTitleBean
 import com.wk.projects.common.communication.IRvClickListener
 import com.wk.projects.common.communication.constant.BundleKey
-import com.wk.projects.common.configuration.WkConfiguration
 import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.constant.WkStringConstants.STR_POSITION_LOW
 import com.wk.projects.common.log.WkLog
@@ -104,18 +102,30 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
                             return@setOnLongClickListener rvItemListener?.onItemLongClick(bundle)
                                     ?: false
                         }
-                        tvTradeAmount.text = amount.toString()
+                        tvTradeAmount.text =
+                                when (tradeRecodeShowBean.mTradeType) {
+                                    CashBookConstants.TYPE_ROOT_CATEGORY_INCOME -> {
+                                        "+$amount"
+                                    }
+                                    CashBookConstants.TYPE_ROOT_CATEGORY_PAY -> {
+                                        "-$amount"
+                                    }
+                                    else -> {
+                                        amount.toString()
+                                    }
+                                }
+
                         tvTradeNote.text = note
                         ivTradeType.setImageResource(
-                                when(tradeRecodeShowBean.mTradeType){
-                                    CashBookConstants.TYPE_ROOT_CATEGORY_INCOME->{
+                                when (tradeRecodeShowBean.mTradeType) {
+                                    CashBookConstants.TYPE_ROOT_CATEGORY_INCOME -> {
                                         R.drawable.cashbook_trade_type_income
                                     }
-                                    CashBookConstants.TYPE_ROOT_CATEGORY_PAY->{
+                                    CashBookConstants.TYPE_ROOT_CATEGORY_PAY -> {
                                         R.drawable.cashbook_trade_type_pay
                                     }
-                                    else->{
-                                        R.drawable.cashbook_trade_type_income
+                                    else -> {
+                                        R.drawable.cashbook_trade_type_internal_transfer
                                     }
                                 }
 
