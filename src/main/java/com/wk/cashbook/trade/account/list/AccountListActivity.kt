@@ -12,8 +12,8 @@ import com.wk.cashbook.CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACT
 import com.wk.cashbook.CashBookActivityResultCode.RESULT_CODE_ACCOUNT_INFO_ACTIVITY
 import com.wk.cashbook.CashBookListItemDecoration
 import com.wk.cashbook.R
-import com.wk.cashbook.trade.data.TradeAccount
-import com.wk.cashbook.trade.data.TradeAccount.Companion.INVALID_ID
+import com.wk.cashbook.trade.data.AccountWallet
+import com.wk.cashbook.trade.data.AccountWallet.Companion.INVALID_ID
 import com.wk.cashbook.trade.record.DeleteCashBookDialog
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.communication.IFragmentToActivity
@@ -114,7 +114,7 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
 
     override fun communication(flag:Int,bundle: Bundle?,any: Any?){
         if(flag== IFAFlag.DELETE_ITEM_DIALOG){
-            val itemId=bundle?.getLong(TradeAccount.ACCOUNT_ID)
+            val itemId=bundle?.getLong(AccountWallet.ACCOUNT_MONEY_ID)
             val position=bundle?.getInt(WkStringConstants.STR_POSITION_LOW)?:return
             mAccountListPresent.deleteData(itemId,position)
         }
@@ -124,7 +124,7 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
         super.onItemLongClick(adapter, view, position)
         if(adapter==mAccountListAdapter){
             val bundle=Bundle()
-            bundle.putLong(TradeAccount.ACCOUNT_ID,mAccountListAdapter.getItemId(position))
+            bundle.putLong(AccountWallet.ACCOUNT_MONEY_ID,mAccountListAdapter.getItemId(position))
             bundle.putInt(WkStringConstants.STR_POSITION_LOW,position)
             DeleteCashBookDialog.create(bundle).show(supportFragmentManager)
         }
@@ -142,14 +142,14 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode==REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
                 && resultCode==RESULT_CODE_ACCOUNT_INFO_ACTIVITY){
-            val id=data?.getLongExtra(TradeAccount.ACCOUNT_ID,INVALID_ID)?:return
+            val id=data?.getLongExtra(AccountWallet.ACCOUNT_MONEY_ID,INVALID_ID)?:return
             if(id<=INVALID_ID){
                 return
             }
-            val note=data.getStringExtra(TradeAccount.NOTE)?:return
-            val name=data.getStringExtra(TradeAccount.ACCOUNT_NAME)?:return
-            val unit=data.getStringExtra(TradeAccount.UNIT)?:return
-            val amount=data.getDoubleExtra(TradeAccount.AMOUNT,NumberConstants.number_double_zero)
+            val note=data.getStringExtra(AccountWallet.NOTE)?:return
+            val name=data.getStringExtra(AccountWallet.ACCOUNT_NAME)?:return
+            val unit=data.getStringExtra(AccountWallet.UNIT)?:return
+            val amount=data.getDoubleExtra(AccountWallet.AMOUNT,NumberConstants.number_double_zero)
             val position=data.getIntExtra(WkStringConstants.STR_POSITION_LOW,NumberConstants.number_int_one_Negative)
             val money=HashMap<String,Double>()
             money[unit]=amount

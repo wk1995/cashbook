@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.annotation.WorkerThread
 import com.wk.cashbook.R
-import com.wk.cashbook.trade.data.TradeAccount
+import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.BaseSimpleDialog
@@ -132,9 +132,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
      *
      * */
     fun showTradeAccount(accountId: Long, accountType: Int = 0) {
-        mSubscriptions.add(Observable.create(Observable.OnSubscribe<TradeAccount> { t ->
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<AccountWallet> { t ->
             t?.onNext(
-                    LitePal.find(TradeAccount::class.java, accountId)
+                    LitePal.find(AccountWallet::class.java, accountId)
             )
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -165,7 +165,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     fun showTradeAccount(bundle: Bundle?) {
         val accountType = bundle?.getInt("accountType") ?: 0
-        val accountId = bundle?.getLong(TradeAccount.ACCOUNT_ID) ?: return
+        val accountId = bundle?.getLong(AccountWallet.ACCOUNT_MONEY_ID) ?: return
         showTradeAccount(accountId, accountType)
     }
 
@@ -308,12 +308,12 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
      * 涉及到内部转账时，原账户1，2，如果与现账户相等，
      * 保存一个账户数据时，后一个账户需要重新获取数据再进行操作
      * */
-    private fun checkAccount(needCheckAccount: TradeAccount, vararg accountIds: Long): TradeAccount {
-        val needCheckAccountId = needCheckAccount.baseObjId
+    private fun checkAccount(needCheckAccountWallet: AccountWallet, vararg accountIds: Long): AccountWallet {
+        val needCheckAccountId = needCheckAccountWallet.baseObjId
         if (accountIds.contains(needCheckAccountId)) {
-            return LitePal.find(TradeAccount::class.java, needCheckAccountId)
+            return LitePal.find(AccountWallet::class.java, needCheckAccountId)
         }
-        return needCheckAccount
+        return needCheckAccountWallet
     }
 
 
@@ -335,10 +335,10 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                         val rootCategory = LitePal.find(TradeCategory::class.java, rootCategoryId)
                         val accountId = mTradeInfoModel.getAccountId()
 
-                        if (accountId <= TradeAccount.INVALID_ID) {
+                        if (accountId <= AccountWallet.INVALID_ID) {
                             WkLog.i("accountId is invalid")
                         }
-                        var account = LitePal.find(TradeAccount::class.java, accountId)
+                        var account = LitePal.find(AccountWallet::class.java, accountId)
                         if (account == null) {
                             WkLog.i("TradeAccount is null")
                             return@runInTransaction false
@@ -354,9 +354,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                         if (rootCategoryId == originRootCategoryId) {
                             WkLog.i("根类别未发生变化")
                             if (accountId != originAccountId) {
-                                if (originAccountId > TradeAccount.INVALID_ID) {
+                                if (originAccountId > AccountWallet.INVALID_ID) {
                                     WkLog.i("账户发生变化")
-                                    val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                    val originAccount = LitePal.find(AccountWallet::class.java, originAccountId)
                                     if (originAccount == null) {
                                         WkLog.i("originAccount is null")
                                         return@runInTransaction false
@@ -441,9 +441,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                                 }
                                             } else {
                                                 //以前有账户
-                                                if (originAccountId > TradeAccount.INVALID_ID) {
+                                                if (originAccountId > AccountWallet.INVALID_ID) {
                                                     WkLog.i("原账户1 有效")
-                                                    val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                    val originAccount = LitePal.find(AccountWallet::class.java, originAccountId)
                                                     if (originAccount == null) {
                                                         WkLog.i("originAccount is null")
                                                         return@runInTransaction false
@@ -463,11 +463,11 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                         }
                                         if (originRootCategory.isInternalTransfer()) {
                                             WkLog.i("由内部转账变为收入")
-                                            mTradeInfoModel.setReceiveAccountId(TradeAccount.INVALID_ID)
+                                            mTradeInfoModel.setReceiveAccountId(AccountWallet.INVALID_ID)
                                             val originReceiveAccountId = mTradeInfoModel.originReceiveId
-                                            if (originReceiveAccountId > TradeAccount.INVALID_ID) {
+                                            if (originReceiveAccountId > AccountWallet.INVALID_ID) {
                                                 WkLog.i("原 账户2 有效")
-                                                val originReceiveAccount = LitePal.find(TradeAccount::class.java, originReceiveAccountId)
+                                                val originReceiveAccount = LitePal.find(AccountWallet::class.java, originReceiveAccountId)
                                                 if (originReceiveAccount == null) {
                                                     WkLog.i("originReceiveAccount is null")
                                                     return@runInTransaction false
@@ -480,9 +480,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                             }
                                             if (originAccountId != accountId) {
                                                 WkLog.i("账户1 发生改变")
-                                                if (originAccountId > TradeAccount.INVALID_ID) {
+                                                if (originAccountId > AccountWallet.INVALID_ID) {
                                                     WkLog.i("原 账户1 有效")
-                                                    val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                    val originAccount = LitePal.find(AccountWallet::class.java, originAccountId)
                                                     if (originAccount == null) {
                                                         WkLog.i("originAccount is null")
                                                         return@runInTransaction false
@@ -512,9 +512,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                         when {
                                             originRootCategory.isInternalTransfer() -> {
                                                 WkLog.i("内部转账->支出")
-                                                mTradeInfoModel.setReceiveAccountId(TradeAccount.INVALID_ID)
+                                                mTradeInfoModel.setReceiveAccountId(AccountWallet.INVALID_ID)
                                                 val originReceiveAccountId = mTradeInfoModel.originReceiveId
-                                                val originReceiveAccount = LitePal.find(TradeAccount::class.java, originReceiveAccountId)
+                                                val originReceiveAccount = LitePal.find(AccountWallet::class.java, originReceiveAccountId)
                                                 if (originReceiveAccount == null) {
                                                     WkLog.i("originReceiveAccount is null originReceiveAccountId is $originReceiveAccountId")
                                                     return@runInTransaction false
@@ -526,9 +526,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                                 }
                                                 if (originAccountId != accountId) {
                                                     WkLog.i("账户1 发生了改变")
-                                                    if (originAccountId > TradeAccount.INVALID_ID) {
+                                                    if (originAccountId > AccountWallet.INVALID_ID) {
                                                         WkLog.i("原账户1 有效")
-                                                        val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                        val originAccount = LitePal.find(AccountWallet::class.java, originAccountId)
                                                         if (originAccount == null) {
                                                             WkLog.i("originAccount is null")
                                                             return@runInTransaction false
@@ -564,9 +564,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                                 WkLog.i("收入->支出")
                                                 if (originAccountId != accountId) {
                                                     WkLog.i("账户1 发生了改变")
-                                                    if (originAccountId > TradeAccount.INVALID_ID) {
+                                                    if (originAccountId > AccountWallet.INVALID_ID) {
                                                         WkLog.i("原账户1 有效")
-                                                        val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                        val originAccount = LitePal.find(AccountWallet::class.java, originAccountId)
                                                         if (originAccount == null) {
                                                             WkLog.i("originAccount is null")
                                                             return@runInTransaction false
@@ -611,9 +611,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
                                                 if (accountId != originAccountId) {
                                                     WkLog.i("accountId != originAccountId")
-                                                    if (originAccountId > TradeAccount.INVALID_ID) {
+                                                    if (originAccountId > AccountWallet.INVALID_ID) {
                                                         WkLog.i(" originAccountId is valid")
-                                                        val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                        val originAccount = LitePal.find(AccountWallet::class.java, originAccountId)
                                                         if (originAccount == null) {
                                                             WkLog.i("originAccount is null")
                                                             return@runInTransaction false
@@ -644,11 +644,11 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
 
                                                 val receiveId = mTradeInfoModel.getReceiveAccountId()
-                                                if (receiveId <= TradeAccount.INVALID_ID) {
+                                                if (receiveId <= AccountWallet.INVALID_ID) {
                                                     WkLog.i("receiveId is invalid")
                                                     return@runInTransaction false
                                                 }
-                                                val receiveAccount = LitePal.find(TradeAccount::class.java, receiveId)
+                                                val receiveAccount = LitePal.find(AccountWallet::class.java, receiveId)
                                                 if (receiveAccount == null) {
                                                     WkLog.i("receiveAccount == null")
                                                     return@runInTransaction false
@@ -663,9 +663,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                             originRootCategory.isComeIn() -> {
                                                 if (accountId != originAccountId) {
                                                     WkLog.i("accountId != originAccountId")
-                                                    if (originAccountId > TradeAccount.INVALID_ID) {
+                                                    if (originAccountId > AccountWallet.INVALID_ID) {
                                                         WkLog.i(" originAccountId is valid")
-                                                        val originAccount = LitePal.find(TradeAccount::class.java, originAccountId)
+                                                        val originAccount = LitePal.find(AccountWallet::class.java, originAccountId)
                                                         if (originAccount == null) {
                                                             WkLog.i("originAccount is null")
                                                             return@runInTransaction false
@@ -690,11 +690,11 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                                                     }
                                                 }
                                                 val receiveId = mTradeInfoModel.getReceiveAccountId()
-                                                if (receiveId <= TradeAccount.INVALID_ID) {
+                                                if (receiveId <= AccountWallet.INVALID_ID) {
                                                     WkLog.i("receiveId is invalid")
                                                     return@runInTransaction false
                                                 }
-                                                val receiveAccount = LitePal.find(TradeAccount::class.java, receiveId)
+                                                val receiveAccount = LitePal.find(AccountWallet::class.java, receiveId)
                                                 if (receiveAccount == null) {
                                                     WkLog.i("receiveAccount is null")
                                                     return@runInTransaction false
@@ -753,7 +753,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         //如果消费金额也发生变化,原接受账号要减掉原来的金额
         val amount = mTradeInfoModel.getMoney()
         val origin = mTradeInfoModel.originAmount
-        val receiveAccount = LitePal.find(TradeAccount::class.java, mTradeInfoModel.getReceiveAccountId())
+        val receiveAccount = LitePal.find(AccountWallet::class.java, mTradeInfoModel.getReceiveAccountId())
         if (receiveAccount == null) {
             WkLog.i("receiveAccount is null")
             return false
@@ -761,9 +761,9 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
         if (receiveAccountId != originReceiveId) {
             WkLog.i("账户2发生改变")
-            if (originReceiveId > TradeAccount.INVALID_ID) {
+            if (originReceiveId > AccountWallet.INVALID_ID) {
                 WkLog.i("原账户2有效")
-                val originReceiveAccount = LitePal.find(TradeAccount::class.java, mTradeInfoModel.originReceiveId)
+                val originReceiveAccount = LitePal.find(AccountWallet::class.java, mTradeInfoModel.originReceiveId)
                 if (originReceiveAccount == null) {
                     WkLog.i("originAccount is null")
                     return false

@@ -1,7 +1,5 @@
 package com.wk.cashbook.trade.data
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.annotation.WorkerThread
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
@@ -14,12 +12,12 @@ import org.litepal.crud.LitePalSupport
  * create date  : 2021/03/10
  * desc         : 交易记录
  * @param tradeTime 交易时间
- * @param accountId 账户 [TradeAccount]
+ * @param accountId 账户 [AccountWallet]
  * @param categoryId 类别  [TradeCategory]
  * @param flagIds 标签 [TradeFlag]
  * @param amount 金额
  * @param tradeNote 备注
- * @param receiveAccountId 收款账户 [TradeAccount]
+ * @param receiveAccountId 收款账户 [AccountWallet]
  * @param relationTradeId 关联交易 比如还款
  */
 

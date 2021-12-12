@@ -2,7 +2,6 @@ package com.wk.cashbook.module
 
 import androidx.annotation.WorkerThread
 import com.wk.cashbook.R
-import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.projects.common.BaseApplication
 import com.wk.projects.common.configuration.WkProjects

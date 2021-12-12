@@ -3,6 +3,7 @@ package com.wk.cashbook.trade.account.list
 import android.content.Intent
 import com.wk.cashbook.CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
 import com.wk.cashbook.trade.account.AccountInfoActivity
+import com.wk.cashbook.trade.data.CurrencyType
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
@@ -47,29 +48,40 @@ class AccountListPresent(private val mAccountListActivity: AccountListActivity) 
     }
 
     fun initData() {
-        mSubscriptions?.add(Observable.create(Observable.OnSubscribe<List<TradeAccount>> {
-            it.onNext(LitePal.findAll(TradeAccount::class.java))
+        mSubscriptions?.add(Observable.create(Observable.OnSubscribe<List<AccountListShowBean>> {
+            val tradeAccounts = LitePal.findAll(TradeAccount::class.java)
+            val accountListShowBeans = ArrayList<AccountListShowBean>()
+            tradeAccounts.forEach { tradeAccount ->
+                val wallet = HashMap<String, Double>()
+                val accountWallets = tradeAccount.accountWallets
+                accountWallets.forEach { accountWallet ->
+                    val walletAmount = wallet[accountWallet.unit]
+                            ?: NumberConstants.number_double_zero
+                    wallet[accountWallet.unit] = walletAmount + accountWallet.amount
+                }
+                if (wallet.isEmpty()) {
+                    wallet[CurrencyType.RenMinBi.mCurrencyCode] = NumberConstants.number_double_zero
+                }
+                accountListShowBeans.add(
+                        AccountListShowBean(wallet, tradeAccount.accountName,
+                                tradeAccount.note, accountId = tradeAccount.baseObjId))
+            }
+            it.onNext(accountListShowBeans)
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     WkLog.i("tradeAccount size: ${it.size}")
-                    val result = it.map { tradeAccount ->
-                        val money = HashMap<String, Double>()
-                        money[tradeAccount.unit] = tradeAccount.amount
-                        AccountListShowBean(money,
-                                tradeAccount.accountName, tradeAccount.note, tradeAccount.baseObjId)
-                    }
-                    mAccountListActivity.updateData(result)
+                    mAccountListActivity.updateData(it)
                 }
         )
     }
 
     fun goToInfoActivity(id: Long = TradeAccount.INVALID_ID,
                          position: Int = NumberConstants.number_int_one_Negative) {
-        val intent = Intent(mAccountListActivity, AccountInfoActivity::class.java)
-        intent.putExtra(TradeAccount.ACCOUNT_ID, id)
-        intent.putExtra(WkStringConstants.STR_POSITION_LOW, position)
-        mAccountListActivity.startActivityForResult(intent, REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
+//        val intent = Intent(mAccountListActivity, AccountInfoActivity::class.java)
+//        intent.putExtra(TradeAccount.ACCOUNT_ID, id)
+//        intent.putExtra(WkStringConstants.STR_POSITION_LOW, position)
+//        mAccountListActivity.startActivityForResult(intent, REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
     }
 
     fun deleteData(id: Long?, position: Int) {

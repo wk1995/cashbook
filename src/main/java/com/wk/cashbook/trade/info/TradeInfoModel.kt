@@ -3,7 +3,7 @@ package com.wk.cashbook.trade.info
 import android.os.Bundle
 import com.wk.cashbook.CashBookConfig
 import com.wk.cashbook.CashBookConstants
-import com.wk.cashbook.trade.data.TradeAccount
+import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeCategory.Companion.INVALID_ID
 import com.wk.cashbook.trade.data.TradeRecode
@@ -33,9 +33,9 @@ class TradeInfoModel(private val mTradeRecordInfoPresent: TradeRecordInfoPresent
 
     var originRootCategoryId: Long = INVALID_ID
 
-    var originAccountId: Long = TradeAccount.INVALID_ID
+    var originAccountId: Long = AccountWallet.INVALID_ID
 
-    var originReceiveId: Long = TradeAccount.INVALID_ID
+    var originReceiveId: Long = AccountWallet.INVALID_ID
 
     var originAmount: Double = NumberConstants.number_double_zero
 

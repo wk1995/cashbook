@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.account.list.AccountListShowBean
-import com.wk.cashbook.trade.data.TradeAccount
+import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.info.TradeRecordInfoPresent
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.ui.recycler.IRvClickListener
@@ -56,7 +56,7 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
         if(adapter==mChooseAccountAdapter) {
-            arguments?.putLong(TradeAccount.ACCOUNT_ID,mChooseAccountAdapter.getItemId(position))
+            arguments?.putLong(AccountWallet.ACCOUNT_MONEY_ID,mChooseAccountAdapter.getItemId(position))
             mTradeRecordInfoPresent?.showTradeAccount(arguments)
             disMiss()
         }
@@ -68,8 +68,8 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
 
 
     private fun initData(){
-        Observable.create(Observable.OnSubscribe<List<TradeAccount>> {
-            it.onNext(LitePal.findAll(TradeAccount::class.java))
+        Observable.create(Observable.OnSubscribe<List<AccountWallet>> {
+            it.onNext(LitePal.findAll(AccountWallet::class.java))
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

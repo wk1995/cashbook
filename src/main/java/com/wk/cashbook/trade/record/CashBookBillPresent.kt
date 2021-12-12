@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.CashBookSql
 import com.wk.cashbook.CashBookSql.SQL_QUERY_TRADE_RECODE_GROUP_DATE
-import com.wk.cashbook.trade.data.TradeAccount
+import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
@@ -187,7 +187,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                     return@runInTransaction false
                 }
 
-                val account = LitePal.find(TradeAccount::class.java, tradeRecode.accountId)
+                val account = LitePal.find(AccountWallet::class.java, tradeRecode.accountId)
                 if (account != null) {
                     val rootCategory = TradeRecode.getRootTradeCategory(tradeRecode.categoryId)
                             ?: return@runInTransaction false
@@ -210,7 +210,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
                         }
                         rootCategory.isInternalTransfer() -> {
                             WkLog.i("删除的交易属于内部转账")
-                            val receiveAccount = LitePal.find(TradeAccount::class.java, tradeRecode.receiveAccountId)
+                            val receiveAccount = LitePal.find(AccountWallet::class.java, tradeRecode.receiveAccountId)
                             if (receiveAccount == null) {
                                 WkToast.showToast("属于内部交易，但没有交易对象 删除失败")
                                 return@runInTransaction false

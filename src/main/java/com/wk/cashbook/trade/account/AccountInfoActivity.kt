@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import com.wk.cashbook.CashBookActivityResultCode.RESULT_CODE_ACCOUNT_INFO_ACTIVITY
 import com.wk.cashbook.R
+import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.constant.NumberConstants
@@ -29,7 +30,7 @@ class AccountInfoActivity : BaseProjectsActivity() {
     private lateinit var etAccountMoney: EditText
     private lateinit var btnAccountSave: Button
 
-    private var mCurrentTradeAccount: TradeAccount? = null
+    private var mCurrentAccountWallet: TradeAccount? = null
     private var mSubscriptions: CompositeSubscription? = null
 
     override fun initResLayId() = R.layout.cashbook_account_info_activity
@@ -74,13 +75,13 @@ class AccountInfoActivity : BaseProjectsActivity() {
             }).subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        mCurrentTradeAccount = it
-                        setName(mCurrentTradeAccount?.accountName ?: WkStringConstants.STR_EMPTY)
-                        setMoney(mCurrentTradeAccount?.amount ?: NumberConstants.number_double_zero)
+                        mCurrentAccountWallet = it
+                        setName(mCurrentAccountWallet?.accountName ?: WkStringConstants.STR_EMPTY)
+//                        setMoney(mCurrentAccountWallet?.amount ?: NumberConstants.number_double_zero)
                     }
             )
         } else {
-            mCurrentTradeAccount = TradeAccount(WkStringConstants.STR_EMPTY)
+//            mCurrentAccountWallet = AccountWallet(WkStringConstants.STR_EMPTY)
         }
     }
 
@@ -91,7 +92,7 @@ class AccountInfoActivity : BaseProjectsActivity() {
                 finish()
             }
             R.id.btnAccountSave -> {
-                mCurrentTradeAccount?.apply {
+              /*  mCurrentAccountWallet?.apply {
                     accountName = etAccountName.text.toString()
                     amount = try {
                         etAccountMoney.text.toString().toDouble()
@@ -107,11 +108,11 @@ class AccountInfoActivity : BaseProjectsActivity() {
                                         if (it) {
                                             WkToast.showToast("保存成功")
                                             val resultIntent = Intent()
-                                            resultIntent.putExtra(TradeAccount.ACCOUNT_ID, baseObjId)
-                                            resultIntent.putExtra(TradeAccount.ACCOUNT_NAME, accountName)
-                                            resultIntent.putExtra(TradeAccount.NOTE, note)
-                                            resultIntent.putExtra(TradeAccount.UNIT, unit)
-                                            resultIntent.putExtra(TradeAccount.AMOUNT, amount)
+                                            resultIntent.putExtra(AccountWallet.ACCOUNT_MONEY_ID, baseObjId)
+                                            resultIntent.putExtra(AccountWallet.ACCOUNT_NAME, accountName)
+                                            resultIntent.putExtra(AccountWallet.NOTE, note)
+                                            resultIntent.putExtra(AccountWallet.UNIT, unit)
+                                            resultIntent.putExtra(AccountWallet.AMOUNT, amount)
                                             resultIntent.putExtra(STR_POSITION_LOW,
                                                     intent.getIntExtra(STR_POSITION_LOW, NumberConstants.number_int_one_Negative))
                                             setResult(RESULT_CODE_ACCOUNT_INFO_ACTIVITY, resultIntent)
@@ -121,7 +122,7 @@ class AccountInfoActivity : BaseProjectsActivity() {
                                         }
                                     }
                     )
-                }
+                }*/
             }
 
         }
