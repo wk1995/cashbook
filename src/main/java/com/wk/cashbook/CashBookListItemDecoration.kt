@@ -1,4 +1,4 @@
-package com.wk.cashbook.trade.record
+package com.wk.cashbook
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,7 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.wk.cashbook.R
+import com.wk.cashbook.trade.record.CashListAdapter
 import com.wk.projects.common.resource.WkContextCompat
 
 

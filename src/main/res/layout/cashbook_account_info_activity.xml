@@ -30,9 +30,9 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/d10dp"
             android:text="@string/cashbook_money_detail"
-            app:layout_constraintTop_toTopOf="@id/ivAccountListBack"
-            app:layout_constraintStart_toEndOf="@id/ivAccountListBack"
-            app:layout_constraintBottom_toBottomOf="@id/ivAccountListBack"/>
+            app:layout_constraintTop_toTopOf="@id/viewTitleLeft1"
+            app:layout_constraintStart_toEndOf="@id/viewTitleLeft1"
+            app:layout_constraintBottom_toBottomOf="@id/viewTitleLeft1"/>
     </LinearLayout>
 
     <EditText

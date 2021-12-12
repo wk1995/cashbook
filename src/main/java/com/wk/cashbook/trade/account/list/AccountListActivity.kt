@@ -2,14 +2,15 @@ package com.wk.cashbook.trade.account.list
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
 import com.wk.cashbook.CashBookActivityResultCode.RESULT_CODE_ACCOUNT_INFO_ACTIVITY
+import com.wk.cashbook.CashBookListItemDecoration
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeAccount.Companion.INVALID_ID
@@ -19,6 +20,8 @@ import com.wk.projects.common.communication.IFragmentToActivity
 import com.wk.projects.common.communication.constant.IFAFlag
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
+import com.wk.projects.common.resource.WkContextCompat
+import com.wk.projects.common.ui.WkCommonActionBar
 import com.wk.projects.common.ui.recycler.IRvClickListener
 
 /**
@@ -28,7 +31,8 @@ import com.wk.projects.common.ui.recycler.IRvClickListener
 class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentToActivity {
 
     /**返回键*/
-    private lateinit var ivAccountListBack:ImageView
+    private lateinit var wbTitle: WkCommonActionBar
+
     /**总资产*/
     private lateinit var ivAllAmount:TextView
 
@@ -47,6 +51,11 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
     }
 
     override fun initResLayId()=R.layout.cashbook_account_list_activity
+
+    override fun beforeSetContentView() {
+        super.beforeSetContentView()
+        supportActionBar?.hide()
+    }
 
     override fun bindView(savedInstanceState: Bundle?, mBaseProjectsActivity: BaseProjectsActivity) {
         mAccountListPresent.onCreate()
@@ -71,14 +80,19 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
     }
 
     private fun initView(){
-        ivAccountListBack=findViewById(R.id.ivAccountListBack)
-        ivAllAmount=findViewById(R.id.ivAllAmount)
+        wbTitle=findViewById(R.id.wbTitle)
+        wbTitle.setMiddleViewText(R.string.cashbook_activity_title_amount_manager)
+        wbTitle.setMiddleViewGravity(Gravity.END or Gravity.CENTER_VERTICAL)
+        wbTitle.setMiddleViewTextColor(WkContextCompat.getColor(this,R.color.common_black_2B2A2A))
+        ivAllAmount=findViewById(R.id.tvAllAmount)
         btnAddAccount=findViewById(R.id.btnAddAccount)
         initAccountList()
     }
 
     private fun initListener(){
-        ivAccountListBack.setOnClickListener(this)
+        wbTitle.setLeftViewClickListener{
+            mAccountListPresent.back()
+        }
         btnAddAccount.setOnClickListener(this)
     }
 
@@ -86,13 +100,12 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
         rvAccountList=findViewById(R.id.rvAccountList)
         rvAccountList.layoutManager=LinearLayoutManager(this)
         rvAccountList.adapter=mAccountListAdapter
+        rvAccountList.addItemDecoration(CashBookListItemDecoration(this))
     }
+
     override fun onClick(v: View?) {
         super.onClick(v)
         when(v?.id){
-            R.id.ivAccountListBack->{
-                mAccountListPresent.back()
-            }
             R.id.btnAddAccount->{
                 mAccountListPresent.goToInfoActivity()
             }

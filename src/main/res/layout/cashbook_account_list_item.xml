@@ -3,66 +3,74 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/d60dp">
+    android:layout_height="@dimen/d60dp"
+    tools:background="@color/common_white_FFFCFC">
+
     <ImageView
         android:id="@+id/ivAccountItemPic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/d15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/abc_vector_test" />
+
+    <ImageView
+        android:id="@+id/ivAccountItemFlag"
+        android:layout_width="16dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="@dimen/d10dp"
+        android:src="@drawable/common_left_arror"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:src="@drawable/abc_vector_test"
-        />
-    <TextView
-        android:id="@+id/tvAccountItemName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/d5dp"
-        android:layout_marginStart="@dimen/d5dp"
-        android:textSize="@dimen/s14sp"
-        app:layout_constraintStart_toEndOf="@id/ivAccountItemPic"
-        app:layout_constraintTop_toTopOf="@id/ivAccountItemPic"
-        app:layout_constraintBottom_toTopOf="@id/tvAccountItemNote"
-        tools:text="支付宝"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvAccountItemNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/common_black_2B2A2A"
         android:textSize="@dimen/s10sp"
-        app:layout_constraintStart_toStartOf="@id/tvAccountItemName"
         app:layout_constraintBottom_toBottomOf="@id/ivAccountItemPic"
+        app:layout_constraintStart_toStartOf="@id/tvAccountItemName"
         app:layout_constraintTop_toBottomOf="@id/tvAccountItemName"
-        tools:text="总账户"/>
-    <ImageView
-        android:id="@+id/ivAccountItemFlag"
+        tools:text="总账户" />
+
+    <TextView
+        android:id="@+id/tvAccountItemName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/d15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:src="@drawable/abc_vector_test"/>
-    <include
-        android:id="@+id/llAccountItemMoney"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/d10dp"
-        android:layout_marginEnd="@dimen/d10dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ivAccountItemFlag"
-        app:layout_constraintStart_toEndOf="@id/tvAccountItemName"
-        layout="@layout/cashbook_account_list_item_money_item"/>
+        android:layout_marginStart="@dimen/d5dp"
+        android:layout_marginBottom="@dimen/d5dp"
+        android:textColor="@color/common_black_2B2A2A"
+        android:textSize="@dimen/s14sp"
+        app:layout_constraintBottom_toTopOf="@id/tvAccountItemNote"
+        app:layout_constraintStart_toEndOf="@id/ivAccountItemPic"
+        app:layout_constraintTop_toTopOf="@id/ivAccountItemPic"
+        tools:text="支付宝" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAccountItemMoney"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/d10dp"
         android:layout_marginEnd="@dimen/d10dp"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/ivAccountItemFlag"
-        app:layout_constraintStart_toEndOf="@id/tvAccountItemName"/>
+        app:layout_constraintStart_toEndOf="@id/tvAccountItemName"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/llAccountItemMoney"
+        layout="@layout/cashbook_account_list_item_money_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/d10dp"
+        android:layout_marginEnd="@dimen/d10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ivAccountItemFlag"
+        app:layout_constraintStart_toEndOf="@id/tvAccountItemName"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

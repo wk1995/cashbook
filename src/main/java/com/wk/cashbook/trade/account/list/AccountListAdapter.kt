@@ -24,6 +24,23 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
                          private val mIRvClickListener: IRvClickListener)
     : RecyclerView.Adapter<AccountListAdapter.AccountListVH>() {
 
+
+    private val moneyRvAdapter by lazy {
+        AccountListMoneyListAdapter()
+    }
+
+    private val moneySpanSizeLookup by lazy {
+        object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (moneyRvAdapter.itemCount <= 1) {
+                    2
+                } else {
+                    1
+                }
+            }
+        }
+    }
+
     class AccountListVH(rootView: View, val ivAccountItemPic: ImageView, val tvAccountItemName: TextView,
                         val tvAccountItemNote: TextView, val rvAccountItemMoney: RecyclerView,
                         val llAccountItemMoney: LinearLayout)
@@ -37,8 +54,10 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
         val tvAccountItemNote = rootView.findViewById<TextView>(R.id.tvAccountItemNote)
         val rvAccountItemMoney = rootView.findViewById<RecyclerView>(R.id.rvAccountItemMoney)
         val llAccountItemMoney = rootView.findViewById<LinearLayout>(R.id.llAccountItemMoney)
-        rvAccountItemMoney.layoutManager = GridLayoutManager(parent.context, 2)
-        rvAccountItemMoney.adapter = AccountListMoneyListAdapter()
+        val moneyRvLayoutManager=GridLayoutManager(parent.context, 2)
+        moneyRvLayoutManager.spanSizeLookup = moneySpanSizeLookup
+        rvAccountItemMoney.layoutManager = moneyRvLayoutManager
+        rvAccountItemMoney.adapter = moneyRvAdapter
         return AccountListVH(rootView, ivAccountItemPic, tvAccountItemName, tvAccountItemNote,
                 rvAccountItemMoney, llAccountItemMoney)
     }
@@ -56,14 +75,14 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
             tvAccountItemName.text = bean.name
             tvAccountItemNote.text = bean.note
             val money = bean.money
-            if (money.size <= 1) {
+         /*   if (money.size <= 1) {
                 rvAccountItemMoney.visibility = View.GONE
                 llAccountItemMoney.visibility = View.VISIBLE
                 money.keys.forEach {
                     llAccountItemMoney.findViewById<TextView>(R.id.tvCurrencyTypeName).text = it
                     llAccountItemMoney.findViewById<TextView>(R.id.tvCurrencyTypeAmount).text = money[it].toString()
                 }
-            } else {
+            } else {*/
                 llAccountItemMoney.visibility = View.GONE
                 rvAccountItemMoney.visibility = View.VISIBLE
                 val adapter = rvAccountItemMoney.adapter
@@ -72,7 +91,7 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
                         Pair(it.key, it.value)
                     })
                 }
-            }
+//            }
 
 
         }
@@ -91,16 +110,16 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
         notifyItemInserted(itemCount - 1)
     }
 
-    fun removeData(position: Int){
+    fun removeData(position: Int) {
         mAccounts.removeAt(position)
         notifyItemRemoved(position)
-        notifyItemChanged(position,itemCount)
+        notifyItemChanged(position, itemCount)
     }
 
 
-    fun updateData(account:AccountListShowBean,position: Int){
-        mAccounts.add(position,account)
-        mAccounts.removeAt(position+1)
+    fun updateData(account: AccountListShowBean, position: Int) {
+        mAccounts.add(position, account)
+        mAccounts.removeAt(position + 1)
         notifyItemChanged(position)
     }
 

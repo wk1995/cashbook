@@ -15,7 +15,8 @@ import org.litepal.crud.LitePalSupport
  *      GitHub : https://github.com/wk1995
  *      CSDN   : http://blog.csdn.net/qq_33882671
  * */
-data class AccountCategory(var name: String, var createTime: Long, var image: ByteArray) : LitePalSupport() {
+data class AccountCategory(var name: String, var createTime: Long, var image: ByteArray
+) : LitePalSupport() {
 
     public override fun getBaseObjId(): Long {
         return super.getBaseObjId()

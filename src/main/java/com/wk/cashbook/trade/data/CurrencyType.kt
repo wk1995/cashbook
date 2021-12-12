@@ -6,11 +6,28 @@ package com.wk.cashbook.trade.data
  *      e-mail : 1226426603@qq.com
  *      time   : 2021/10/14
  *      desc   : 币种，货币类型
+ *      see http://www.webmasterhome.cn/huilv/huobidaima.asp
  *      GitHub : https://github.com/wk1995
  *      CSDN   : http://blog.csdn.net/qq_33882671
+ * @param mCurrencyCode 货币代码
+ * @param chinese 中文
+ * @param english 英文
  * */
-enum class CurrencyType(shorthand:String,chinese:String,english:String) {
+enum class CurrencyType(val mCurrencyCode:String, chinese:String, english:String) {
 
-    Renminbi("CYN","人民币","Renminbi"),
-    Dollar("CYN","USD","Dollar")
+    RenMinBi("CYN","人民币","RenMinBi"),
+    Dollar("USD","美元","Dollar"),
+    HongKongDollar("HKD","港币","Hong Kong Dollar"),
+    NewTaiwanDollar("TWD","新台币","New Taiwan Dollar"),
+    MacauPataca("MOP","澳门元","Macau Pataca"),
+    SouthKoreanWon("KRW","韩元","South Korean Won"),
+    ThaiBaht("THB","泰铢","Thai Baht"),
+    Euro("EUR","欧元","Euro"),
+    BritishPound("GBP","英镑","British Pound"),
+    SingaporeDollar("SGD","新加坡元","Singapore Dollar"),
+    AustraliaDollar("AUD","澳元 ","Australia Dollar"),
+    CanadianDollar("CAD","加元 ","Canadian Dollar"),
+    JapaneseYen("JPY","日元","Japanese Yen")
+
+
 }

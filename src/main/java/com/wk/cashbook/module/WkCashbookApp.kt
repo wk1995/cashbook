@@ -7,6 +7,7 @@ import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.projects.common.BaseApplication
 import com.wk.projects.common.configuration.WkProjects
 import org.litepal.LitePal
+import org.litepal.tablemanager.callback.DatabaseListener
 
 /**
  * @author      :wangkang_shenlong
@@ -27,7 +28,17 @@ class WkCashbookApp : BaseApplication() {
             initTradeAccount()
             initTradeCategory()
         }.start()
+        LitePal.registerDatabaseListener(object :DatabaseListener{
+            override fun onCreate() {
 
+            }
+
+            override fun onUpgrade(oldVersion: Int, newVersion: Int) {
+                if(oldVersion==1){
+
+                }
+            }
+        })
     }
 
     companion object {

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -18,16 +17,14 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.wk.cashbook.R
 import com.wk.cashbook.databinding.CashbookBillListActivityBinding
+import com.wk.cashbook.CashBookListItemDecoration
 import com.wk.cashbook.trade.account.list.AccountListActivity
-import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.info.TradeRecordInfoActivity
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.communication.IRvClickListener
 import com.wk.projects.common.communication.constant.IFAFlag
-import com.wk.projects.common.constant.NumberConstants
-import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.constant.WkStringConstants.STR_INT_ZERO
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat

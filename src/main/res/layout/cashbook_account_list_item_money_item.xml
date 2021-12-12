@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:background="@color/common_white_F1F0F0">
     <TextView
         android:id="@+id/tvCurrencyTypeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/common_black_2B2A2A"
         tools:text="CYN："/>
     <TextView
         android:id="@+id/tvCurrencyTypeAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/common_black_2B2A2A"
         tools:text="1009"/>
 </LinearLayout>
