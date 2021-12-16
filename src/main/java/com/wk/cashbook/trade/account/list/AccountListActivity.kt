@@ -52,11 +52,6 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
 
     override fun initResLayId()=R.layout.cashbook_account_list_activity
 
-    override fun beforeSetContentView() {
-        super.beforeSetContentView()
-        supportActionBar?.hide()
-    }
-
     override fun bindView(savedInstanceState: Bundle?, mBaseProjectsActivity: BaseProjectsActivity) {
         mAccountListPresent.onCreate()
         initView()
@@ -140,7 +135,8 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
+        mAccountListPresent.initData()
+        /*if(requestCode==REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
                 && resultCode==RESULT_CODE_ACCOUNT_INFO_ACTIVITY){
             val id=data?.getLongExtra(AccountWallet.ACCOUNT_MONEY_ID,INVALID_ID)?:return
             if(id<=INVALID_ID){
@@ -159,7 +155,7 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
             }else{
                 mAccountListAdapter.updateData(showBean,position)
             }
-        }
+        }*/
     }
 
     fun updateData(accounts:List<AccountListShowBean>){

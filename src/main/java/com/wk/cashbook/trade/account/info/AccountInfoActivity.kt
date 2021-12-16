@@ -1,0 +1,192 @@
+package com.wk.cashbook.trade.account.info
+
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.wk.cashbook.R
+import com.wk.cashbook.trade.data.AccountWallet
+import com.wk.cashbook.trade.data.TradeAccount
+import com.wk.projects.common.BaseProjectsActivity
+import com.wk.projects.common.constant.WkStringConstants
+import com.wk.projects.common.log.WkLog
+import com.wk.projects.common.ui.WkCommonActionBar
+import org.litepal.LitePal
+import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
+
+/**
+ * 资金渠道详情
+ * */
+class AccountInfoActivity : BaseProjectsActivity() {
+    private lateinit var btnAddWallet: Button
+    private lateinit var wbAccountInfoTitle: WkCommonActionBar
+    private lateinit var ivAccountInfoPic: ImageView
+    private lateinit var tvAccountInfoName: TextView
+    private lateinit var tvAccountInfoNote: TextView
+    private lateinit var etAccountInfoNote: EditText
+    private lateinit var etAccountInfoName: EditText
+    private lateinit var rvAccountWalletList: RecyclerView
+
+    private lateinit var etAccountWalletNote: EditText
+    private lateinit var etAccountWalletName: EditText
+    private lateinit var etAccountWalletTime: EditText
+    private lateinit var etAccountWalletAmount: EditText
+
+
+    private val adapter by lazy {
+        AccountWalletAdapter()
+    }
+    private var mCurrentAccountWallet: TradeAccount? = null
+
+
+    private val mAccountInfoPresent by lazy{
+        AccountInfoPresent(this)
+    }
+
+    override fun initResLayId() = R.layout.cashbook_account_info_activity
+
+    override fun bindView(savedInstanceState: Bundle?, mBaseProjectsActivity: BaseProjectsActivity) {
+        initView()
+        initListener()
+        initData()
+    }
+
+    private fun initView() {
+        btnAddWallet = findViewById(R.id.btnAddWallet)
+        wbAccountInfoTitle = findViewById(R.id.wbAccountInfoTitle)
+        etAccountInfoName = findViewById(R.id.etAccountInfoName)
+        etAccountInfoNote = findViewById(R.id.etAccountInfoNote)
+        ivAccountInfoPic = findViewById(R.id.ivAccountInfoPic)
+        etAccountWalletNote = findViewById(R.id.etAccountWalletNote)
+        tvAccountInfoName = findViewById(R.id.tvAccountInfoName)
+        tvAccountInfoNote = findViewById(R.id.tvAccountInfoNote)
+        etAccountWalletAmount = findViewById(R.id.etAccountWalletAmount)
+        etAccountWalletName = findViewById(R.id.etAccountWalletName)
+        etAccountWalletTime = findViewById(R.id.etAccountWalletTime)
+        rvAccountWalletList = findViewById(R.id.rvAccountWalletList)
+        rvAccountWalletList.layoutManager=LinearLayoutManager(this)
+        rvAccountWalletList.adapter=adapter
+    }
+
+    private fun initListener() {
+        btnAddWallet.setOnClickListener(this)
+        tvAccountInfoName.setOnClickListener(this)
+        tvAccountInfoNote.setOnClickListener(this)
+        ivAccountInfoPic.setOnClickListener(this)
+    }
+
+    fun setAccountPic(bitmap:Bitmap){
+        ivAccountInfoPic.setImageBitmap(bitmap)
+    }
+
+    fun setAccountName(name: String) {
+        tvAccountInfoName.text = name
+    }
+
+    fun setNote(note: String) {
+        tvAccountInfoNote.text = note
+    }
+
+    fun setWallet(wallets: List<AccountWallet>) {
+        adapter.updateData(wallets)
+    }
+
+    private fun initData() {
+        val id = intent.getLongExtra(TradeAccount.ACCOUNT_ID, TradeAccount.INVALID_ID)
+        mAccountInfoPresent.initData(id)
+    }
+
+    fun showAddAccount(needShow:Boolean){
+        val show=if(needShow){
+            View.VISIBLE
+        }else{
+            View.GONE
+        }
+        etAccountInfoName.visibility=show
+        etAccountInfoNote.visibility=show
+    }
+
+    fun clearAddData(){
+        etAccountInfoName.setText(WkStringConstants.STR_EMPTY)
+        etAccountInfoNote.setText(WkStringConstants.STR_EMPTY)
+        etAccountWalletName.setText(WkStringConstants.STR_EMPTY)
+        etAccountWalletTime.setText(WkStringConstants.STR_EMPTY)
+        etAccountWalletAmount.setText(WkStringConstants.STR_EMPTY)
+        etAccountWalletNote.setText(WkStringConstants.STR_EMPTY)
+    }
+
+
+    override fun onClick(v: View?) {
+        super.onClick(v)
+        when (v?.id) {
+            R.id.btnAddWallet -> {
+                val accountName=etAccountInfoName.text.toString()
+                val accountNote=etAccountInfoNote.text.toString()
+                val walletName=etAccountWalletName.text.toString()
+                val walletNote=etAccountWalletNote.text.toString()
+                val walletTime=etAccountWalletTime.text.toString()
+                val walletAmount=etAccountWalletAmount.text.toString()
+                mAccountInfoPresent.saveOrUpdateAccount(accountName,accountNote,walletName,
+                        walletNote,walletTime,walletAmount)
+
+            }
+            R.id.ivAccountInfoPic -> {
+
+            }
+            R.id.tvAccountInfoNote -> {
+
+            }
+            R.id.tvAccountInfoName -> {
+
+
+
+
+              /*  mCurrentAccountWallet?.apply {
+                    accountName = etAccountName.text.toString()
+                    amount = try {
+                        etAccountMoney.text.toString().toDouble()
+                    } catch (e: NumberFormatException) {
+                        NumberConstants.number_double_zero
+                    }
+                    mSubscriptions?.add(
+                            Observable.create(Observable.OnSubscribe<Boolean> {
+                                it.onNext(saveOrUpdate("id = ?",baseObjId.toString()))
+                            }).subscribeOn(Schedulers.newThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe {
+                                        if (it) {
+                                            WkToast.showToast("保存成功")
+                                            val resultIntent = Intent()
+                                            resultIntent.putExtra(AccountWallet.ACCOUNT_MONEY_ID, baseObjId)
+                                            resultIntent.putExtra(AccountWallet.ACCOUNT_NAME, accountName)
+                                            resultIntent.putExtra(AccountWallet.NOTE, note)
+                                            resultIntent.putExtra(AccountWallet.UNIT, unit)
+                                            resultIntent.putExtra(AccountWallet.AMOUNT, amount)
+                                            resultIntent.putExtra(STR_POSITION_LOW,
+                                                    intent.getIntExtra(STR_POSITION_LOW, NumberConstants.number_int_one_Negative))
+                                            setResult(RESULT_CODE_ACCOUNT_INFO_ACTIVITY, resultIntent)
+                                            finish()
+                                        } else {
+                                            WkToast.showToast("保存失败")
+                                        }
+                                    }
+                    )
+                }*/
+            }
+
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+}

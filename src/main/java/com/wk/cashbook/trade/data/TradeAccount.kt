@@ -16,9 +16,10 @@ import org.litepal.crud.LitePalSupport
  *      GitHub : https://github.com/wk1995
 ` *      CSDN   : http://blog.csdn.net/qq_33882671
  * */
-data class TradeAccount(var accountName: String= WkStringConstants.STR_EMPTY,
-                        val createTime: Long = NumberConstants.number_long_zero,
-                        var note: String=WkStringConstants.STR_EMPTY,
+data class TradeAccount(var accountName: String = WkStringConstants.STR_EMPTY,
+                        val createTime: Long = System.currentTimeMillis(),
+                        var note: String = WkStringConstants.STR_EMPTY,
+                        var accountPic: ByteArray? = null,
                         val accountWallets: MutableList<AccountWallet> = ArrayList())
     : LitePalSupport() {
 
@@ -26,7 +27,7 @@ data class TradeAccount(var accountName: String= WkStringConstants.STR_EMPTY,
         const val ACCOUNT_NAME = "accountname"
         const val CREATE_TIME = "createtime"
         const val NOTE = "note"
-        const val ACCOUNT_ID="account_id"
+        const val ACCOUNT_ID = "account_id"
         const val INVALID_ID = 0L
     }
 
@@ -34,4 +35,34 @@ data class TradeAccount(var accountName: String= WkStringConstants.STR_EMPTY,
     public override fun getBaseObjId(): Long {
         return super.getBaseObjId()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TradeAccount
+
+        if (accountName != other.accountName) return false
+        if (createTime != other.createTime) return false
+        if (note != other.note) return false
+        if (!accountPic.contentEquals(other.accountPic)) return false
+        if (accountWallets != other.accountWallets) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = accountName.hashCode()
+        result = 31 * result + createTime.hashCode()
+        result = 31 * result + note.hashCode()
+        result = 31 * result + accountPic.contentHashCode()
+        result = 31 * result + accountWallets.hashCode()
+        return result
+    }
+
+    fun addWallet(wallet:AccountWallet):Boolean{
+        accountWallets.add(wallet)
+        return save()
+    }
+
 }

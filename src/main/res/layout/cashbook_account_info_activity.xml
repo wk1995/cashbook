@@ -4,57 +4,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".trade.account.AccountInfoActivity">
-    <LinearLayout
-        android:id="@+id/vgTitle"
+    android:padding="@dimen/d15dp"
+    android:background="@color/common_white_F1F0F0"
+    tools:context=".trade.account.info.AccountInfoActivity">
+    <com.wk.projects.common.ui.WkCommonActionBar
+        android:id="@+id/wbAccountInfoTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <ImageView
+        android:id="@+id/ivAccountInfoPic"
+        android:layout_width="@dimen/d40dp"
+        android:layout_height="@dimen/d40dp"
+        android:layout_marginTop="@dimen/d15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wbAccountInfoTitle"
+        tools:src="@drawable/cashbook_account_type_alipay"/>
+    <TextView
+        android:id="@+id/tvAccountInfoName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/d10dp"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintStart_toEndOf="@id/ivAccountInfoPic"
+        app:layout_constraintTop_toTopOf="@id/ivAccountInfoPic"
+        app:layout_constraintBottom_toTopOf="@id/tvAccountInfoName"
+        tools:text="支付宝"/>
+    <TextView
+        android:id="@+id/tvAccountInfoNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/s10sp"
+        android:layout_marginTop="@dimen/d5dp"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintStart_toStartOf="@id/tvAccountInfoName"
+        app:layout_constraintBottom_toBottomOf="@id/ivAccountInfoPic"
+        app:layout_constraintTop_toBottomOf="@id/tvAccountInfoName"
+        tools:text="总账户"/>
+    <Button
+        android:id="@+id/btnAddWallet"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40dp"
+        android:text="@string/common_str_save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <EditText
+        android:id="@+id/etAccountWalletAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="金额"
+        android:inputType="number"
+        android:textColor="@color/common_black_2B2A2A"
+        android:textColorHint="@color/color_grey_7E797B"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <ImageView
-            android:id="@+id/viewTitleLeft1"
-            android:layout_width="@dimen/d40dp"
-            android:layout_height="@dimen/d40dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="@dimen/d5dp"
-            android:layout_marginBottom="@dimen/d5dp"
-            android:layout_marginStart="@dimen/d5dp"
-            android:src="@drawable/common_back_right_arrow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-        <TextView
-            android:id="@+id/viewTitleLeft2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/s20sp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/d10dp"
-            android:text="@string/cashbook_money_detail"
-            app:layout_constraintTop_toTopOf="@id/viewTitleLeft1"
-            app:layout_constraintStart_toEndOf="@id/viewTitleLeft1"
-            app:layout_constraintBottom_toBottomOf="@id/viewTitleLeft1"/>
-    </LinearLayout>
+        app:layout_constraintBottom_toTopOf="@id/btnAddWallet"/>
+    <EditText
+        android:id="@+id/etAccountWalletNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_black_2B2A2A"
+        android:hint="钱包备注"
+        android:textColorHint="@color/color_grey_7E797B"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/etAccountWalletAmount"/>
 
     <EditText
-        android:id="@+id/etAccountName"
+        android:id="@+id/etAccountWalletName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/cashbook_account_name"
+        android:textColor="@color/common_black_2B2A2A"
+        android:hint="钱包名"
+        android:textColorHint="@color/color_grey_7E797B"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/vgTitle"/>
+        app:layout_constraintBottom_toTopOf="@id/etAccountWalletNote"/>
     <EditText
-        android:id="@+id/etAccountMoney"
+        android:id="@+id/etAccountWalletTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/cashbook_account_money"
+        android:textColor="@color/common_black_2B2A2A"
+        android:hint="转现金时间"
+        android:inputType="number"
+        android:textColorHint="@color/color_grey_7E797B"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etAccountName"/>
-    <Button
-        android:id="@+id/btnAccountSave"
+        app:layout_constraintBottom_toTopOf="@id/etAccountWalletName"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAccountWalletList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/d10dp"
+        app:layout_constraintTop_toBottomOf="@id/ivAccountInfoPic"
+        app:layout_constraintBottom_toTopOf="@id/etAccountWalletTime"/>
+    <EditText
+        android:id="@+id/etAccountInfoName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/common_str_save"
+        android:textColor="@color/common_black_2B2A2A"
+        android:hint="账户名"
+        android:textColorHint="@color/color_grey_7E797B"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/etAccountWalletTime"/>
+    <EditText
+        android:id="@+id/etAccountInfoNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/common_black_2B2A2A"
+        android:hint="账户备注"
+        android:textColorHint="@color/color_grey_7E797B"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/etAccountInfoName"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

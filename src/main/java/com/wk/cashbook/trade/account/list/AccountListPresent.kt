@@ -2,7 +2,7 @@ package com.wk.cashbook.trade.account.list
 
 import android.content.Intent
 import com.wk.cashbook.CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
-import com.wk.cashbook.trade.account.AccountInfoActivity
+import com.wk.cashbook.trade.account.info.AccountInfoActivity
 import com.wk.cashbook.trade.data.CurrencyType
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.constant.NumberConstants
@@ -78,10 +78,10 @@ class AccountListPresent(private val mAccountListActivity: AccountListActivity) 
 
     fun goToInfoActivity(id: Long = TradeAccount.INVALID_ID,
                          position: Int = NumberConstants.number_int_one_Negative) {
-//        val intent = Intent(mAccountListActivity, AccountInfoActivity::class.java)
-//        intent.putExtra(TradeAccount.ACCOUNT_ID, id)
-//        intent.putExtra(WkStringConstants.STR_POSITION_LOW, position)
-//        mAccountListActivity.startActivityForResult(intent, REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
+        val intent = Intent(mAccountListActivity, AccountInfoActivity::class.java)
+        intent.putExtra(TradeAccount.ACCOUNT_ID, id)
+        intent.putExtra(WkStringConstants.STR_POSITION_LOW, position)
+        mAccountListActivity.startActivityForResult(intent, REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
     }
 
     fun deleteData(id: Long?, position: Int) {

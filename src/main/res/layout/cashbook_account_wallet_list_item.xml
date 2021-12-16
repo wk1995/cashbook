@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/d60dp"
+    android:orientation="horizontal"
+    tools:background="@color/common_white_F1F0F0">
+
+    <TextView
+        android:id="@+id/tvWalletName"
+        android:layout_width="@dimen/d100dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/common_black_2B2A2A"
+        tools:text="花呗" />
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etWalletAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/common_black_2B2A2A"
+        tools:text="-11000" />
+
+</LinearLayout>
