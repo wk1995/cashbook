@@ -19,7 +19,7 @@ import org.litepal.crud.LitePalSupport
 data class TradeAccount(var accountName: String = WkStringConstants.STR_EMPTY,
                         val createTime: Long = System.currentTimeMillis(),
                         var note: String = WkStringConstants.STR_EMPTY,
-                        var accountPic: ByteArray? = null,
+                        var accountPic: ByteArray =ByteArray(0),
                         val accountWallets: MutableList<AccountWallet> = ArrayList())
     : LitePalSupport() {
 
@@ -46,7 +46,6 @@ data class TradeAccount(var accountName: String = WkStringConstants.STR_EMPTY,
         if (createTime != other.createTime) return false
         if (note != other.note) return false
         if (!accountPic.contentEquals(other.accountPic)) return false
-        if (accountWallets != other.accountWallets) return false
 
         return true
     }
@@ -56,7 +55,6 @@ data class TradeAccount(var accountName: String = WkStringConstants.STR_EMPTY,
         result = 31 * result + createTime.hashCode()
         result = 31 * result + note.hashCode()
         result = 31 * result + accountPic.contentHashCode()
-        result = 31 * result + accountWallets.hashCode()
         return result
     }
 

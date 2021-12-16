@@ -9,7 +9,7 @@ import org.litepal.crud.LitePalSupport
  * email        :shenlong.wang@tuya.com
  * create date  : 2021/03/10
  * desc         : 钱包
- * @param accountName 名称 如花呗，余额宝
+ * @param walletName 名称 如花呗，余额宝
  * @param createTime 创建时间
  * @param amount 余额
  * @param note 备注
@@ -26,20 +26,22 @@ data class AccountWallet(var accountName: String=WkStringConstants.STR_EMPTY,
                          var toCashTime:Long=CONVERT_CASH_TIME_AT_ONCE)
     : LitePalSupport() {
 
-    companion object{
-        const val ACCOUNT_NAME="accountname"
-        const val CREATE_TIME="createtime"
-        const val AMOUNT="amount"
-        const val UNIT="unit"
-        const val NOTE="note"
-        const val ACCOUNT_MONEY_ID="account_money_id"
-        const val INVALID_ID=0L
+    companion object {
+        const val WALLET_NAME = "walletname"
+        const val CREATE_TIME = "createtime"
+        const val AMOUNT = "amount"
+        const val UNIT = "unit"
+        const val NOTE = "note"
+        const val ACCOUNT_MONEY_ID = "account_money_id"
+        const val INVALID_ID = 0L
+
         /**立刻能转换为现金*/
-        const val CONVERT_CASH_TIME_AT_ONCE=NumberConstants.number_long_zero
+        const val CONVERT_CASH_TIME_AT_ONCE = NumberConstants.number_long_zero
+
         /**
          * 不可能转换为现金
          * */
-        const val CONVERT_CASH_TIME_IMPOSSIBLE=NumberConstants.number_long_one_Negative
+        const val CONVERT_CASH_TIME_IMPOSSIBLE = NumberConstants.number_long_one_Negative
     }
 
     public override fun getBaseObjId(): Long {

@@ -24,9 +24,9 @@ class AccountInfoModel {
     fun isValidAccount()=mCurrentTradeAccount.baseObjId > TradeAccount.INVALID_ID
 
     fun getTradeAccount(id:Long): TradeAccount? =
-        LitePal.find(TradeAccount::class.java, id)
+        LitePal.find(TradeAccount::class.java, id,true)
 
-    fun setPicByteArray(image:ByteArray?){
+    fun setPicByteArray(image:ByteArray){
         mCurrentTradeAccount.accountPic=image
     }
 
@@ -40,7 +40,7 @@ class AccountInfoModel {
 
     fun addWallet(walletName:String= WkStringConstants.STR_EMPTY,
                   walletNote:String= WkStringConstants.STR_EMPTY,
-                  walletTime:String= NumberConstants.number_long_zero.toString(),
+                  walletTime:String= AccountWallet.CONVERT_CASH_TIME_AT_ONCE.toString(),
                   walletAmount:String= NumberConstants.number_double_zero.toString()):Boolean{
        return LitePal.runInTransaction {
            if(!isValidAccount()){

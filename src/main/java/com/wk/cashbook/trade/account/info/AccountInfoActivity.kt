@@ -14,13 +14,7 @@ import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.constant.WkStringConstants
-import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.ui.WkCommonActionBar
-import org.litepal.LitePal
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
-import rx.subscriptions.CompositeSubscription
 
 /**
  * 资金渠道详情
@@ -44,8 +38,6 @@ class AccountInfoActivity : BaseProjectsActivity() {
     private val adapter by lazy {
         AccountWalletAdapter()
     }
-    private var mCurrentAccountWallet: TradeAccount? = null
-
 
     private val mAccountInfoPresent by lazy{
         AccountInfoPresent(this)

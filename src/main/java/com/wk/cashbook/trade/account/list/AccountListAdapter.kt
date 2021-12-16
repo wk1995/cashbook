@@ -54,7 +54,7 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
         val tvAccountItemNote = rootView.findViewById<TextView>(R.id.tvAccountItemNote)
         val rvAccountItemMoney = rootView.findViewById<RecyclerView>(R.id.rvAccountItemMoney)
         val llAccountItemMoney = rootView.findViewById<LinearLayout>(R.id.llAccountItemMoney)
-        val moneyRvLayoutManager=GridLayoutManager(parent.context, 2)
+        val moneyRvLayoutManager = GridLayoutManager(parent.context, 2)
         moneyRvLayoutManager.spanSizeLookup = moneySpanSizeLookup
         rvAccountItemMoney.layoutManager = moneyRvLayoutManager
         rvAccountItemMoney.adapter = moneyRvAdapter
@@ -75,24 +75,14 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
             tvAccountItemName.text = bean.name
             tvAccountItemNote.text = bean.note
             val money = bean.money
-         /*   if (money.size <= 1) {
-                rvAccountItemMoney.visibility = View.GONE
-                llAccountItemMoney.visibility = View.VISIBLE
-                money.keys.forEach {
-                    llAccountItemMoney.findViewById<TextView>(R.id.tvCurrencyTypeName).text = it
-                    llAccountItemMoney.findViewById<TextView>(R.id.tvCurrencyTypeAmount).text = money[it].toString()
-                }
-            } else {*/
-                llAccountItemMoney.visibility = View.GONE
-                rvAccountItemMoney.visibility = View.VISIBLE
-                val adapter = rvAccountItemMoney.adapter
-                if (adapter is AccountListMoneyListAdapter) {
-                    adapter.replaceData(money.map {
-                        Pair(it.key, it.value)
-                    })
-                }
-//            }
-
+            llAccountItemMoney.visibility = View.GONE
+            rvAccountItemMoney.visibility = View.VISIBLE
+            val adapter = rvAccountItemMoney.adapter
+            if (adapter is AccountListMoneyListAdapter) {
+                adapter.replaceData(money.map {
+                    Pair(it.key, it.value)
+                })
+            }
 
         }
     }
