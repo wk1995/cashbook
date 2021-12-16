@@ -49,7 +49,7 @@ class AccountListPresent(private val mAccountListActivity: AccountListActivity) 
 
     fun initData() {
         mSubscriptions?.add(Observable.create(Observable.OnSubscribe<List<AccountListShowBean>> {
-            val tradeAccounts = LitePal.findAll(TradeAccount::class.java)
+            val tradeAccounts = LitePal.findAll(TradeAccount::class.java,true)
             val accountListShowBeans = ArrayList<AccountListShowBean>()
             tradeAccounts.forEach { tradeAccount ->
                 val wallet = HashMap<String, Double>()
