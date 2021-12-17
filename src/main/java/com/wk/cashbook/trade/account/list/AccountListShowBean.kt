@@ -14,4 +14,29 @@ import com.wk.projects.common.constant.WkStringConstants
 data class AccountListShowBean(val money: Map<String, Double>,
                                var name: String = WkStringConstants.STR_EMPTY,
                                var note: String = WkStringConstants.STR_EMPTY,
-                               val accountId: Long)
+                               var img:ByteArray = ByteArray(0),
+                               val accountId: Long) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AccountListShowBean
+
+        if (money != other.money) return false
+        if (name != other.name) return false
+        if (note != other.note) return false
+        if (!img.contentEquals(other.img)) return false
+        if (accountId != other.accountId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = money.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + note.hashCode()
+        result = 31 * result + img.contentHashCode()
+        result = 31 * result + accountId.hashCode()
+        return result
+    }
+}

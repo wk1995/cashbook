@@ -73,10 +73,10 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    val data=it.map { tradeAccount->
+                    val data=it.map { tradeWallet->
                         val map=HashMap<String,Double>()
-                        map[tradeAccount.unit]=tradeAccount.amount
-                        AccountListShowBean(map,tradeAccount.accountName,tradeAccount.note,tradeAccount.baseObjId)
+                        map[tradeWallet.unit]=tradeWallet.amount
+                        AccountListShowBean(map,tradeWallet.accountName,tradeWallet.note,accountId=tradeWallet.baseObjId)
                     }
                     mChooseAccountAdapter.updateData(data)
                 }

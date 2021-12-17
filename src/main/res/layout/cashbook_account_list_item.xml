@@ -5,7 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/d60dp"
     tools:background="@color/common_white_FFFCFC">
-
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glItemMoneyPositionVFlag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/d100dp"/>
     <ImageView
         android:id="@+id/ivAccountItemPic"
         android:layout_width="wrap_content"
@@ -35,6 +40,7 @@
         app:layout_constraintBottom_toBottomOf="@id/ivAccountItemPic"
         app:layout_constraintStart_toStartOf="@id/tvAccountItemName"
         app:layout_constraintTop_toBottomOf="@id/tvAccountItemName"
+        app:layout_constraintEnd_toEndOf="@id/tvAccountItemName"
         tools:text="总账户" />
 
     <TextView
@@ -45,32 +51,50 @@
         android:layout_marginBottom="@dimen/d5dp"
         android:textColor="@color/common_black_2B2A2A"
         android:textSize="@dimen/s14sp"
+        app:layout_constraintEnd_toStartOf="@id/glItemMoneyPositionVFlag"
         app:layout_constraintBottom_toTopOf="@id/tvAccountItemNote"
         app:layout_constraintStart_toEndOf="@id/ivAccountItemPic"
         app:layout_constraintTop_toTopOf="@id/ivAccountItemPic"
         tools:text="支付宝" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAccountItemMoney"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/d10dp"
-        android:layout_marginEnd="@dimen/d10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <TextView
+        android:id="@+id/tvAccountMoney1"
+        style="@style/cashbook_account_list_item_amount_tv"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintVertical_weight="1"
         app:layout_constraintEnd_toStartOf="@id/ivAccountItemFlag"
-        app:layout_constraintStart_toEndOf="@id/tvAccountItemName"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <include
-        android:id="@+id/llAccountItemMoney"
-        layout="@layout/cashbook_account_list_item_money_item"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/d10dp"
-        android:layout_marginEnd="@dimen/d10dp"
-        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/tvAccountMoney2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvAccountMoney3"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="CYN: 200"/>
+    <TextView
+        android:id="@+id/tvAccountMoney2"
+        style="@style/cashbook_account_list_item_amount_tv"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintEnd_toStartOf="@id/tvAccountMoney1"
+        app:layout_constraintStart_toEndOf="@id/glItemMoneyPositionVFlag"
+        app:layout_constraintBottom_toBottomOf="@id/tvAccountMoney1"
+        app:layout_constraintTop_toTopOf="@id/tvAccountMoney1"
+        tools:text="USD: 200"/>
+    <TextView
+        android:id="@+id/tvAccountMoney3"
+        style="@style/cashbook_account_list_item_amount_tv"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintEnd_toEndOf="@id/tvAccountMoney1"
+        app:layout_constraintStart_toStartOf="@id/tvAccountMoney1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/ivAccountItemFlag"
-        app:layout_constraintStart_toEndOf="@id/tvAccountItemName"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tvAccountMoney1"
+        tools:visibility="gone"
+        tools:text="HKD: 200"/>
+    <TextView
+        android:id="@+id/tvAccountMoney4"
+        style="@style/cashbook_account_list_item_amount_tv"
+        app:layout_constraintVertical_weight="1"
+        app:layout_constraintEnd_toEndOf="@id/tvAccountMoney2"
+        app:layout_constraintStart_toStartOf="@id/tvAccountMoney2"
+        app:layout_constraintBottom_toBottomOf="@id/tvAccountMoney3"
+        app:layout_constraintTop_toTopOf="@id/tvAccountMoney3"
+        tools:text="JPY: 200"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -64,7 +64,7 @@ class AccountListPresent(private val mAccountListActivity: AccountListActivity) 
                 }
                 accountListShowBeans.add(
                         AccountListShowBean(wallet, tradeAccount.accountName,
-                                tradeAccount.note, accountId = tradeAccount.baseObjId))
+                                tradeAccount.note, img = tradeAccount.accountPic,accountId = tradeAccount.baseObjId))
             }
             it.onNext(accountListShowBeans)
         }).subscribeOn(Schedulers.newThread())
