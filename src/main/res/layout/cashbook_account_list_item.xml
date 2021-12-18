@@ -13,13 +13,14 @@
         app:layout_constraintGuide_begin="@dimen/d100dp"/>
     <ImageView
         android:id="@+id/ivAccountItemPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/d15dp"
+        android:layout_width="@dimen/d40dp"
+        android:layout_height="@dimen/d40dp"
+        android:layout_marginStart="@dimen/d10dp"
+        android:src="@drawable/cashbook_account_type_alipay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/abc_vector_test" />
+        android:contentDescription="@string/common_str_todo" />
 
     <ImageView
         android:id="@+id/ivAccountItemFlag"
@@ -29,11 +30,12 @@
         android:src="@drawable/common_left_arror"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/common_str_todo" />
 
     <TextView
         android:id="@+id/tvAccountItemNote"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/common_black_2B2A2A"
         android:textSize="@dimen/s10sp"
@@ -45,7 +47,7 @@
 
     <TextView
         android:id="@+id/tvAccountItemName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/d5dp"
         android:layout_marginBottom="@dimen/d5dp"
