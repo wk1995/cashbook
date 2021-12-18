@@ -13,21 +13,23 @@ package com.wk.cashbook.trade.data
  * @param chinese 中文
  * @param english 英文
  * */
-enum class CurrencyType(val mCurrencyCode:String, chinese:String, english:String) {
+@Suppress("unused")
+enum class CurrencyType(val mCurrencyCode: String, private val chinese: String,
+                        private val english: String, val mSymbol: String) {
 
-    RenMinBi("CYN","人民币","RenMinBi"),
-    Dollar("USD","美元","Dollar"),
-    HongKongDollar("HKD","港币","Hong Kong Dollar"),
-    NewTaiwanDollar("TWD","新台币","New Taiwan Dollar"),
-    MacauPataca("MOP","澳门元","Macau Pataca"),
-    SouthKoreanWon("KRW","韩元","South Korean Won"),
-    ThaiBaht("THB","泰铢","Thai Baht"),
-    Euro("EUR","欧元","Euro"),
-    BritishPound("GBP","英镑","British Pound"),
-    SingaporeDollar("SGD","新加坡元","Singapore Dollar"),
-    AustraliaDollar("AUD","澳元 ","Australia Dollar"),
-    CanadianDollar("CAD","加元 ","Canadian Dollar"),
-    JapaneseYen("JPY","日元","Japanese Yen")
+    RenMinBi("CYN", "人民币", "RenMinBi", "￥"),
+    Dollar("USD", "美元", "Dollar", "\$"),
+    HongKongDollar("HKD", "港币", "Hong Kong Dollar", "HK\$"),
+    NewTaiwanDollar("TWD", "新台币", "New Taiwan Dollar", "NT\$"),
+    MacauPataca("MOP", "澳门元", "Macau Pataca", "MOP\$"),
+    SouthKoreanWon("KRW", "韩元", "South Korean Won", "₩"),
+    ThaiBaht("THB", "泰铢", "Thai Baht", "฿"),
+    Euro("EUR", "欧元", "Euro", "€"),
+    BritishPound("GBP", "英镑", "British Pound", "￡"),
+    SingaporeDollar("SGD", "新加坡元", "Singapore Dollar", "S\$"),
+    AustraliaDollar("AUD", "澳元 ", "Australia Dollar", "A\$"),
+    CanadianDollar("CAD", "加元 ", "Canadian Dollar", "C\$"),
+    JapaneseYen("JPY", "日元", "Japanese Yen", "JPY￥")
 
 
 }

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.account.list.AccountListShowBean
 import com.wk.cashbook.trade.data.AccountWallet
+import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.info.TradeRecordInfoPresent
 import com.wk.projects.common.BaseSimpleDialog
 import com.wk.projects.common.ui.recycler.IRvClickListener
@@ -41,7 +42,7 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
     private lateinit var rvCommon: RecyclerView
 
     private val mChooseAccountAdapter by lazy {
-        ChooseAccountAdapter(mIRvClickListener = this)
+        ChooseWalletAdapter(mIRvClickListener = this)
     }
 
     override fun initVSView(vsView: View) {
@@ -55,8 +56,8 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
 
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
-        if(adapter==mChooseAccountAdapter) {
-            arguments?.putLong(AccountWallet.ACCOUNT_MONEY_ID,mChooseAccountAdapter.getItemId(position))
+        if (adapter == mChooseAccountAdapter) {
+            arguments?.putLong(AccountWallet.ACCOUNT_MONEY_ID, mChooseAccountAdapter.getItemId(position))
             mTradeRecordInfoPresent?.showTradeAccount(arguments)
             disMiss()
         }
@@ -67,16 +68,25 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
     override fun showCancelButton() = false
 
 
-    private fun initData(){
-        Observable.create(Observable.OnSubscribe<List<AccountWallet>> {
-            it.onNext(LitePal.findAll(AccountWallet::class.java))
+    private fun initData() {
+        Observable.create(Observable.OnSubscribe<List<TradeAccount>> {
+            it.onNext(LitePal.findAll(TradeAccount::class.java, true))
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    val data=it.map { tradeWallet->
-                        val map=HashMap<String,Double>()
-                        map[tradeWallet.unit]=tradeWallet.amount
-                        AccountListShowBean(map,tradeWallet.accountName,tradeWallet.note,accountId=tradeWallet.baseObjId)
+                .subscribe { tradeAccounts ->
+                    val data = ArrayList<ChooseWalletShowBean>()
+                    tradeAccounts.forEach { tradeAccount ->
+                        val accountWallets= tradeAccount.accountWallets
+                        if(accountWallets.isNullOrEmpty()){
+                            return@forEach
+                        }
+                        data.add(ChooseWalletShowBean(AccountWallet.INVALID_ID, name = tradeAccount.accountName))
+                        accountWallets.forEach { tradeWallet ->
+                            val map = HashMap<String, Double>()
+                            map[tradeWallet.unit] = tradeWallet.amount
+                            data.add(ChooseWalletShowBean(tradeWallet.baseObjId, Pair(tradeWallet.unit, tradeWallet.amount),
+                                    tradeWallet.accountName))
+                        }
                     }
                     mChooseAccountAdapter.updateData(data)
                 }
