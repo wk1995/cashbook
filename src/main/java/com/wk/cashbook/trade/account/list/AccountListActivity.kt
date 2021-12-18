@@ -117,12 +117,12 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
 
     override fun onItemLongClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemLongClick(adapter, view, position)
-        if(adapter==mAccountListAdapter){
+        /*if(adapter==mAccountListAdapter){
             val bundle=Bundle()
             bundle.putLong(AccountWallet.ACCOUNT_MONEY_ID,mAccountListAdapter.getItemId(position))
             bundle.putInt(WkStringConstants.STR_POSITION_LOW,position)
             DeleteCashBookDialog.create(bundle).show(supportFragmentManager)
-        }
+        }*/
     }
 
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
