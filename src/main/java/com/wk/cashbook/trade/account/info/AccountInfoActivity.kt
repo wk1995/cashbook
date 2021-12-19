@@ -1,5 +1,6 @@
 package com.wk.cashbook.trade.account.info
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
@@ -54,7 +55,7 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
     }
 
     private fun initView() {
-        btnAddWallet = findViewById(R.id.btnCreate)
+        btnAddWallet = findViewById(R.id.btnAddWattle)
         wbAccountInfoTitle = findViewById(R.id.wbAccountInfoTitle)
         wbAccountInfoTitle.setRightViewText(R.string.cashbook_add_wallet)
    /*     etAccountInfoName = findViewById(R.id.etAccountInfoName)
@@ -133,20 +134,10 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
     override fun onClick(v: View?) {
         super.onClick(v)
         when (v?.id) {
-            wbAccountInfoTitle.getRightViewId()->{
+            wbAccountInfoTitle.getRightViewId(), R.id.btnAddWattle->{
                 mAccountInfoPresent.gotoCreateWallet()
             }
-            R.id.btnCreate -> {
-              /*  val accountName=etAccountInfoName.text.toString()
-                val accountNote=etAccountInfoNote.text.toString()
-                val walletName=etAccountWalletName.text.toString()
-                val walletNote=etAccountWalletNote.text.toString()
-                val walletTime=etAccountWalletTime.text.toString()
-                val walletAmount=etAccountWalletAmount.text.toString()
-                mAccountInfoPresent.saveOrUpdateAccount(accountName,accountNote,walletName,
-                        walletNote,walletTime,walletAmount)*/
 
-            }
             R.id.ivAccountInfoPic -> {
 
             }
@@ -193,6 +184,12 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
 
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        initData()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

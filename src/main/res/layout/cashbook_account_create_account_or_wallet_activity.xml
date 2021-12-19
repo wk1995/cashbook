@@ -37,7 +37,7 @@
         app:layout_constraintTop_toBottomOf="@id/etCreateName" />
 
     <EditText
-        android:id="@+id/tvCreateAmount"
+        android:id="@+id/etCreateAmount"
         style="@style/cashbook_create_or_edit_account_wallet_et"
         android:autofillHints="@string/common_str_todo"
         android:hint="@string/cashbook_str_balance"
@@ -53,7 +53,7 @@
         android:inputType="numberSigned"
         android:hint="@string/cashbook_cast_to_cash_day"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCreateAmount"
+        app:layout_constraintTop_toBottomOf="@id/etCreateAmount"
         tools:ignore="LabelFor" />
 
     <ImageView

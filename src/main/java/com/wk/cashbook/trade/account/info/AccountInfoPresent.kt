@@ -1,22 +1,18 @@
 package com.wk.cashbook.trade.account.info
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import com.wk.cashbook.CashBookActivityRequestCode
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity
-import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.DATA_ID
 import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.DATA_TYPE
 import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.TYPE_WALLET
+import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsPresent
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.helper.WkBitmapUtil
 import com.wk.projects.common.log.WkLog
-import com.wk.projects.common.resource.WkContextCompat
-import org.litepal.LitePal
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -38,6 +34,8 @@ class AccountInfoPresent(private val mAccountInfoActivity: AccountInfoActivity) 
         AccountInfoModel()
     }
 
+    private var currentTradeAccountId:Long=TradeAccount.INVALID_ID
+
     override fun onCreate() {
         mSubscriptions = CompositeSubscription()
     }
@@ -48,12 +46,13 @@ class AccountInfoPresent(private val mAccountInfoActivity: AccountInfoActivity) 
     }
 
     fun initData(id: Long) {
+        currentTradeAccountId=id
         mSubscriptions = CompositeSubscription()
         val defaultPic = WkBitmapUtil.getBitmap(R.drawable.cashbook_account_type_crash)
-        WkLog.i("id: $id")
-        if (id > TradeAccount.INVALID_ID) {
+        WkLog.i("id: $currentTradeAccountId")
+        if (currentTradeAccountId > TradeAccount.INVALID_ID) {
             mSubscriptions?.add(Observable.create(Observable.OnSubscribe<TradeAccount> {
-                it.onNext(mAccountInfoModel.getTradeAccount(id))
+                it.onNext(mAccountInfoModel.getTradeAccount(currentTradeAccountId))
             }).subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { tradeAccount ->
@@ -133,14 +132,19 @@ class AccountInfoPresent(private val mAccountInfoActivity: AccountInfoActivity) 
     }
 
 
+
+
     fun gotoCreateWallet(){
         val intent = Intent(mAccountInfoActivity, UpdateAccountOrWalletActivity::class.java)
+        intent.putExtra(DATA_TYPE,TYPE_WALLET)
+        intent.putExtra(AccountWallet.ACCOUNT_ID,mAccountInfoModel.getAccountId())
         mAccountInfoActivity.startActivityForResult(intent, CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
     }
 
     fun gotoUpdateWallet(walletId:Long){
         val intent = Intent(mAccountInfoActivity, UpdateAccountOrWalletActivity::class.java)
-        intent.putExtra(DATA_ID,walletId)
+        intent.putExtra(AccountWallet.ACCOUNT_WALLET_ID,walletId)
+        intent.putExtra(AccountWallet.ACCOUNT_ID,mAccountInfoModel.getAccountId())
         intent.putExtra(DATA_TYPE,TYPE_WALLET)
         mAccountInfoActivity.startActivityForResult(intent, CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
     }

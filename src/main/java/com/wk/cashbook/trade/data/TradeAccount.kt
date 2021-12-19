@@ -27,7 +27,7 @@ data class TradeAccount(var accountName: String = WkStringConstants.STR_EMPTY,
         const val ACCOUNT_NAME = "accountname"
         const val CREATE_TIME = "createtime"
         const val NOTE = "note"
-        const val ACCOUNT_ID = "account_id"
+        const val ACCOUNT_ID = "id"
         const val INVALID_ID = 0L
     }
 

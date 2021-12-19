@@ -1,5 +1,6 @@
 package com.wk.cashbook.trade.account
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -7,9 +8,13 @@ import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsActivity
+import com.wk.projects.common.communication.ActivityResultCode.ResultCode_UpdateAccountOrWalletActivity
 import com.wk.projects.common.constant.NumberConstants
+import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.ui.WkCommonActionBar
 import org.litepal.LitePal
+import org.litepal.crud.LitePalSupport
+import org.litepal.extension.runInTransaction
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -33,7 +38,6 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         const val TYPE_WALLET = NumberConstants.number_int_one
 
 
-        const val DATA_ID = "data_id"
         const val DATA_TYPE = "data_type"
 
 
@@ -45,11 +49,13 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
     private lateinit var btnCreate: Button
     private lateinit var etCreateName: EditText
     private lateinit var etCreateNote: EditText
-    private lateinit var tvCreateAmount: TextView
+    private lateinit var etCreateAmount: TextView
     private lateinit var spCreateUnit: Spinner
 
     private var type: Int = TYPE_INVALID
 
+
+    private var mLitePalSupport: LitePalSupport? = null
 
     override
     fun initResLayId() = R.layout.cashbook_account_create_account_or_wallet_activity
@@ -62,28 +68,37 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         btnCreate = findViewById(R.id.btnCreate)
         etCreateName = findViewById(R.id.etCreateName)
         etCreateNote = findViewById(R.id.etCreateNote)
-        tvCreateAmount = findViewById(R.id.tvCreateAmount)
+        etCreateAmount = findViewById(R.id.etCreateAmount)
         spCreateUnit = findViewById(R.id.spCreateUnit)
         initData()
+        initListener()
+
+    }
+
+    fun initListener(){
+        btnCreate.setOnClickListener(this)
     }
 
     fun initData() {
         type = intent.getIntExtra(DATA_TYPE, TYPE_INVALID)
         showWallet(isWallet())
-        val id = intent.getLongExtra(DATA_ID, NumberConstants.number_long_one_Negative)
-        if(id<=0){
-            return
-        }
         when (type) {
             TYPE_ACCOUNT -> {
+                val id = intent.getLongExtra(TradeAccount.ACCOUNT_ID, TradeAccount.INVALID_ID)
+                if (id <= 0) {
+                    mLitePalSupport = TradeAccount()
+                    return
+                }
                 Observable.create(Observable.OnSubscribe<TradeAccount> {
                     it.onNext(LitePal.find(TradeAccount::class.java, id))
                 }).subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {tradeAccount->
-                            if(tradeAccount==null){
+                        .subscribe { tradeAccount ->
+                            if (tradeAccount == null) {
+                                WkLog.w("获取账户失败")
                                 finish()
-                            }else{
+                            } else {
+                                mLitePalSupport = tradeAccount
                                 tradeAccount.apply {
                                     etCreateName.setText(accountName)
                                     etCreateNote.setText(note)
@@ -94,17 +109,26 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
             }
 
             TYPE_WALLET -> {
+                val id = intent.getLongExtra(AccountWallet.ACCOUNT_WALLET_ID, NumberConstants.number_long_one_Negative)
+                if (id <= 0) {
+                    mLitePalSupport = AccountWallet()
+                    return
+                }
+
                 Observable.create(Observable.OnSubscribe<AccountWallet> {
                     it.onNext(LitePal.find(AccountWallet::class.java, id))
                 }).subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {wallet->
-                            if(wallet==null){
+                        .subscribe { wallet ->
+                            if (wallet == null) {
+                                WkLog.w("获取钱包数据失败")
                                 finish()
-                            }else{
+                            } else {
+                                mLitePalSupport = wallet
                                 wallet.apply {
                                     etCreateName.setText(accountName)
                                     etCreateNote.setText(note)
+                                    etCreateAmount.text = amount.toString()
                                 }
                             }
                         }
@@ -124,28 +148,83 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         super.onClick(v)
         when (v?.id) {
             R.id.btnCreate -> {
-
+                if (isWallet()) {
+                    createWallet()
+                } else {
+                    createAccount()
+                }
             }
         }
     }
 
-    fun showWallet(isWallet: Boolean) {
+    private fun showWallet(isWallet: Boolean) {
         val visibility = if (isWallet) {
             View.VISIBLE
         } else {
             View.GONE
         }
-        tvCreateAmount.visibility = visibility
+        etCreateAmount.visibility = visibility
         spCreateUnit.visibility = visibility
         etCreateCaseTime.visibility = visibility
     }
 
 
     private fun createAccount() {
-
+        val account = mLitePalSupport
+        if (account !is TradeAccount) {
+            return
+        }
+        account.accountName = etCreateName.text.toString()
+        account.note = etCreateNote.text.toString()
+        Observable.create(Observable.OnSubscribe<Boolean> {
+            it.onNext(account.save())
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { success ->
+                    if (success) {
+                        setResult(ResultCode_UpdateAccountOrWalletActivity)
+                        finish()
+                    } else {
+                        showToast("新增账户失败")
+                    }
+                }
     }
 
-    private fun createWallet() {
 
+
+    private fun createWallet() {
+        val accountId = intent.getLongExtra(AccountWallet.ACCOUNT_ID, NumberConstants.number_long_one_Negative)
+        if(accountId<0){
+            showToast("新增钱包失败")
+            return
+        }
+        val wallet = mLitePalSupport
+        if (wallet !is AccountWallet) {
+            return
+        }
+        wallet.accountName = etCreateName.text.toString()
+        wallet.note = etCreateNote.text.toString()
+        wallet.amount = etCreateAmount.text.toString().toDouble()
+
+        Observable.create(Observable.OnSubscribe<Boolean> {
+            it.onNext(LitePal.runInTransaction {
+                val save = wallet.save()
+                if (!save) {
+                    return@runInTransaction false
+                }
+                val account = LitePal.find(TradeAccount::class.java, accountId)
+                account.addWallet(wallet)
+                return@runInTransaction account.save()
+            })
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { success ->
+                    if (success) {
+                        setResult(ResultCode_UpdateAccountOrWalletActivity)
+                        finish()
+                    } else {
+                        showToast("新增钱包失败")
+                    }
+                }
     }
 }

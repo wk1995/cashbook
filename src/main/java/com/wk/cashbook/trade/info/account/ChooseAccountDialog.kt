@@ -5,7 +5,6 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
-import com.wk.cashbook.trade.account.list.AccountListShowBean
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.info.TradeRecordInfoPresent
@@ -57,7 +56,7 @@ class ChooseAccountDialog : BaseSimpleDialog(), IRvClickListener {
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
         if (adapter == mChooseAccountAdapter) {
-            arguments?.putLong(AccountWallet.ACCOUNT_MONEY_ID, mChooseAccountAdapter.getItemId(position))
+            arguments?.putLong(AccountWallet.ACCOUNT_WALLET_ID, mChooseAccountAdapter.getItemId(position))
             mTradeRecordInfoPresent?.showTradeAccount(arguments)
             disMiss()
         }

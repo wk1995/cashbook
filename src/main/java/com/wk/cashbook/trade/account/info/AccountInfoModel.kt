@@ -23,6 +23,8 @@ class AccountInfoModel {
 
     fun isValidAccount()=mCurrentTradeAccount.baseObjId > TradeAccount.INVALID_ID
 
+    fun getAccountId() =mCurrentTradeAccount.baseObjId
+
     fun getTradeAccount(id:Long): TradeAccount? =
         LitePal.find(TradeAccount::class.java, id,true)
 

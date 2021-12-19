@@ -27,12 +27,14 @@ data class AccountWallet(var accountName: String=WkStringConstants.STR_EMPTY,
     : LitePalSupport() {
 
     companion object {
-        const val WALLET_NAME = "walletname"
+        const val WALLET_NAME = "accountname"
         const val CREATE_TIME = "createtime"
         const val AMOUNT = "amount"
         const val UNIT = "unit"
         const val NOTE = "note"
-        const val ACCOUNT_MONEY_ID = "account_money_id"
+        const val ACCOUNT_WALLET_ID = "id"
+        const val ACCOUNT_ID = "tradeaccount_id"
+
         const val INVALID_ID = 0L
 
         /**立刻能转换为现金*/

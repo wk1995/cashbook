@@ -165,7 +165,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
 
     fun showTradeAccount(bundle: Bundle?) {
         val accountType = bundle?.getInt("accountType") ?: 0
-        val accountId = bundle?.getLong(AccountWallet.ACCOUNT_MONEY_ID) ?: return
+        val accountId = bundle?.getLong(AccountWallet.ACCOUNT_WALLET_ID) ?: return
         showTradeAccount(accountId, accountType)
     }
 

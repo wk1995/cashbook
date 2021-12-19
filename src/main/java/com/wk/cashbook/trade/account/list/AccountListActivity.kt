@@ -104,7 +104,7 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
 
     override fun communication(flag:Int,bundle: Bundle?,any: Any?){
         if(flag== IFAFlag.DELETE_ITEM_DIALOG){
-            val itemId=bundle?.getLong(AccountWallet.ACCOUNT_MONEY_ID)
+            val itemId=bundle?.getLong(AccountWallet.ACCOUNT_WALLET_ID)
             val position=bundle?.getInt(WkStringConstants.STR_POSITION_LOW)?:return
             mAccountListPresent.deleteData(itemId,position)
         }

@@ -3,7 +3,6 @@ package com.wk.cashbook.trade.account.list
 import android.content.Intent
 import com.wk.cashbook.CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
 import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity
-import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.DATA_ID
 import com.wk.cashbook.trade.account.info.AccountInfoActivity
 import com.wk.cashbook.trade.data.CurrencyType
 import com.wk.cashbook.trade.data.TradeAccount
@@ -89,7 +88,7 @@ class AccountListPresent(private val mAccountListActivity: AccountListActivity) 
     fun gotoCreateAccount(id: Long = TradeAccount.INVALID_ID,
                           position: Int = NumberConstants.number_int_one_Negative) {
         val intent = Intent(mAccountListActivity, UpdateAccountOrWalletActivity::class.java)
-        intent.putExtra(DATA_ID, id)
+        intent.putExtra(TradeAccount.ACCOUNT_ID, id)
         intent.putExtra(UpdateAccountOrWalletActivity.DATA_TYPE, UpdateAccountOrWalletActivity.TYPE_ACCOUNT)
         intent.putExtra(WkStringConstants.STR_POSITION_LOW, position)
         mAccountListActivity.startActivityForResult(intent, REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
