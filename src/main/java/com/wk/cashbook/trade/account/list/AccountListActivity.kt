@@ -8,17 +8,12 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.wk.cashbook.CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY
-import com.wk.cashbook.CashBookActivityResultCode.RESULT_CODE_ACCOUNT_INFO_ACTIVITY
 import com.wk.cashbook.CashBookListItemDecoration
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
-import com.wk.cashbook.trade.data.AccountWallet.Companion.INVALID_ID
-import com.wk.cashbook.trade.record.DeleteCashBookDialog
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.communication.IFragmentToActivity
 import com.wk.projects.common.communication.constant.IFAFlag
-import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.ui.WkCommonActionBar
@@ -102,7 +97,7 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
         super.onClick(v)
         when(v?.id){
             R.id.btnAddAccount->{
-                mAccountListPresent.goToInfoActivity()
+                mAccountListPresent.gotoCreateAccount()
             }
         }
     }
@@ -129,7 +124,7 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
         super.onItemClick(adapter, view, position)
         if(adapter==mAccountListAdapter){
             val itemId=mAccountListAdapter.getItemId(position)
-            mAccountListPresent.goToInfoActivity(itemId,position)
+            mAccountListPresent.gotoAccountInfo(itemId,position)
         }
     }
 

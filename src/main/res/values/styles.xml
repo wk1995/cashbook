@@ -21,4 +21,11 @@
         <item name="android:textSize">@dimen/s14sp</item>
         <item name="android:paddingEnd">@dimen/d10dp</item>
     </style>
+
+    <style name="cashbook_create_or_edit_account_wallet_et">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColorHint">@color/color_grey_7E797B</item>
+        <item name="android:textColor">@color/common_black_2B2A2A</item>
+    </style>
 </resources>

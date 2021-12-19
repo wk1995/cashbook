@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,30 +12,33 @@ import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsActivity
-import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.ui.WkCommonActionBar
+import com.wk.projects.common.ui.recycler.IRvClickListener
 
 /**
  * 资金渠道详情
  * */
-class AccountInfoActivity : BaseProjectsActivity() {
+class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
     private lateinit var btnAddWallet: Button
     private lateinit var wbAccountInfoTitle: WkCommonActionBar
     private lateinit var ivAccountInfoPic: ImageView
     private lateinit var tvAccountInfoName: TextView
     private lateinit var tvAccountInfoNote: TextView
-    private lateinit var etAccountInfoNote: EditText
-    private lateinit var etAccountInfoName: EditText
     private lateinit var rvAccountWalletList: RecyclerView
+
+   /* private lateinit var etAccountInfoNote: EditText
+    private lateinit var etAccountInfoName: EditText
 
     private lateinit var etAccountWalletNote: EditText
     private lateinit var etAccountWalletName: EditText
     private lateinit var etAccountWalletTime: EditText
-    private lateinit var etAccountWalletAmount: EditText
+    private lateinit var etAccountWalletAmount: EditText*/
 
 
     private val adapter by lazy {
-        AccountWalletAdapter()
+       val mAccountWalletAdapter= AccountWalletAdapter()
+        mAccountWalletAdapter.mIRvClickListener=this
+        mAccountWalletAdapter
     }
 
     private val mAccountInfoPresent by lazy{
@@ -52,17 +54,18 @@ class AccountInfoActivity : BaseProjectsActivity() {
     }
 
     private fun initView() {
-        btnAddWallet = findViewById(R.id.btnAddWallet)
+        btnAddWallet = findViewById(R.id.btnCreate)
         wbAccountInfoTitle = findViewById(R.id.wbAccountInfoTitle)
-        etAccountInfoName = findViewById(R.id.etAccountInfoName)
+        wbAccountInfoTitle.setRightViewText(R.string.cashbook_add_wallet)
+   /*     etAccountInfoName = findViewById(R.id.etAccountInfoName)
         etAccountInfoNote = findViewById(R.id.etAccountInfoNote)
-        ivAccountInfoPic = findViewById(R.id.ivAccountInfoPic)
         etAccountWalletNote = findViewById(R.id.etAccountWalletNote)
-        tvAccountInfoName = findViewById(R.id.tvAccountInfoName)
-        tvAccountInfoNote = findViewById(R.id.tvAccountInfoNote)
         etAccountWalletAmount = findViewById(R.id.etAccountWalletAmount)
         etAccountWalletName = findViewById(R.id.etAccountWalletName)
-        etAccountWalletTime = findViewById(R.id.etAccountWalletTime)
+        etAccountWalletTime = findViewById(R.id.etAccountWalletTime)*/
+        ivAccountInfoPic = findViewById(R.id.ivAccountInfoPic)
+        tvAccountInfoName = findViewById(R.id.tvAccountInfoName)
+        tvAccountInfoNote = findViewById(R.id.tvAccountInfoNote)
         rvAccountWalletList = findViewById(R.id.rvAccountWalletList)
         rvAccountWalletList.layoutManager=LinearLayoutManager(this)
         rvAccountWalletList.adapter=adapter
@@ -73,6 +76,7 @@ class AccountInfoActivity : BaseProjectsActivity() {
         tvAccountInfoName.setOnClickListener(this)
         tvAccountInfoNote.setOnClickListener(this)
         ivAccountInfoPic.setOnClickListener(this)
+        wbAccountInfoTitle.setRightViewClickListener(this)
     }
 
     fun setAccountPic(bitmap:Bitmap){
@@ -102,32 +106,45 @@ class AccountInfoActivity : BaseProjectsActivity() {
         }else{
             View.GONE
         }
-        etAccountInfoName.visibility=show
-        etAccountInfoNote.visibility=show
+      /*  etAccountInfoName.visibility=show
+        etAccountInfoNote.visibility=show*/
     }
 
     fun clearAddData(){
-        etAccountInfoName.setText(WkStringConstants.STR_EMPTY)
+       /* etAccountInfoName.setText(WkStringConstants.STR_EMPTY)
         etAccountInfoNote.setText(WkStringConstants.STR_EMPTY)
         etAccountWalletName.setText(WkStringConstants.STR_EMPTY)
         etAccountWalletTime.setText(WkStringConstants.STR_EMPTY)
         etAccountWalletAmount.setText(WkStringConstants.STR_EMPTY)
-        etAccountWalletNote.setText(WkStringConstants.STR_EMPTY)
+        etAccountWalletNote.setText(WkStringConstants.STR_EMPTY)*/
     }
 
+    override fun onItemChildClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
+        super.onItemChildClick(adapter, view, position)
+        val id=adapter?.getItemId(position)
+        mAccountInfoPresent.gotoUpdateWallet(id?:AccountWallet.INVALID_ID)
+    }
+
+    override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
+        super.onItemClick(adapter, view, position)
+
+    }
 
     override fun onClick(v: View?) {
         super.onClick(v)
         when (v?.id) {
-            R.id.btnAddWallet -> {
-                val accountName=etAccountInfoName.text.toString()
+            wbAccountInfoTitle.getRightViewId()->{
+                mAccountInfoPresent.gotoCreateWallet()
+            }
+            R.id.btnCreate -> {
+              /*  val accountName=etAccountInfoName.text.toString()
                 val accountNote=etAccountInfoNote.text.toString()
                 val walletName=etAccountWalletName.text.toString()
                 val walletNote=etAccountWalletNote.text.toString()
                 val walletTime=etAccountWalletTime.text.toString()
                 val walletAmount=etAccountWalletAmount.text.toString()
                 mAccountInfoPresent.saveOrUpdateAccount(accountName,accountNote,walletName,
-                        walletNote,walletTime,walletAmount)
+                        walletNote,walletTime,walletAmount)*/
 
             }
             R.id.ivAccountInfoPic -> {

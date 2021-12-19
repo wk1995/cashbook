@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/common_white_F1F0F0"
+    android:paddingStart="@dimen/d10dp"
+    android:paddingEnd="@dimen/d10dp"
+    tools:context=".trade.account.UpdateAccountOrWalletActivity">
+
+    <Button
+        android:id="@+id/btnCreate"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40dp"
+        android:text="@string/common_str_save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/etCreateName"
+        style="@style/cashbook_create_or_edit_account_wallet_et"
+        android:autofillHints="@string/common_str_todo"
+        android:hint="@string/cashbook_edit_name"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivCratePic"
+        tools:text="@string/common_str_note" />
+
+    <EditText
+        android:id="@+id/etCreateNote"
+        style="@style/cashbook_create_or_edit_account_wallet_et"
+        android:autofillHints="@string/common_str_todo"
+        android:hint="@string/common_str_note"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etCreateName" />
+
+    <EditText
+        android:id="@+id/tvCreateAmount"
+        style="@style/cashbook_create_or_edit_account_wallet_et"
+        android:autofillHints="@string/common_str_todo"
+        android:hint="@string/cashbook_str_balance"
+        android:inputType="numberSigned|numberDecimal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etCreateNote" />
+
+
+    <EditText
+        android:id="@+id/etCreateCaseTime"
+        style="@style/cashbook_create_or_edit_account_wallet_et"
+        android:autofillHints="@string/common_str_todo"
+        android:inputType="numberSigned"
+        android:hint="@string/cashbook_cast_to_cash_day"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvCreateAmount"
+        tools:ignore="LabelFor" />
+
+    <ImageView
+        android:id="@+id/ivCratePic"
+        android:layout_width="@dimen/d40dp"
+        android:layout_height="@dimen/d40dp"
+        android:contentDescription="@string/common_str_todo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wbCreateTitle"
+        tools:src="@drawable/cashbook_account_type_alipay" />
+
+    <Spinner
+        android:id="@+id/spCreateUnit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etCreateCaseTime" />
+
+    <com.wk.projects.common.ui.WkCommonActionBar
+        android:id="@+id/wbCreateTitle"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

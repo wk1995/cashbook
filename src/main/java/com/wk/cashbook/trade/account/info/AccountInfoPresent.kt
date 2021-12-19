@@ -1,8 +1,14 @@
 package com.wk.cashbook.trade.account.info
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.wk.cashbook.CashBookActivityRequestCode
 import com.wk.cashbook.R
+import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity
+import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.DATA_ID
+import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.DATA_TYPE
+import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.TYPE_WALLET
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsPresent
 import com.wk.projects.common.constant.NumberConstants
@@ -127,4 +133,15 @@ class AccountInfoPresent(private val mAccountInfoActivity: AccountInfoActivity) 
     }
 
 
+    fun gotoCreateWallet(){
+        val intent = Intent(mAccountInfoActivity, UpdateAccountOrWalletActivity::class.java)
+        mAccountInfoActivity.startActivityForResult(intent, CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
+    }
+
+    fun gotoUpdateWallet(walletId:Long){
+        val intent = Intent(mAccountInfoActivity, UpdateAccountOrWalletActivity::class.java)
+        intent.putExtra(DATA_ID,walletId)
+        intent.putExtra(DATA_TYPE,TYPE_WALLET)
+        mAccountInfoActivity.startActivityForResult(intent, CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
+    }
 }

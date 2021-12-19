@@ -18,5 +18,9 @@
     <string name="cashbook_zh_pay_desc">支出：</string>
     <string name="cashbook_zh_income_desc">收入：</string>
     <string name="cashbook_title_day_info_format">%s日-%s</string>
+    <string name="cashbook_add_wallet">添加钱包</string>
+    <string name="cashbook_edit_name">请添加名字</string>
+    <string name="cashbook_str_balance">余额</string>
+    <string name="cashbook_cast_to_cash_day">转成现金所需要的天数</string>
 
 </resources>
