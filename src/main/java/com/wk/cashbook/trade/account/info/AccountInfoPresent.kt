@@ -148,4 +148,11 @@ class AccountInfoPresent(private val mAccountInfoActivity: AccountInfoActivity) 
         intent.putExtra(DATA_TYPE,TYPE_WALLET)
         mAccountInfoActivity.startActivityForResult(intent, CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
     }
+
+    fun gotoUpdateAccount() {
+        val intent = Intent(mAccountInfoActivity, UpdateAccountOrWalletActivity::class.java)
+        intent.putExtra(TradeAccount.ACCOUNT_ID, mAccountInfoModel.getAccountId())
+        intent.putExtra(DATA_TYPE, UpdateAccountOrWalletActivity.TYPE_ACCOUNT)
+        mAccountInfoActivity.startActivityForResult(intent, CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
+    }
 }

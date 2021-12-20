@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
+import com.wk.projects.common.configuration.WkConfiguration
+import com.wk.projects.common.configuration.WkProjects
+import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.ui.recycler.BaseRecyclerViewAdapter
 import org.w3c.dom.Text
 
@@ -30,7 +33,7 @@ class AccountWalletAdapter(mWallets: MutableList<AccountWallet> = ArrayList())
     override fun onBindViewHolder(holder: AccountWalletVH, position: Int) {
         val data = getItem(position)
         holder.apply {
-            etWalletAmount.text = data.amount.toString()
+            etWalletAmount.text =WkContextCompat.getString(R.string.cashbook_list_wallet_balance).format(data.amount.toString())
             tvWalletName.text = (data.accountName)
             itemView.setOnClickListener {
                 mIRvClickListener?.onItemClick(this@AccountWalletAdapter, tvWalletName, position)

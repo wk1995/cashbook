@@ -1,16 +1,18 @@
 package com.wk.cashbook.trade.account
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.core.view.drawToBitmap
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.communication.ActivityResultCode.ResultCode_UpdateAccountOrWalletActivity
 import com.wk.projects.common.constant.NumberConstants
+import com.wk.projects.common.helper.WkBitmapUtil
 import com.wk.projects.common.log.WkLog
+import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.ui.WkCommonActionBar
 import org.litepal.LitePal
 import org.litepal.crud.LitePalSupport
@@ -64,6 +66,7 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         ivCratePic = findViewById(R.id.ivCratePic)
         ivCratePic.setImageResource(R.drawable.cashbook_account_type_crash)
         wbCreateTitle = findViewById(R.id.wbCreateTitle)
+        wbCreateTitle.setMiddleViewTextColor(WkContextCompat.getColor(this, R.color.common_black_2B2A2A))
         etCreateCaseTime = findViewById(R.id.etCreateCaseTime)
         btnCreate = findViewById(R.id.btnCreate)
         etCreateName = findViewById(R.id.etCreateName)
@@ -75,8 +78,9 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
 
     }
 
-    fun initListener(){
+    private fun initListener() {
         btnCreate.setOnClickListener(this)
+        ivCratePic.setOnClickListener(this)
     }
 
     fun initData() {
@@ -84,13 +88,16 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         showWallet(isWallet())
         when (type) {
             TYPE_ACCOUNT -> {
+
                 val id = intent.getLongExtra(TradeAccount.ACCOUNT_ID, TradeAccount.INVALID_ID)
-                if (id <= 0) {
+                if (id <= TradeAccount.INVALID_ID) {
                     mLitePalSupport = TradeAccount()
+                    wbCreateTitle.setMiddleViewText(R.string.cashbook_create_account)
                     return
                 }
+                wbCreateTitle.setMiddleViewText(R.string.cashbook_edit_account)
                 Observable.create(Observable.OnSubscribe<TradeAccount> {
-                    it.onNext(LitePal.find(TradeAccount::class.java, id))
+                    it.onNext(LitePal.find(TradeAccount::class.java, id,true))
                 }).subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { tradeAccount ->
@@ -109,12 +116,13 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
             }
 
             TYPE_WALLET -> {
-                val id = intent.getLongExtra(AccountWallet.ACCOUNT_WALLET_ID, NumberConstants.number_long_one_Negative)
-                if (id <= 0) {
+                val id = intent.getLongExtra(AccountWallet.ACCOUNT_WALLET_ID, AccountWallet.INVALID_ID)
+                if (id <= AccountWallet.INVALID_ID) {
                     mLitePalSupport = AccountWallet()
+                    wbCreateTitle.setMiddleViewText(R.string.cashbook_create_wallet)
                     return
                 }
-
+                wbCreateTitle.setMiddleViewText(R.string.cashbook_edit_wallet)
                 Observable.create(Observable.OnSubscribe<AccountWallet> {
                     it.onNext(LitePal.find(AccountWallet::class.java, id))
                 }).subscribeOn(Schedulers.newThread())
@@ -154,6 +162,9 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
                     createAccount()
                 }
             }
+            R.id.ivCratePic -> {
+
+            }
         }
     }
 
@@ -176,8 +187,9 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         }
         account.accountName = etCreateName.text.toString()
         account.note = etCreateNote.text.toString()
+        account.accountPic = WkBitmapUtil.getByteArrayByBitmap(ivCratePic.drawToBitmap())
         Observable.create(Observable.OnSubscribe<Boolean> {
-            it.onNext(account.save())
+            it.onNext(account.saveOrUpdate("id=?", account.baseObjId.toString()))
         }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { success ->
@@ -191,10 +203,9 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
     }
 
 
-
     private fun createWallet() {
-        val accountId = intent.getLongExtra(AccountWallet.ACCOUNT_ID, NumberConstants.number_long_one_Negative)
-        if(accountId<0){
+        val accountId = intent.getLongExtra(AccountWallet.ACCOUNT_ID, AccountWallet.INVALID_ID)
+        if (accountId < AccountWallet.INVALID_ID) {
             showToast("新增钱包失败")
             return
         }
@@ -208,7 +219,7 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
 
         Observable.create(Observable.OnSubscribe<Boolean> {
             it.onNext(LitePal.runInTransaction {
-                val save = wallet.save()
+                val save = wallet.saveOrUpdate("id=?", wallet.baseObjId.toString())
                 if (!save) {
                     return@runInTransaction false
                 }

@@ -11,7 +11,7 @@
         android:id="@+id/btnAddAccount"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d50dp"
-        android:text="+ 添加"
+        android:text="@string/cashbook_add_account"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -62,7 +62,7 @@
         android:textColor="@color/common_black_000000"
         android:textSize="@dimen/s16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/wbTitle" />
+        app:layout_constraintTop_toBottomOf="@id/wbAccountListTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAccountList"
@@ -73,10 +73,11 @@
         app:layout_constraintBottom_toTopOf="@id/btnAddAccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivAllAmountName" />
+        app:layout_constraintTop_toBottomOf="@id/ivAllAmountName"
+        tools:listitem="@layout/cashbook_account_list_item"/>
 
     <com.wk.projects.common.ui.WkCommonActionBar
-        android:id="@+id/wbTitle"
+        android:id="@+id/wbAccountListTitle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d40dp"
         android:background="@color/common_white_FFFCFC"

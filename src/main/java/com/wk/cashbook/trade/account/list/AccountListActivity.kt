@@ -70,9 +70,9 @@ class AccountListActivity : BaseProjectsActivity(), IRvClickListener, IFragmentT
     }
 
     private fun initView(){
-        wbTitle=findViewById(R.id.wbTitle)
+        wbTitle=findViewById(R.id.wbAccountListTitle)
         wbTitle.setMiddleViewText(R.string.cashbook_activity_title_amount_manager)
-        wbTitle.setMiddleViewGravity(Gravity.END or Gravity.CENTER_VERTICAL)
+        wbTitle.setMiddleViewGravity(Gravity.START or Gravity.CENTER_VERTICAL)
         wbTitle.setMiddleViewTextColor(WkContextCompat.getColor(this,R.color.common_black_2B2A2A))
         ivAllAmount=findViewById(R.id.tvAllAmount)
         btnAddAccount=findViewById(R.id.btnAddAccount)

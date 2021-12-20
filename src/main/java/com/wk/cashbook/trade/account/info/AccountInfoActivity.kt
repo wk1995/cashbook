@@ -3,16 +3,19 @@ package com.wk.cashbook.trade.account.info
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.wk.cashbook.CashBookListItemDecoration
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsActivity
+import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.ui.WkCommonActionBar
 import com.wk.projects.common.ui.recycler.IRvClickListener
 
@@ -27,22 +30,13 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
     private lateinit var tvAccountInfoNote: TextView
     private lateinit var rvAccountWalletList: RecyclerView
 
-   /* private lateinit var etAccountInfoNote: EditText
-    private lateinit var etAccountInfoName: EditText
-
-    private lateinit var etAccountWalletNote: EditText
-    private lateinit var etAccountWalletName: EditText
-    private lateinit var etAccountWalletTime: EditText
-    private lateinit var etAccountWalletAmount: EditText*/
-
-
     private val adapter by lazy {
-       val mAccountWalletAdapter= AccountWalletAdapter()
-        mAccountWalletAdapter.mIRvClickListener=this
+        val mAccountWalletAdapter = AccountWalletAdapter()
+        mAccountWalletAdapter.mIRvClickListener = this
         mAccountWalletAdapter
     }
 
-    private val mAccountInfoPresent by lazy{
+    private val mAccountInfoPresent by lazy {
         AccountInfoPresent(this)
     }
 
@@ -57,19 +51,21 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
     private fun initView() {
         btnAddWallet = findViewById(R.id.btnAddWattle)
         wbAccountInfoTitle = findViewById(R.id.wbAccountInfoTitle)
-        wbAccountInfoTitle.setRightViewText(R.string.cashbook_add_wallet)
-   /*     etAccountInfoName = findViewById(R.id.etAccountInfoName)
-        etAccountInfoNote = findViewById(R.id.etAccountInfoNote)
-        etAccountWalletNote = findViewById(R.id.etAccountWalletNote)
-        etAccountWalletAmount = findViewById(R.id.etAccountWalletAmount)
-        etAccountWalletName = findViewById(R.id.etAccountWalletName)
-        etAccountWalletTime = findViewById(R.id.etAccountWalletTime)*/
+        initTitleView()
         ivAccountInfoPic = findViewById(R.id.ivAccountInfoPic)
         tvAccountInfoName = findViewById(R.id.tvAccountInfoName)
         tvAccountInfoNote = findViewById(R.id.tvAccountInfoNote)
         rvAccountWalletList = findViewById(R.id.rvAccountWalletList)
-        rvAccountWalletList.layoutManager=LinearLayoutManager(this)
-        rvAccountWalletList.adapter=adapter
+        rvAccountWalletList.layoutManager = GridLayoutManager(this,2)
+        rvAccountWalletList.addItemDecoration(CashBookListItemDecoration(this))
+        rvAccountWalletList.adapter = adapter
+    }
+
+    private fun initTitleView() {
+        wbAccountInfoTitle.setRightViewText(R.string.cashbook_add_wallet)
+        wbAccountInfoTitle.setMiddleViewText(R.string.cashbook_title_account_info)
+        wbAccountInfoTitle.setMiddleViewTextColor(WkContextCompat.getColor(this, R.color.common_black_2B2A2A))
+        wbAccountInfoTitle.setMiddleViewGravity(Gravity.START or Gravity.CENTER_VERTICAL)
     }
 
     private fun initListener() {
@@ -80,7 +76,7 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
         wbAccountInfoTitle.setRightViewClickListener(this)
     }
 
-    fun setAccountPic(bitmap:Bitmap){
+    fun setAccountPic(bitmap: Bitmap) {
         ivAccountInfoPic.setImageBitmap(bitmap)
     }
 
@@ -101,40 +97,35 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
         mAccountInfoPresent.initData(id)
     }
 
-    fun showAddAccount(needShow:Boolean){
-        val show=if(needShow){
+    fun showAddAccount(needShow: Boolean) {
+        val show = if (needShow) {
             View.VISIBLE
-        }else{
+        } else {
             View.GONE
         }
-      /*  etAccountInfoName.visibility=show
-        etAccountInfoNote.visibility=show*/
+        /*  etAccountInfoName.visibility=show
+          etAccountInfoNote.visibility=show*/
     }
 
-    fun clearAddData(){
-       /* etAccountInfoName.setText(WkStringConstants.STR_EMPTY)
-        etAccountInfoNote.setText(WkStringConstants.STR_EMPTY)
-        etAccountWalletName.setText(WkStringConstants.STR_EMPTY)
-        etAccountWalletTime.setText(WkStringConstants.STR_EMPTY)
-        etAccountWalletAmount.setText(WkStringConstants.STR_EMPTY)
-        etAccountWalletNote.setText(WkStringConstants.STR_EMPTY)*/
+    fun clearAddData() {
+
     }
 
     override fun onItemChildClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemChildClick(adapter, view, position)
-        val id=adapter?.getItemId(position)
-        mAccountInfoPresent.gotoUpdateWallet(id?:AccountWallet.INVALID_ID)
+        val id = adapter?.getItemId(position)
+        mAccountInfoPresent.gotoUpdateWallet(id ?: AccountWallet.INVALID_ID)
     }
 
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
-
+        mAccountInfoPresent.gotoUpdateAccount()
     }
 
     override fun onClick(v: View?) {
         super.onClick(v)
         when (v?.id) {
-            wbAccountInfoTitle.getRightViewId(), R.id.btnAddWattle->{
+            wbAccountInfoTitle.getRightViewId(), R.id.btnAddWattle -> {
                 mAccountInfoPresent.gotoCreateWallet()
             }
 
@@ -147,39 +138,37 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
             R.id.tvAccountInfoName -> {
 
 
-
-
-              /*  mCurrentAccountWallet?.apply {
-                    accountName = etAccountName.text.toString()
-                    amount = try {
-                        etAccountMoney.text.toString().toDouble()
-                    } catch (e: NumberFormatException) {
-                        NumberConstants.number_double_zero
-                    }
-                    mSubscriptions?.add(
-                            Observable.create(Observable.OnSubscribe<Boolean> {
-                                it.onNext(saveOrUpdate("id = ?",baseObjId.toString()))
-                            }).subscribeOn(Schedulers.newThread())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe {
-                                        if (it) {
-                                            WkToast.showToast("保存成功")
-                                            val resultIntent = Intent()
-                                            resultIntent.putExtra(AccountWallet.ACCOUNT_MONEY_ID, baseObjId)
-                                            resultIntent.putExtra(AccountWallet.ACCOUNT_NAME, accountName)
-                                            resultIntent.putExtra(AccountWallet.NOTE, note)
-                                            resultIntent.putExtra(AccountWallet.UNIT, unit)
-                                            resultIntent.putExtra(AccountWallet.AMOUNT, amount)
-                                            resultIntent.putExtra(STR_POSITION_LOW,
-                                                    intent.getIntExtra(STR_POSITION_LOW, NumberConstants.number_int_one_Negative))
-                                            setResult(RESULT_CODE_ACCOUNT_INFO_ACTIVITY, resultIntent)
-                                            finish()
-                                        } else {
-                                            WkToast.showToast("保存失败")
-                                        }
-                                    }
-                    )
-                }*/
+                /*  mCurrentAccountWallet?.apply {
+                      accountName = etAccountName.text.toString()
+                      amount = try {
+                          etAccountMoney.text.toString().toDouble()
+                      } catch (e: NumberFormatException) {
+                          NumberConstants.number_double_zero
+                      }
+                      mSubscriptions?.add(
+                              Observable.create(Observable.OnSubscribe<Boolean> {
+                                  it.onNext(saveOrUpdate("id = ?",baseObjId.toString()))
+                              }).subscribeOn(Schedulers.newThread())
+                                      .observeOn(AndroidSchedulers.mainThread())
+                                      .subscribe {
+                                          if (it) {
+                                              WkToast.showToast("保存成功")
+                                              val resultIntent = Intent()
+                                              resultIntent.putExtra(AccountWallet.ACCOUNT_MONEY_ID, baseObjId)
+                                              resultIntent.putExtra(AccountWallet.ACCOUNT_NAME, accountName)
+                                              resultIntent.putExtra(AccountWallet.NOTE, note)
+                                              resultIntent.putExtra(AccountWallet.UNIT, unit)
+                                              resultIntent.putExtra(AccountWallet.AMOUNT, amount)
+                                              resultIntent.putExtra(STR_POSITION_LOW,
+                                                      intent.getIntExtra(STR_POSITION_LOW, NumberConstants.number_int_one_Negative))
+                                              setResult(RESULT_CODE_ACCOUNT_INFO_ACTIVITY, resultIntent)
+                                              finish()
+                                          } else {
+                                              WkToast.showToast("保存失败")
+                                          }
+                                      }
+                      )
+                  }*/
             }
 
         }

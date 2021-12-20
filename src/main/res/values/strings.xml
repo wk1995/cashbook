@@ -22,5 +22,12 @@
     <string name="cashbook_edit_name">请添加名字</string>
     <string name="cashbook_str_balance">余额</string>
     <string name="cashbook_cast_to_cash_day">转成现金所需要的天数</string>
+    <string name="cashbook_add_account">添加账户</string>
+    <string name="cashbook_title_account_info">账户详情</string>
+    <string name="cashbook_list_wallet_balance">余： %s</string>
+    <string name="cashbook_create_wallet">新建钱包</string>
+    <string name="cashbook_create_account">新建账户</string>
+    <string name="cashbook_edit_account">编辑账户</string>
+    <string name="cashbook_edit_wallet">编辑钱包</string>
 
 </resources>

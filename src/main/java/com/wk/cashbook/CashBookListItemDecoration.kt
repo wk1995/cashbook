@@ -19,27 +19,24 @@ import com.wk.projects.common.resource.WkContextCompat
  *      GitHub : https://github.com/wk1995
  *      CSDN   : http://blog.csdn.net/qq_33882671
  * */
-class CashBookListItemDecoration(context: Context): RecyclerView.ItemDecoration() {
+class CashBookListItemDecoration(context: Context,
+                                 private val dividerHeight: Int = context.resources.getDimensionPixelSize(R.dimen.d1dp))
+    : RecyclerView.ItemDecoration() {
     private val dividerPaint by lazy {
-       val dividerPaint= Paint()
+        val dividerPaint = Paint()
         dividerPaint.color = WkContextCompat.getColor(context, R.color.color_grey_807E797B)
         dividerPaint
     }
-
-    private val dividerHeight by lazy {
-        context.resources.getDimensionPixelSize(R.dimen.d1dp)
-    }
-
 
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDraw(c, parent, state)
         val left = parent.paddingLeft
         val right = parent.width - parent.paddingRight
-        val adapter=parent.adapter
-        val childCount = adapter?.itemCount?:return
+        val adapter = parent.adapter
+        val childCount = adapter?.itemCount ?: return
         for (i in 0 until childCount) {
-            if(adapter is CashListAdapter && adapter.isTitle(i)){
+            if (adapter is CashListAdapter && adapter.isTitle(i)) {
                 continue
             }
             val view = parent.getChildAt(i)
