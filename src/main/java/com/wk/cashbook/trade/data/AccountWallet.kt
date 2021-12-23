@@ -14,7 +14,7 @@ import org.litepal.crud.LitePalSupport
  * @param amount 余额
  * @param note 备注
  * @param unit 单位，人民币="CNY",美元USD，日元 JPY，港元HKD see[CurrencyType]
- * @param toCashTime 转成现金所需要的时间 [CONVERT_CASH_TIME_AT_ONCE]表示能实时到账 ,[CONVERT_CASH_TIME_IMPOSSIBLE]表示不能转为现金
+ * @param toCashTime 转成现金所需要的时间 [CONVERT_CASH_TIME_AT_ONCE]表示能实时到账 ,[CONVERT_CASH_TIME_IMPOSSIBLE]表示不能转为现金 单位ms
  */
 
 
@@ -37,11 +37,11 @@ data class AccountWallet(var accountName: String=WkStringConstants.STR_EMPTY,
 
         const val INVALID_ID = 0L
 
-        /**立刻能转换为现金*/
+        /**0立刻能转换为现金*/
         const val CONVERT_CASH_TIME_AT_ONCE = NumberConstants.number_long_zero
 
         /**
-         * 不可能转换为现金
+         * -1不可转换为现金
          * */
         const val CONVERT_CASH_TIME_IMPOSSIBLE = NumberConstants.number_long_one_Negative
     }

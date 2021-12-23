@@ -13,6 +13,7 @@ import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.helper.WkBitmapUtil
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
+import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.WkCommonActionBar
 import org.litepal.LitePal
 import org.litepal.crud.LitePalSupport
@@ -97,7 +98,7 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
                 }
                 wbCreateTitle.setMiddleViewText(R.string.cashbook_edit_account)
                 Observable.create(Observable.OnSubscribe<TradeAccount> {
-                    it.onNext(LitePal.find(TradeAccount::class.java, id,true))
+                    it.onNext(LitePal.find(TradeAccount::class.java, id, true))
                 }).subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe { tradeAccount ->
@@ -137,6 +138,7 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
                                     etCreateName.setText(accountName)
                                     etCreateNote.setText(note)
                                     etCreateAmount.text = amount.toString()
+                                    etCreateCaseTime.setText(DateTime.getDayNum(toCashTime).toString())
                                 }
                             }
                         }
@@ -216,6 +218,12 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         wallet.accountName = etCreateName.text.toString()
         wallet.note = etCreateNote.text.toString()
         wallet.amount = etCreateAmount.text.toString().toDouble()
+        val castTime = try {
+            etCreateCaseTime.text.toString().toLong()
+        } catch (e: Exception) {
+            0L
+        }
+        wallet.toCashTime = castTime * 24 * 60 * 60 * 1000
 
         Observable.create(Observable.OnSubscribe<Boolean> {
             it.onNext(LitePal.runInTransaction {
