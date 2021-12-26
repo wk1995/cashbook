@@ -35,15 +35,15 @@ class CashBookListItemDecoration(context: Context,
         val right = parent.width - parent.paddingRight
         val adapter = parent.adapter
         val childCount = adapter?.itemCount ?: return
-        for (i in 0 until childCount) {
-            if (adapter is CashListAdapter && adapter.isTitle(i)) {
-                continue
-            }
-            val view = parent.getChildAt(i)
-            val top = view.bottom.toFloat()
-            val bottom = (view.bottom + dividerHeight).toFloat()
-            c.drawRect(left.toFloat(), top, right.toFloat(), bottom, dividerPaint)
-        }
+//        for (i in 0 until childCount-1) {
+//            if (adapter is CashListAdapter && adapter.isTitle(i)) {
+//                continue
+//            }
+//            val view = parent.getChildAt(i)
+//            val top = view.bottom.toFloat()
+//            val bottom = (view.bottom + dividerHeight).toFloat()
+//            c.drawRect(left.toFloat(), top, right.toFloat(), bottom, dividerPaint)
+//        }
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {

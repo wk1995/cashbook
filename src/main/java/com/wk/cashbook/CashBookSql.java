@@ -33,4 +33,14 @@ public class CashBookSql {
             " on b.topid=c.id and a.categoryid=b.id\n" +
             " where a.tradetime>? and a.tradetime<? " +
             " order by a.tradetime desc;";
+
+    /**
+     * 获取资产汇总
+     * 单位，资产，负债，净资产,现金
+     * */
+    public static final String SQL_QUERY_ASSETS_INFO="select unit,sum(case when amount>0 then amount else 0 end) as assets ,\n" +
+            "sum(case when amount<=0 then amount else 0 end) as liabilities ,\n" +
+            "sum(amount) as netAssets,\n" +
+            "sum(case when tocashtime=0 and amount > 0 then amount else 0 end) as cash\n" +
+            "from accountwallet group by unit";
 }

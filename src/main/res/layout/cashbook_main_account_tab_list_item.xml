@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/common_white_C9C9C9"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvAssetsInfoUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="@dimen/d15dp"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="人民币" />
+
+    <TextView
+        android:id="@+id/tvAssetsInfoCash"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d100dp"
+        android:gravity="center_horizontal|bottom"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="现金：10000" />
+
+    <TextView
+        android:id="@+id/tvAssetsInfoAssets"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintEnd_toStartOf="@id/tvAssetsInfoNetAssets"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvAssetsInfoCash"
+        tools:text="资产 \n 10000" />
+
+    <TextView
+        android:id="@+id/tvAssetsInfoNetAssets"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintBottom_toBottomOf="@id/tvAssetsInfoAssets"
+        app:layout_constraintEnd_toStartOf="@id/tvAssetsInfoLiabilities"
+        app:layout_constraintStart_toEndOf="@id/tvAssetsInfoAssets"
+        app:layout_constraintTop_toTopOf="@id/tvAssetsInfoAssets"
+        tools:text="净资产 \n 10000" />
+
+    <TextView
+        android:id="@+id/tvAssetsInfoLiabilities"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/common_black_2B2A2A"
+        app:layout_constraintBottom_toBottomOf="@id/tvAssetsInfoAssets"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvAssetsInfoNetAssets"
+        app:layout_constraintTop_toTopOf="@id/tvAssetsInfoAssets"
+        tools:text="负债 \n 10000" />
+</androidx.constraintlayout.widget.ConstraintLayout>

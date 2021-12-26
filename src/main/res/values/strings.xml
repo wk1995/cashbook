@@ -29,5 +29,9 @@
     <string name="cashbook_create_account">新建账户</string>
     <string name="cashbook_edit_account">编辑账户</string>
     <string name="cashbook_edit_wallet">编辑钱包</string>
+    <string name="cashbook_assets_info_cash">现金：%s</string>
+    <string name="cashbook_assets_info_assets">资产：\n %s</string>
+    <string name="cashbook_assets_info_liabilities">负债：\n %s</string>
+    <string name="cashbook_assets_info_net_assets">净资产：\n %s</string>
 
 </resources>

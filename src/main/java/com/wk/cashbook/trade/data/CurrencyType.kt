@@ -14,7 +14,7 @@ package com.wk.cashbook.trade.data
  * @param english 英文
  * */
 @Suppress("unused")
-enum class CurrencyType(val mCurrencyCode: String, private val chinese: String,
+enum class CurrencyType(val mCurrencyCode: String, val chinese: String,
                         private val english: String, val mSymbol: String) {
 
     RenMinBi("CYN", "人民币", "RenMinBi", "￥"),
@@ -29,7 +29,7 @@ enum class CurrencyType(val mCurrencyCode: String, private val chinese: String,
     SingaporeDollar("SGD", "新加坡元", "Singapore Dollar", "S\$"),
     AustraliaDollar("AUD", "澳元 ", "Australia Dollar", "A\$"),
     CanadianDollar("CAD", "加元 ", "Canadian Dollar", "C\$"),
-    JapaneseYen("JPY", "日元", "Japanese Yen", "JPY￥")
+    JapaneseYen("JPY", "日元", "Japanese Yen", "JPY￥"),
 
-
+    UnKnow("UnKnow","UnKnow","UnKnow","UnKnow")
 }

@@ -4,10 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.CashBookSql
+import com.wk.cashbook.CashBookSql.SQL_QUERY_ASSETS_INFO
 import com.wk.cashbook.CashBookSql.SQL_QUERY_TRADE_RECODE_GROUP_DATE
+import com.wk.cashbook.trade.account.CurrencyTypeManager
 import com.wk.cashbook.trade.data.AccountWallet
+import com.wk.cashbook.trade.data.CurrencyType
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
+import com.wk.cashbook.trade.record.bean.AssetsInfoShowBean
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.cashbook.trade.record.bean.TradeRecodeShowBean
 import com.wk.cashbook.trade.record.bean.TradeRecodeShowTitleBean
@@ -107,6 +111,31 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
 
 
     }
+
+
+    fun initAssetsInfo() {
+        mSubscriptions?.add(Observable.create(Observable.OnSubscribe<List<AssetsInfoShowBean>> { t ->
+            val assetsInfoBeans = ArrayList<AssetsInfoShowBean>()
+            val cursor = LitePal.findBySQL(SQL_QUERY_ASSETS_INFO)
+            if (cursor.count != 0) {
+                while (cursor.moveToNext()) {
+                    val unit = (CurrencyTypeManager.getCurrencyType(cursor.getString(0))?: CurrencyType.UnKnow).chinese
+                    val assets = cursor.getDouble(1).toString()
+                    val liabilities = cursor.getDouble(2).toString()
+                    val netAssets = cursor.getDouble(3).toString()
+                    val cash = cursor.getDouble(4).toString()
+                    assetsInfoBeans.add(AssetsInfoShowBean(unit, cash, assets, liabilities, netAssets))
+                }
+            }
+            t.onNext(assetsInfoBeans)
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { assetsInfoShowBeans ->
+                    mCashBookBillListActivity?.replaceAssetsInfoData(assetsInfoShowBeans)
+                }
+        )
+    }
+
 
     /**交易记录列表*/
     fun initCashBookList(time: Long) {

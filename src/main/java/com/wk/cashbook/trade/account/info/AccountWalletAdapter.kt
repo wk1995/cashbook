@@ -1,18 +1,13 @@
 package com.wk.cashbook.trade.account.info
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
-import com.wk.projects.common.configuration.WkConfiguration
-import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.ui.recycler.BaseRecyclerViewAdapter
-import org.w3c.dom.Text
 
 /**
  *

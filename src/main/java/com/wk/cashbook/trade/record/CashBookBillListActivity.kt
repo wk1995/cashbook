@@ -20,6 +20,7 @@ import com.wk.cashbook.databinding.CashbookBillListActivityBinding
 import com.wk.cashbook.CashBookListItemDecoration
 import com.wk.cashbook.trade.account.list.AccountListActivity
 import com.wk.cashbook.trade.info.TradeRecordInfoActivity
+import com.wk.cashbook.trade.record.bean.AssetsInfoShowBean
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.BaseSimpleDialog
@@ -56,6 +57,10 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     }
     private val cashListAdapter by lazy {
         CashListAdapter(ArrayList(), this)
+    }
+
+    private val mAssetsInfoAdapter by lazy {
+        MainAssetsInfoAdapter()
     }
 
     private val pad by lazy {
@@ -133,20 +138,28 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         btnAddBill = mBind.btnAddBill
         ivTitleBack = mBind.ivTitleBack
         vpCashbook = mBind.vpCashbook
-        vpCashbook.adapter = object : RecyclerView.Adapter<CardViewHolder>() {
+        vpCashbook.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
                 val rootView = LayoutInflater.from(parent.context).inflate(
                         getLayoutId(viewType), parent, false)
                 rootView.findViewById<RecyclerView>(R.id.rvCommon)?.apply {
                     val linearLayoutManager = LinearLayoutManager(context)
                     layoutManager = linearLayoutManager
-                    adapter = cashListAdapter
                     addItemDecoration(CashBookListItemDecoration(this@CashBookBillListActivity))
                     setBackgroundColor(WkContextCompat.getColor(this@CashBookBillListActivity,
                             R.color.common_white_FFFCFC))
                     setPadding(pad, 0, pad, 0)
                     addItemDecoration(DividerItemDecoration(context, linearLayoutManager.orientation))
+                    adapter =  when(viewType){
+                        2->{
+                            mAssetsInfoAdapter
+                        }
+                        else->{
+                            cashListAdapter
+                        }
+                    }
                 }
+
                 return CardViewHolder(rootView)
             }
 
@@ -156,9 +169,9 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
                 return position
             }
 
-            override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
                 holder.apply {
-                    val tvCommon = rootView.findViewById<TextView>(R.id.tv)
+                    val tvCommon = itemView.findViewById<TextView>(R.id.tv)
                     tvCommon?.apply {
                         setText(tabTitles[position])
                         textSize = 100f
@@ -168,10 +181,13 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
             }
 
             private fun getLayoutId(viewType: Int) =
-                    if (viewType == LAYOUT_VIEWPAGER_DETAILED) {
-                        R.layout.common_only_recycler
-                    } else {
-                        R.layout.common_default
+                    when(viewType){
+                        LAYOUT_VIEWPAGER_DETAILED,LAYOUT_VIEWPAGER_ACCOUNT->{
+                            R.layout.common_only_recycler
+                        }
+                        else->{
+                            R.layout.common_default
+                        }
                     }
 
         }
@@ -242,6 +258,7 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
 
     fun initData() {
         mCashBookBillPresent.initCashBookList(selectTime)
+        mCashBookBillPresent.initAssetsInfo()
     }
 
 
@@ -254,6 +271,11 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     fun replaceRecodeList(data: List<ITradeRecodeShowBean>) {
         cashListAdapter.replaceList(data)
     }
+
+    fun replaceAssetsInfoData(data:List<AssetsInfoShowBean>){
+        mAssetsInfoAdapter.updateData(data)
+    }
+
 
     fun getData(position: Int) = cashListAdapter.getData(position)
 
