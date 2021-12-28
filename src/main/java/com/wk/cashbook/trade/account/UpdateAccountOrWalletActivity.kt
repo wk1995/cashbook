@@ -217,11 +217,15 @@ class UpdateAccountOrWalletActivity : BaseProjectsActivity() {
         }
         wallet.accountName = etCreateName.text.toString()
         wallet.note = etCreateNote.text.toString()
-        wallet.amount = etCreateAmount.text.toString().toDouble()
+        wallet.amount = try {
+            etCreateAmount.text.toString().toDouble()
+        } catch (e: Exception) {
+            NumberConstants.number_double_zero
+        }
         val castTime = try {
             etCreateCaseTime.text.toString().toLong()
         } catch (e: Exception) {
-            0L
+            NumberConstants.number_long_zero
         }
         wallet.toCashTime = castTime * 24 * 60 * 60 * 1000
 

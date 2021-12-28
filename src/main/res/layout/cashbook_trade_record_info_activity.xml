@@ -42,7 +42,7 @@
         android:paddingStart="@dimen/d5dp"
         android:paddingEnd="@dimen/d5dp"
         android:background="@drawable/common_bg_stroke_w1_color_2b2a2a"
-        android:inputType="number"
+        android:inputType="numberSigned|numberDecimal"
         android:hint="@string/common_str_amount_zero"
         android:textColorHint="@color/color_grey_7E797B"
         android:textColor="@color/common_black_2B2A2A"
