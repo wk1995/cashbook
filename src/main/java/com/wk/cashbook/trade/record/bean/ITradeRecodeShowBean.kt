@@ -12,4 +12,8 @@ package com.wk.cashbook.trade.record.bean
 interface ITradeRecodeShowBean {
 
     fun getTradeTime():Long
+
+    fun getTradeRecodeId():Long
+
+    fun getShowText():String
 }

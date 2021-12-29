@@ -1,6 +1,8 @@
 package com.wk.cashbook.trade.record.bean
 
+import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.constant.NumberConstants
+import com.wk.projects.common.constant.WkStringConstants
 
 /**
  *
@@ -24,4 +26,8 @@ data class TradeRecodeShowTitleBean(var mPayAmount: Double = NumberConstants.num
     }
 
     override fun getTradeTime()=mDayEndTime
+
+    override fun getTradeRecodeId()=TradeRecode.INVALID_ID
+
+    override fun getShowText()=WkStringConstants.STR_EMPTY
 }

@@ -119,7 +119,7 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
             val cursor = LitePal.findBySQL(SQL_QUERY_ASSETS_INFO)
             if (cursor.count != 0) {
                 while (cursor.moveToNext()) {
-                    val unit = (CurrencyTypeManager.getCurrencyType(cursor.getString(0))?: CurrencyType.UnKnow).chinese
+                    val unit = cursor.getString(0)
                     val assets = cursor.getDouble(1).toString()
                     val liabilities = cursor.getDouble(2).toString()
                     val netAssets = cursor.getDouble(3).toString()

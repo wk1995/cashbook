@@ -12,7 +12,6 @@ import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.cashbook.trade.record.bean.TradeRecodeShowBean
 import com.wk.cashbook.trade.record.bean.TradeRecodeShowTitleBean
-import com.wk.projects.common.communication.IRvClickListener
 import com.wk.projects.common.communication.constant.BundleKey
 import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.constant.WkStringConstants.STR_POSITION_LOW
@@ -20,6 +19,7 @@ import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.time.date.DayUtil
 import com.wk.projects.common.time.date.week.WeekUtil
+import com.wk.projects.common.ui.recycler.IRvClickListener
 import java.util.*
 
 /**
@@ -92,15 +92,15 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
                             bundle.putInt(STR_POSITION_LOW, getRealPosition(position))
                             bundle.putLong(TradeRecode.TRADE_RECODE_ID, tradeRecodeShowBean.mTradeRecodeId)
                             WkLog.d("click id: ${tradeRecodeShowBean.mTradeRecodeId}")
-                            rvItemListener?.onItemClick(bundle)
+                            rvItemListener?.onItemClick(this@CashListAdapter,itemView,position)
                         }
                         itemView.setOnLongClickListener {
                             val bundle = Bundle()
                             bundle.putInt(STR_POSITION_LOW, getRealPosition(position))
                             bundle.putLong(TradeRecode.TRADE_RECODE_ID, tradeRecodeShowBean.mTradeRecodeId)
                             bundle.putString(BundleKey.LIST_ITEM_NAME, tradeRecodeShowBean.mShowText)
-                            return@setOnLongClickListener rvItemListener?.onItemLongClick(bundle)
-                                    ?: false
+                            rvItemListener?.onItemLongClick(this@CashListAdapter,itemView,position)
+                            return@setOnLongClickListener true
                         }
                         tvTradeAmount.text =
                                 when (tradeRecodeShowBean.mTradeType) {
@@ -137,7 +137,7 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
         }
     }
 
-    private fun getRealPosition(position: Int) = position
+    fun getRealPosition(position: Int) = position
 
     override fun getItemCount() = mTradeRecords.size
 

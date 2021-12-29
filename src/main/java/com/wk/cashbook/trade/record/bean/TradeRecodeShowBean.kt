@@ -29,4 +29,8 @@ data class TradeRecodeShowBean(val mTradeRecodeId: Long,
    }
 
     override fun getTradeTime() =mTradeTime
+
+    override fun getTradeRecodeId()=mTradeRecodeId
+
+    override fun getShowText()=mShowText
 }

@@ -19,17 +19,20 @@ import com.wk.cashbook.R
 import com.wk.cashbook.databinding.CashbookBillListActivityBinding
 import com.wk.cashbook.CashBookListItemDecoration
 import com.wk.cashbook.trade.account.list.AccountListActivity
+import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.info.TradeRecordInfoActivity
 import com.wk.cashbook.trade.record.bean.AssetsInfoShowBean
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.BaseSimpleDialog
-import com.wk.projects.common.communication.IRvClickListener
+import com.wk.projects.common.communication.constant.BundleKey
 import com.wk.projects.common.communication.constant.IFAFlag
+import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.constant.WkStringConstants.STR_INT_ZERO
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.time.date.DateTime
+import com.wk.projects.common.ui.recycler.IRvClickListener
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -60,7 +63,9 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
     }
 
     private val mAssetsInfoAdapter by lazy {
-        MainAssetsInfoAdapter()
+        val mAssetsInfoAdapter=MainAssetsInfoAdapter()
+        mAssetsInfoAdapter.mIRvClickListener=this
+        mAssetsInfoAdapter
     }
 
     private val pad by lazy {
@@ -287,15 +292,61 @@ class CashBookBillListActivity : BaseProjectsActivity(), TabLayout.OnTabSelected
         cashListAdapter.replaceData(tradeRecodeShowBean, position, needSort)
     }
 
-    override fun onItemClick(bundle: Bundle?, vararg any: Any?) {
-        val intent = Intent(this, TradeRecordInfoActivity::class.java)
-        intent.putExtras(bundle ?: Bundle())
-        startActivityForResult(intent, 1)
+    override fun onItemChildClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
+        super.onItemChildClick(adapter, view, position)
+        when(adapter){
+            is MainAssetsInfoAdapter->{
+                when(view?.id?:View.NO_ID){
+                    //现金
+                    R.id.tvAssetsInfoCash->{
+
+                    }
+                    //资产
+                    R.id.tvAssetsInfoAssets->{
+
+                    }
+                    //负债
+                    R.id.tvAssetsInfoLiabilities->{
+
+                    }
+                }
+            }
+        }
     }
 
-    override fun onItemLongClick(bundle: Bundle?, vararg any: Any?): Boolean {
-        DeleteCashBookDialog.create(bundle).show(supportFragmentManager)
-        return true
+    override fun onItemLongClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
+        super.onItemLongClick(adapter, view, position)
+        when(adapter){
+            is CashListAdapter->{
+                val bundle = Bundle()
+                val realPosition=adapter.getRealPosition(position)
+                val item=adapter.getData(realPosition)
+                bundle.putInt(WkStringConstants.STR_POSITION_LOW, realPosition)
+                bundle.putLong(TradeRecode.TRADE_RECODE_ID, item.getTradeRecodeId())
+                bundle.putString(BundleKey.LIST_ITEM_NAME, item.getShowText())
+                DeleteCashBookDialog.create(bundle).show(supportFragmentManager)
+            }
+        }
+    }
+
+    override fun onItemChildLongClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
+        super.onItemChildLongClick(adapter, view, position)
+    }
+
+    override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
+        super.onItemClick(adapter, view, position)
+        when(adapter){
+            is CashListAdapter->{
+                val intent = Intent(this, TradeRecordInfoActivity::class.java)
+                val realPosition=adapter.getRealPosition(position)
+                intent.putExtra(WkStringConstants.STR_POSITION_LOW, realPosition)
+                val tradeRecodeId=adapter.getData(realPosition).getTradeRecodeId()
+                intent.putExtra(TradeRecode.TRADE_RECODE_ID, tradeRecodeId)
+                WkLog.d("click id: $tradeRecodeId")
+                startActivityForResult(intent, 1)
+            }
+        }
+
     }
 
     override fun communication(flag: Int, bundle: Bundle?, any: Any?) {
