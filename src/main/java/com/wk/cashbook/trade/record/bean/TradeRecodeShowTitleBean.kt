@@ -3,6 +3,7 @@ package com.wk.cashbook.trade.record.bean
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
+import java.math.BigDecimal
 
 /**
  *
@@ -18,7 +19,7 @@ data class TradeRecodeShowTitleBean(var mPayAmount: Double = NumberConstants.num
                                     var mDayEndTime: Long=NumberConstants.number_long_zero) : ITradeRecodeShowBean {
 
     fun addPayAmount(payAmount: Double) {
-        mPayAmount+=payAmount
+        mPayAmount=BigDecimal.valueOf(mPayAmount).add(BigDecimal.valueOf(payAmount)).toDouble()
     }
 
     fun addInComeAmount(inComeAmount: Double) {
