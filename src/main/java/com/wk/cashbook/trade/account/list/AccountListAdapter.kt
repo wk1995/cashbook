@@ -8,8 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
+import com.wk.cashbook.initMoneyToString
 import com.wk.cashbook.trade.data.CurrencyType
 import com.wk.projects.common.constant.NumberConstants
+import com.wk.projects.common.helper.NumberUtil
 import com.wk.projects.common.helper.WkBitmapUtil
 import com.wk.projects.common.ui.recycler.IRvClickListener
 
@@ -51,7 +53,7 @@ class AccountListAdapter(private val mAccounts: MutableList<AccountListShowBean>
                         ?: NumberConstants.number_double_zero
                 if (moneyAmount != NumberConstants.number_double_zero) {
                     it.first.visibility = View.VISIBLE
-                    it.first.text = it.second.mCurrencyCode + ": " + moneyAmount
+                    it.first.text = it.second.mCurrencyCode + ": " + NumberUtil.initMoneyToString(moneyAmount)
                 } else {
                     it.first.visibility = View.GONE
                 }

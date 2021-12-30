@@ -6,9 +6,8 @@ import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.CashBookSql
 import com.wk.cashbook.CashBookSql.SQL_QUERY_ASSETS_INFO
 import com.wk.cashbook.CashBookSql.SQL_QUERY_TRADE_RECODE_GROUP_DATE
-import com.wk.cashbook.trade.account.CurrencyTypeManager
+import com.wk.cashbook.initMoneyToString
 import com.wk.cashbook.trade.data.AccountWallet
-import com.wk.cashbook.trade.data.CurrencyType
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.trade.record.bean.AssetsInfoShowBean
@@ -17,6 +16,7 @@ import com.wk.cashbook.trade.record.bean.TradeRecodeShowBean
 import com.wk.cashbook.trade.record.bean.TradeRecodeShowTitleBean
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
+import com.wk.projects.common.helper.NumberUtil
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.WkToast
@@ -120,10 +120,10 @@ class CashBookBillPresent(private val mCashBookBillListActivity: CashBookBillLis
             if (cursor.count != 0) {
                 while (cursor.moveToNext()) {
                     val unit = cursor.getString(0)
-                    val assets = cursor.getDouble(1).toString()
-                    val liabilities = cursor.getDouble(2).toString()
-                    val netAssets = cursor.getDouble(3).toString()
-                    val cash = cursor.getDouble(4).toString()
+                    val assets = NumberUtil.initMoneyToString(cursor.getDouble(1))
+                    val liabilities = NumberUtil.initMoneyToString(cursor.getDouble(2))
+                    val netAssets = NumberUtil.initMoneyToString(cursor.getDouble(3))
+                    val cash = NumberUtil.initMoneyToString(cursor.getDouble(4))
                     assetsInfoBeans.add(AssetsInfoShowBean(unit, cash, assets, liabilities, netAssets))
                 }
             }
