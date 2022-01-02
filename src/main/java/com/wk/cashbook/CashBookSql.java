@@ -16,7 +16,7 @@ public class CashBookSql {
     public static final String SQL_QUERY_SUM_AMOUNT_CATEGORY="select sum(a.amount),b.categoryname from traderecode a " +
             "join (select a.id,a.topid,b.categoryname from (select id,(CASE  WHEN parentid<=-1 THEN  id ELSE parentid END) AS topid from tradecategory) a " +
             "join tradecategory b on a.topid=b.id) b on a.categoryid=b.id " +
-            "where a.tradetime>? and a.tradetime<? " +
+            "where a.tradetime>=? and a.tradetime<=? " +
             "group by b.topid ;";
 
     /**
@@ -31,7 +31,7 @@ public class CashBookSql {
             " join (select id,categoryname,(CASE  WHEN parentid<=-1 THEN  id ELSE parentid END) AS topid from tradecategory) b \n" +
             " join tradecategory c\n" +
             " on b.topid=c.id and a.categoryid=b.id\n" +
-            " where a.tradetime>? and a.tradetime<? " +
+            " where a.tradetime>=? and a.tradetime<=? " +
             " order by a.tradetime desc;";
 
     /**

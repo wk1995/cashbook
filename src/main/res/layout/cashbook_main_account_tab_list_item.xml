@@ -33,6 +33,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginTop="@dimen/d15dp"
         android:textColor="@color/common_black_2B2A2A"
         app:layout_constraintEnd_toStartOf="@id/tvAssetsInfoNetAssets"
         app:layout_constraintHorizontal_chainStyle="packed"

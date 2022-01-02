@@ -18,7 +18,6 @@ import org.litepal.crud.LitePalSupport
  * @param amount 金额
  * @param tradeNote 备注
  * @param receiveAccountId 收款账户 [AccountWallet]
- * @param relationTradeId 关联交易 比如还款
  */
 
 
@@ -28,8 +27,7 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
                        val flagIds: ArrayList<Long> = ArrayList(),
                        var amount: Double = NumberConstants.number_double_zero,
                        var tradeNote: String = WkStringConstants.STR_EMPTY,
-                       var receiveAccountId: Long = NumberConstants.number_long_one_Negative,
-                       var relationTradeId: Long = NumberConstants.number_long_one_Negative
+                       var receiveAccountId: Long = NumberConstants.number_long_one_Negative
 ) : LitePalSupport(), ITradeRecord {
 
     public override fun getBaseObjId(): Long {
@@ -37,7 +35,9 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
     }
 
     override fun toString(): String {
-        return "TradeRecode(baseObjId=${baseObjId}, tradeTime=$tradeTime, accountId=$accountId, categoryId=$categoryId, flagIds=$flagIds, amount=$amount, tradeNote='$tradeNote', receiveAccountId=$receiveAccountId, relationTradeId=$relationTradeId)"
+        return "TradeRecode(baseObjId=${baseObjId}, tradeTime=$tradeTime," +
+                " accountId=$accountId, categoryId=$categoryId, flagIds=$flagIds, " +
+                "amount=$amount, tradeNote='$tradeNote', receiveAccountId=$receiveAccountId)"
     }
 
     companion object{
@@ -66,7 +66,6 @@ data class TradeRecode(var tradeTime: Long = NumberConstants.number_long_zero,
         const val AMOUNT="amount"
         const val TRADE_NOTE="tradenote"
         const val RECEIVE_ACCOUNT_ID="receiveaccountid"
-        const val RELATION_TRADE_ID="relationtradeid"
         const val INVALID_ID = NumberConstants.number_long_one_Negative
         /**初始id，新建对象，id都为这个0*/
         const val INIT_ID=NumberConstants.number_long_zero
