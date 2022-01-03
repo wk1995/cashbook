@@ -15,6 +15,7 @@ import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsActivity
+import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.ui.WkCommonActionBar
 import com.wk.projects.common.ui.recycler.IRvClickListener
@@ -119,7 +120,12 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
 
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
-        mAccountInfoPresent.gotoUpdateAccount()
+        val id = adapter?.getItemId(position)?:AccountWallet.INVALID_ID
+        if(id==AccountWallet.INVALID_ID){
+            WkLog.w("id is  invalid")
+            return
+        }
+        mAccountInfoPresent.gotoWalletRecodeInfo(id)
     }
 
     override fun onClick(v: View?) {
@@ -130,13 +136,13 @@ class AccountInfoActivity : BaseProjectsActivity(), IRvClickListener {
             }
 
             R.id.ivAccountInfoPic -> {
-
+                mAccountInfoPresent.gotoUpdateAccount()
             }
             R.id.tvAccountInfoNote -> {
-
+                mAccountInfoPresent.gotoUpdateAccount()
             }
             R.id.tvAccountInfoName -> {
-
+                mAccountInfoPresent.gotoUpdateAccount()
 
                 /*  mCurrentAccountWallet?.apply {
                       accountName = etAccountName.text.toString()

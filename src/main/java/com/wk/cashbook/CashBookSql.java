@@ -43,4 +43,9 @@ public class CashBookSql {
             "sum(amount) as netAssets,\n" +
             "sum(case when tocashtime=0 and amount > 0 then amount else 0 end) as cash\n" +
             "from accountwallet group by unit";
+
+
+    public static final String SQL_QUERY_WALLET_TRADE_RECODE="select id,tradetime,amount,tradenote,(case when accountid =? then \"yes\" else \"no\" end) as pay from traderecode\n" +
+            "where accountid=? or receiveaccountid=?\n" +
+            "order by tradetime desc";
 }

@@ -23,7 +23,7 @@ data class TradeRecodeShowTitleBean(var mPayAmount: Double = NumberConstants.num
     }
 
     fun addInComeAmount(inComeAmount: Double) {
-        mInComeAmount+=inComeAmount
+        mInComeAmount=BigDecimal.valueOf(mInComeAmount).add(BigDecimal.valueOf(inComeAmount)).toDouble()
     }
 
     override fun getTradeTime()=mDayEndTime

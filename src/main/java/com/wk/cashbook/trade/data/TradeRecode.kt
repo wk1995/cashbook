@@ -12,7 +12,7 @@ import org.litepal.crud.LitePalSupport
  * create date  : 2021/03/10
  * desc         : 交易记录
  * @param tradeTime 交易时间
- * @param accountId 账户 [AccountWallet]
+ * @param accountId 钱包 [AccountWallet]
  * @param categoryId 类别  [TradeCategory]
  * @param flagIds 标签 [TradeFlag]
  * @param amount 金额

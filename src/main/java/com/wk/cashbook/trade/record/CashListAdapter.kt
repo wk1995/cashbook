@@ -152,9 +152,12 @@ class CashListAdapter(private var mTradeRecords: MutableList<ITradeRecodeShowBea
 
     fun isTitle(position: Int) = getItemViewType(position) == TYPE_TOTAL_ITEM
 
-    fun replaceList(tradeRecords: List<ITradeRecodeShowBean>) {
+    fun replaceList(tradeRecords: List<ITradeRecodeShowBean>?) {
         mTradeRecords.clear()
-        mTradeRecords.addAll(tradeRecords)
+        if(tradeRecords!=null){
+            mTradeRecords.addAll(tradeRecords)
+        }
+
         notifyDataSetChanged()
     }
 
