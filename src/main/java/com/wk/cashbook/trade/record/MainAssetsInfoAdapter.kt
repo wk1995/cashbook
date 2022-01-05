@@ -1,6 +1,5 @@
 package com.wk.cashbook.trade.record
 
-import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -33,7 +32,7 @@ class MainAssetsInfoAdapter : BaseRecyclerViewAdapter<AssetsInfoShowBean,
 
     override fun getItemLayoutResId(parent: ViewGroup, viewType: Int) = R.layout.cashbook_main_account_tab_list_item
 
-    override fun createVH(rootView: View): MainAssetsInfoAdapterVH {
+    override fun createVH(rootView: View, viewType: Int): MainAssetsInfoAdapterVH {
         val tvAssetsInfoCash = rootView.findViewById<TextView>(R.id.tvAssetsInfoCash)
         val tvAssetsInfoAssets = rootView.findViewById<TextView>(R.id.tvAssetsInfoAssets)
         val tvAssetsInfoLiabilities = rootView.findViewById<TextView>(R.id.tvAssetsInfoLiabilities)

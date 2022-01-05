@@ -11,12 +11,13 @@
         android:label="@string/module_name"
         android:theme="@style/Theme.AppCompat"
         tools:replace="android:label">
-        <activity android:name=".trade.account.wallet.WalletInfoActivity"></activity>
+        <activity android:name=".trade.account.wallet.WalletTradeRecodeActivity" />
         <activity android:name=".trade.account.UpdateAccountOrWalletActivity" />
         <activity android:name=".trade.account.info.AccountInfoActivity" />
         <activity android:name=".trade.account.list.AccountListActivity" />
         <activity android:name=".trade.info.TradeRecordInfoActivity" />
-        <activity android:name=".trade.record.CashBookBillListActivity">
+        <activity android:name=".trade.record.CashBookBillListActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

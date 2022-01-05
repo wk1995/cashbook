@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/d30dp">
+
+    <TextView
+        android:id="@+id/tvBillTotalDay"
+        android:text="@string/cashbook_title_day_info_format"
+        style="@style/cashbook_tv_trade_list_total"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvAllIncomeValue"
+        style="@style/cashbook_tv_trade_list_total"
+        android:layout_marginEnd="@dimen/d10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="0.0" />
+
+    <TextView
+        android:id="@+id/tvAllIncomeName"
+        style="@style/cashbook_tv_trade_list_total"
+        android:text="@string/cashbook_zh_income_desc"
+        app:layout_constraintEnd_toStartOf="@id/tvAllIncomeValue"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvAllPayValue"
+        style="@style/cashbook_tv_trade_list_total"
+        android:layout_marginEnd="@dimen/d10dp"
+        app:layout_constraintEnd_toStartOf="@id/tvAllIncomeName"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="60.0" />
+
+    <TextView
+        android:id="@+id/tvAllPayName"
+        style="@style/cashbook_tv_trade_list_total"
+        android:text="@string/cashbook_zh_pay_desc"
+        app:layout_constraintEnd_toStartOf="@id/tvAllPayValue"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

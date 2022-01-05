@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/common_blue_0D62A5"
-    tools:context=".trade.account.wallet.WalletInfoActivity">
+    tools:context=".trade.account.wallet.WalletTradeRecodeActivity">
 
     <TextView
         android:id="@+id/tvWalletInfoName"
@@ -59,6 +59,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/d15dp"
+        android:paddingStart="@dimen/d15dp"
+        android:paddingEnd="@dimen/d15dp"
         android:background="@color/common_white_F1F0F0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -6,7 +6,7 @@ import com.wk.cashbook.R
 import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity
 import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.DATA_TYPE
 import com.wk.cashbook.trade.account.UpdateAccountOrWalletActivity.Companion.TYPE_WALLET
-import com.wk.cashbook.trade.account.wallet.WalletInfoActivity
+import com.wk.cashbook.trade.account.wallet.WalletTradeRecodeActivity
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.projects.common.BaseProjectsPresent
@@ -158,7 +158,7 @@ class AccountInfoPresent(private val mAccountInfoActivity: AccountInfoActivity) 
     }
 
     fun gotoWalletRecodeInfo(walletId:Long){
-        val intent = Intent(mAccountInfoActivity, WalletInfoActivity::class.java)
+        val intent = Intent(mAccountInfoActivity, WalletTradeRecodeActivity::class.java)
         intent.putExtra(AccountWallet.ACCOUNT_WALLET_ID,walletId)
         mAccountInfoActivity.startActivityForResult(intent, CashBookActivityRequestCode.REQUEST_CODE_ACCOUNT_LIST_ACTIVITY)
     }

@@ -48,7 +48,7 @@ class AccountWalletAdapter(mWallets: MutableList<AccountWallet> = ArrayList())
 
     override fun getItemLayoutResId(parent: ViewGroup, viewType: Int) = R.layout.cashbook_account_wallet_list_item
 
-    override fun createVH(rootView: View): AccountWalletVH {
+    override fun createVH(rootView: View, viewType: Int): AccountWalletVH {
         val tvWalletName = rootView.findViewById<TextView>(R.id.tvWalletName)
         val etWalletAmount = rootView.findViewById<TextView>(R.id.etWalletAmount)
         val tvWalletPayTotal = rootView.findViewById<TextView>(R.id.tvWalletPayTotal)

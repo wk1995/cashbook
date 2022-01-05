@@ -10,16 +10,16 @@ import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.ui.recycler.IRvClickListener
 
-class WalletInfoActivity : BaseProjectsActivity() , IRvClickListener {
+class WalletTradeRecodeActivity : BaseProjectsActivity() , IRvClickListener {
 
     private lateinit var rvWalletTradeRecode:RecyclerView
     private lateinit var tvWalletInfoName:TextView
     private val mCashListAdapter by lazy {
-        CashListAdapter(ArrayList(), this)
+        WalletTradeRecodeAdapter(ArrayList(), this)
     }
 
     private val mWalletInfoPresent by lazy {
-        WalletInfoPresent(this)
+        WalletTradeRecodePresent(this)
     }
 
     override fun initResLayId()= R.layout.cashbook_wallet_info_activity

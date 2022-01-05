@@ -45,7 +45,7 @@ public class CashBookSql {
             "from accountwallet group by unit";
 
 
-    public static final String SQL_QUERY_WALLET_TRADE_RECODE="select id,tradetime,amount,tradenote,(case when accountid =? then \"yes\" else \"no\" end) as pay from traderecode\n" +
+    public static final String SQL_QUERY_WALLET_TRADE_RECODE="select id,tradetime,amount,tradenote,(case when accountid =? then \"yes\" else \"no\" end) as pay ,(select amount from accountwallet where id=?) as balance from traderecode\n" +
             "where accountid=? or receiveaccountid=?\n" +
             "order by tradetime desc";
 }
