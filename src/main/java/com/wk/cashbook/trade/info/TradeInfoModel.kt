@@ -68,9 +68,9 @@ class TradeInfoModel(private val mTradeRecordInfoPresent: TradeRecordInfoPresent
         mCurrentTradeRecode.tradeTime=tradeTime
     }
 
-    fun setRootCategory(rootCategory: TradeCategory) {
+    fun setRootCategory(rootCategory: TradeCategory,isSelect:Boolean=false) {
         val rootCategoryId = rootCategory.baseObjId
-        if (mSelectRootCategoryId != rootCategoryId) {
+        if (isSelect && mSelectRootCategoryId != rootCategoryId) {
             mCurrentTradeRecode.categoryId = rootCategoryId
         }
         mSelectRootCategoryId = rootCategoryId
@@ -106,7 +106,8 @@ class TradeInfoModel(private val mTradeRecordInfoPresent: TradeRecordInfoPresent
         mCurrentTradeRecode.receiveAccountId = accountId
     }
 
-    fun saveOrUpdate() = mCurrentTradeRecode.saveOrUpdate("id = ?", mCurrentTradeRecode.baseObjId.toString())
+    fun saveOrUpdate() =
+        mCurrentTradeRecode.saveOrUpdate("id = ?", mCurrentTradeRecode.baseObjId.toString())
 
     fun getAccountId() = mCurrentTradeRecode.accountId
 

@@ -200,7 +200,8 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
             }
             //选中类别
             mTradeInfoRootCategoryAdapter.selectPosition(position)
-            mTradeRecordInfoPresent.setSelectRootCategory(mTradeInfoRootCategoryAdapter.getItem(position))
+            mTradeRecordInfoPresent.setSelectRootCategory(
+                mTradeInfoRootCategoryAdapter.getItem(position),true)
         }
     }
 

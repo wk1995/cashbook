@@ -1,16 +1,23 @@
 package com.wk.cashbook.trade.account.wallet
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
+import com.wk.cashbook.trade.data.TradeRecode
+import com.wk.cashbook.trade.info.TradeRecordInfoActivity
 import com.wk.cashbook.trade.record.CashListAdapter
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.projects.common.BaseProjectsActivity
+import com.wk.projects.common.constant.WkStringConstants
+import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.ui.WkCommonActionBar
+import com.wk.projects.common.ui.recycler.BaseRecyclerViewAdapter
 import com.wk.projects.common.ui.recycler.IRvClickListener
 
 class WalletTradeRecodeActivity : BaseProjectsActivity(), IRvClickListener {
@@ -43,6 +50,10 @@ class WalletTradeRecodeActivity : BaseProjectsActivity(), IRvClickListener {
         wbWalletInfoTitle.setMiddleViewTextSize(R.dimen.s16sp)
         rvWalletTradeRecode.adapter = mCashListAdapter
         rvWalletTradeRecode.layoutManager = LinearLayoutManager(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
         mWalletInfoPresent.initData(intent)
     }
 
@@ -61,8 +72,19 @@ class WalletTradeRecodeActivity : BaseProjectsActivity(), IRvClickListener {
         )
     }
 
-
     fun setWalletName(name: String) {
         tvWalletInfoName.text = name
+    }
+
+    override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
+        super.onItemClick(adapter, view, position)
+        if(adapter is BaseRecyclerViewAdapter<*, *>){
+            val intent = Intent(this, TradeRecordInfoActivity::class.java)
+            val realPosition=adapter.getDataReallyPosition(position)
+            intent.putExtra(WkStringConstants.STR_POSITION_LOW, realPosition)
+            val tradeRecodeId=adapter.getItemId(realPosition)
+            intent.putExtra(TradeRecode.TRADE_RECODE_ID, tradeRecodeId)
+            startActivityForResult(intent, 1)
+        }
     }
 }

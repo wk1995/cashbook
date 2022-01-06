@@ -143,6 +143,10 @@ class WalletTradeRecodeAdapter(private var mTradeRecords: MutableList<ITradeReco
         }
     }
 
+    override fun getItemId(position: Int): Long {
+        return mTradeRecords[getDataReallyPosition(position)].getTradeRecodeId()
+    }
+
     override fun getItemCount() = mTradeRecords.size
 
     override fun getItemViewType(position: Int): Int {

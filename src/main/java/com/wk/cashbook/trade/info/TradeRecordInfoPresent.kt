@@ -119,6 +119,7 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
                         WkLog.i("initRootCategory:  ${it.categoryName}")
                         mTradeInfoModel.originRootCategoryId = it.baseObjId
                         setSelectRootCategory(it)
+
                     }
                 }
         )
@@ -213,18 +214,18 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
         mTradeRecordInfoActivity.setTradeCategory(selectCategoryId)
     }
 
-    fun setSelectRootCategory(category: TradeCategory?) {
+    fun setSelectRootCategory(category: TradeCategory?,isSelect:Boolean=false) {
         if (category?.isRootCategory() != true) {
             return
         }
+        mTradeInfoModel.mSelectRootCategoryName=category.categoryName
         val isInternalTransfer = isInternalTrans(category)
         if (isInternalTransfer) {
             showTradeAccount(mTradeInfoModel.getReceiveAccountId(), 1)
         }
         mTradeRecordInfoActivity.initInternalTransferView(isInternalTransfer)
+        mTradeInfoModel.setRootCategory(category,isSelect)
         mTradeRecordInfoActivity.setRootCategory(category)
-        mTradeInfoModel.setRootCategory(category)
-        mTradeInfoModel.mSelectRootCategoryName=category.categoryName
     }
 
     private fun isInternalTrans(category: TradeCategory?) =
