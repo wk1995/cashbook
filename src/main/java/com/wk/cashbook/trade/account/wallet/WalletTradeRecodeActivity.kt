@@ -1,6 +1,7 @@
 package com.wk.cashbook.trade.account.wallet
 
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -8,12 +9,16 @@ import com.wk.cashbook.R
 import com.wk.cashbook.trade.record.CashListAdapter
 import com.wk.cashbook.trade.record.bean.ITradeRecodeShowBean
 import com.wk.projects.common.BaseProjectsActivity
+import com.wk.projects.common.resource.WkContextCompat
+import com.wk.projects.common.ui.WkCommonActionBar
 import com.wk.projects.common.ui.recycler.IRvClickListener
 
-class WalletTradeRecodeActivity : BaseProjectsActivity() , IRvClickListener {
+class WalletTradeRecodeActivity : BaseProjectsActivity(), IRvClickListener {
 
-    private lateinit var rvWalletTradeRecode:RecyclerView
-    private lateinit var tvWalletInfoName:TextView
+    private lateinit var rvWalletTradeRecode: RecyclerView
+    private lateinit var tvWalletInfoName: TextView
+    private lateinit var tvWalletInfoBalance: TextView
+    private lateinit var wbWalletInfoTitle: WkCommonActionBar
     private val mCashListAdapter by lazy {
         WalletTradeRecodeAdapter(ArrayList(), this)
     }
@@ -22,18 +27,26 @@ class WalletTradeRecodeActivity : BaseProjectsActivity() , IRvClickListener {
         WalletTradeRecodePresent(this)
     }
 
-    override fun initResLayId()= R.layout.cashbook_wallet_info_activity
+    override fun initResLayId() = R.layout.cashbook_wallet_info_activity
 
-    override fun bindView(savedInstanceState: Bundle?, mBaseProjectsActivity: BaseProjectsActivity) {
+    override fun bindView(
+        savedInstanceState: Bundle?,
+        mBaseProjectsActivity: BaseProjectsActivity
+    ) {
         mWalletInfoPresent.onCreate()
-        rvWalletTradeRecode=findViewById(R.id.rvWalletTradeRecode)
-        tvWalletInfoName=findViewById(R.id.tvWalletInfoName)
-        rvWalletTradeRecode.adapter=mCashListAdapter
-        rvWalletTradeRecode.layoutManager=LinearLayoutManager(this)
+        rvWalletTradeRecode = findViewById(R.id.rvWalletTradeRecode)
+        tvWalletInfoName = findViewById(R.id.tvWalletInfoName)
+        wbWalletInfoTitle = findViewById(R.id.wbWalletInfoTitle)
+        tvWalletInfoBalance = findViewById(R.id.tvWalletInfoBalance)
+        wbWalletInfoTitle.setMiddleViewText(R.string.cashbook_wallet_info)
+        wbWalletInfoTitle.setMiddleViewGravity(Gravity.START or Gravity.CENTER_VERTICAL)
+        wbWalletInfoTitle.setMiddleViewTextSize(R.dimen.s16sp)
+        rvWalletTradeRecode.adapter = mCashListAdapter
+        rvWalletTradeRecode.layoutManager = LinearLayoutManager(this)
         mWalletInfoPresent.initData(intent)
     }
 
-    fun updateData(tradeShowBeans:List<ITradeRecodeShowBean>?){
+    fun updateData(tradeShowBeans: List<ITradeRecodeShowBean>?) {
         mCashListAdapter.replaceList(tradeShowBeans)
     }
 
@@ -42,7 +55,14 @@ class WalletTradeRecodeActivity : BaseProjectsActivity() , IRvClickListener {
         mWalletInfoPresent.onDestroy()
     }
 
-    fun setWalletName(name:String){
-        tvWalletInfoName.text=name
+    fun setWalletBalance(balance: String) {
+        tvWalletInfoBalance.text = WkContextCompat.getStringByFormat(
+            R.string.cashbook_wallet_info_balance, balance
+        )
+    }
+
+
+    fun setWalletName(name: String) {
+        tvWalletInfoName.text = name
     }
 }

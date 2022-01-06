@@ -33,5 +33,7 @@
     <string name="cashbook_assets_info_assets">资产：\n %s</string>
     <string name="cashbook_assets_info_liabilities">负债：\n %s</string>
     <string name="cashbook_assets_info_net_assets">净资产：\n %s</string>
+    <string name="cashbook_wallet_info">钱包详情</string>
+    <string name="cashbook_wallet_info_balance">结余： %s</string>
 
 </resources>

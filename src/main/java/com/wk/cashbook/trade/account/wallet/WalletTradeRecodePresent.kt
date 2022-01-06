@@ -38,6 +38,7 @@ class WalletTradeRecodePresent(private val mWalletTradeRecodeActivity: WalletTra
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { wallet ->
                 mWalletTradeRecodeActivity.setWalletName(wallet.accountName)
+                mWalletTradeRecodeActivity.setWalletBalance(NumberUtil.initMoneyToString(wallet.amount))
             })
     }
 
