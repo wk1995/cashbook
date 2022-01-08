@@ -7,7 +7,7 @@
     android:background="@color/common_white_F1F0F0"
     android:paddingStart="@dimen/d10dp"
     android:paddingEnd="@dimen/d10dp"
-    tools:context=".trade.account.UpdateAccountOrWalletActivity">
+    tools:context=".account.UpdateAccountOrWalletActivity">
 
     <Button
         android:id="@+id/btnCreate"

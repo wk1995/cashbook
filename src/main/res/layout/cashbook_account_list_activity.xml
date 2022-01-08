@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/common_white_C9C9C9"
-    tools:context=".trade.account.list.AccountListActivity">
+    tools:context=".account.list.AccountListActivity">
 
     <Button
         android:id="@+id/btnAddAccount"

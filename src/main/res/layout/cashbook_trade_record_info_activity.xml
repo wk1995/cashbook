@@ -7,7 +7,7 @@
     android:background="@color/common_white_C9C9C9"
     android:paddingStart="@dimen/d15dp"
     android:paddingEnd="@dimen/d15dp"
-    tools:context=".trade.info.TradeRecordInfoActivity">
+    tools:context="com.wk.cashbook.main.recode.info.TradeRecordInfoActivity">
 
     <Button
         android:id="@+id/btTradeInfoSave"
@@ -29,9 +29,11 @@
         android:gravity="start|top"
         android:hint="@string/common_str_note"
         android:padding="@dimen/d5dp"
+        android:inputType="text"
         android:textColorHint="@color/color_grey_7E797B"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btTradeInfoSave" />
+        app:layout_constraintBottom_toTopOf="@id/btTradeInfoSave"
+        tools:ignore="Autofill"/>
 
     <!-- 交易金 额-->
     <EditText
@@ -47,7 +49,8 @@
         android:textColorHint="@color/color_grey_7E797B"
         android:textColor="@color/common_black_2B2A2A"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoTime" />
+        app:layout_constraintTop_toBottomOf="@id/tvTradeInfoTime"
+        tools:ignore="Autofill"/>
 
     <!--返回-->
     <ImageView
@@ -57,7 +60,8 @@
         android:layout_marginTop="@dimen/d15dp"
         android:src="@drawable/common_back_right_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="contentDescription"/>
 
 
     <!--交易时间-->

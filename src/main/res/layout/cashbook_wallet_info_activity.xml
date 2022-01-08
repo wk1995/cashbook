@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/common_blue_0D62A5"
-    tools:context=".trade.account.wallet.WalletTradeRecodeActivity">
+    tools:context=".account.wallet.WalletTradeRecodeActivity">
 
     <TextView
         android:id="@+id/tvWalletInfoName"

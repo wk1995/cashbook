@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.wk.cashbook.trade.record.CashListAdapter
 import com.wk.projects.common.resource.WkContextCompat
 
 
@@ -24,7 +23,7 @@ class CashBookListItemDecoration(context: Context,
     : RecyclerView.ItemDecoration() {
     private val dividerPaint by lazy {
         val dividerPaint = Paint()
-        dividerPaint.color = WkContextCompat.getColor(context, R.color.color_grey_807E797B)
+        dividerPaint.color = WkContextCompat.getColor( R.color.color_grey_807E797B)
         dividerPaint
     }
 

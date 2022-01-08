@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".trade.record.CashBookBillListActivity">
+    tools:context=".main.CashBookMainActivity">
 
     <ImageView
         android:id="@+id/ivTitleBack"
@@ -16,7 +16,8 @@
         android:visibility="gone"
         android:src="@drawable/common_back_right_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="contentDescription"/>
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glItemListPositionVFlag"
         android:layout_width="wrap_content"
