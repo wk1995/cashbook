@@ -18,12 +18,13 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:layout_marginStart="@dimen/d5dp"
         android:textColor="@color/common_black_2B2A2A"
         tools:text="1009"/>
     <TextView
         android:id="@+id/tvChooseAccountName"
         android:layout_width="match_parent"
-        android:gravity="center_vertical|end"
+        android:gravity="center_vertical|start"
         android:textColor="@color/common_black_2B2A2A"
         android:layout_height="match_parent"
         android:layout_marginEnd="@dimen/d10dp"

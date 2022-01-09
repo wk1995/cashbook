@@ -13,5 +13,6 @@ import com.wk.projects.common.constant.WkStringConstants
  *      CSDN   : http://blog.csdn.net/qq_33882671
  * */
 class ChooseWalletShowBean(val walletId: Long,
-                           val money: Pair<String, Double> = Pair(WkStringConstants.STR_EMPTY,NumberConstants.number_double_zero),
+                           val money: Pair<String, String> = Pair(WkStringConstants.STR_EMPTY,
+                               NumberConstants.number_double_zero.toString()),
                            var name: String = WkStringConstants.STR_EMPTY)

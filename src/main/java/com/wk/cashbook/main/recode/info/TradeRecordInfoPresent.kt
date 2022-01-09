@@ -5,7 +5,11 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.annotation.WorkerThread
 import com.wk.cashbook.R
+import com.wk.cashbook.initMoneyToString
+import com.wk.cashbook.main.recode.info.account.ChooseAccountShowBean
+import com.wk.cashbook.main.recode.info.account.ChooseWalletShowBean
 import com.wk.cashbook.trade.data.AccountWallet
+import com.wk.cashbook.trade.data.TradeAccount
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.projects.common.BaseSimpleDialog
@@ -13,6 +17,7 @@ import com.wk.projects.common.SimpleOnlyEtDialog
 import com.wk.projects.common.configuration.WkProjects
 import com.wk.projects.common.constant.NumberConstants
 import com.wk.projects.common.constant.WkStringConstants
+import com.wk.projects.common.helper.NumberUtil
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.time.date.DateTime
 import com.wk.projects.common.ui.WkToast
@@ -797,6 +802,39 @@ class TradeRecordInfoPresent(private val mTradeRecordInfoActivity: TradeRecordIn
             }
         }
         return true
+    }
+
+
+    fun initAccountList(){
+        mSubscriptions.add(Observable.create(Observable.OnSubscribe<List<TradeAccount>> {
+            it.onNext(LitePal.findAll(TradeAccount::class.java, true))
+        }).subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { tradeAccounts ->
+                val data = ArrayList<ChooseAccountShowBean>()
+                tradeAccounts.forEach { tradeAccount ->
+                    val accountWallets = tradeAccount.accountWallets
+                    if (accountWallets.isNullOrEmpty()) {
+                        return@forEach
+                    }
+                    val chooseAccountShowBean =
+                        ChooseAccountShowBean(tradeAccount.accountName)
+                    accountWallets.forEach { tradeWallet ->
+                        val map = HashMap<String, Double>()
+                        map[tradeWallet.unit] = tradeWallet.amount
+                        chooseAccountShowBean.addChooseWalletShowBean(
+                            ChooseWalletShowBean(
+                                tradeWallet.baseObjId,
+                                Pair(tradeWallet.unit, NumberUtil.initMoneyToString(tradeWallet.amount)),
+                                tradeWallet.accountName
+                            )
+                        )
+                    }
+                    data.add(chooseAccountShowBean)
+                }
+                mTradeRecordInfoActivity.updateAccountData(data)
+            }
+        )
     }
 
 }

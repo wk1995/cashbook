@@ -43,7 +43,7 @@ class AccountWalletAdapter(mWallets: MutableList<AccountWallet> = ArrayList())
 
 
     override fun getItemId(position: Int): Long {
-        return mData[getDataReallyPosition(position)].baseObjId
+        return getItem(position).baseObjId
     }
 
     override fun getItemLayoutResId(parent: ViewGroup, viewType: Int) = R.layout.cashbook_account_wallet_list_item

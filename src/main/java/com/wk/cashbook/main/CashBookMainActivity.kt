@@ -22,6 +22,7 @@ import com.wk.cashbook.main.asset.MainAssetsInfoAdapter
 import com.wk.cashbook.main.recode.CashListAdapter
 import com.wk.cashbook.main.recode.DeleteCashBookDialog
 import com.wk.cashbook.account.list.AccountListActivity
+import com.wk.cashbook.initMoneyToString
 import com.wk.cashbook.trade.data.TradeRecode
 import com.wk.cashbook.main.recode.info.TradeRecordInfoActivity
 import com.wk.cashbook.trade.record.*
@@ -33,6 +34,7 @@ import com.wk.projects.common.communication.constant.BundleKey
 import com.wk.projects.common.communication.constant.IFAFlag
 import com.wk.projects.common.constant.WkStringConstants
 import com.wk.projects.common.constant.WkStringConstants.STR_INT_ZERO
+import com.wk.projects.common.helper.NumberUtil
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.resource.WkContextCompat
 import com.wk.projects.common.time.date.DateTime
@@ -248,8 +250,8 @@ class CashBookMainActivity : BaseProjectsActivity(), TabLayout.OnTabSelectedList
     }
 
     fun initTotalData(totalData: Pair<Double, Double>) {
-        tvAllPay.text = totalData.second.toString()
-        tvIncome.text = totalData.first.toString()
+        tvAllPay.text = NumberUtil.initMoneyToString(totalData.second)
+        tvIncome.text =  NumberUtil.initMoneyToString(totalData.first)
     }
 
 

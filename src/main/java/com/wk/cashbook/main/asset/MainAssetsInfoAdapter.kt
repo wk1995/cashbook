@@ -43,7 +43,7 @@ class MainAssetsInfoAdapter : BaseRecyclerViewAdapter<AssetsInfoShowBean,
 
     override fun onBindViewHolder(holder: MainAssetsInfoAdapterVH, position: Int) {
         super.onBindViewHolder(holder, position)
-        val data = mData[getDataReallyPosition(position)]
+        val data =getItem(position)
         holder.apply {
             tvAssetsInfoCash.text = WkContextCompat.getStringByFormat(R.string.cashbook_assets_info_cash, data.cash)
             tvAssetsInfoAssets.text = WkContextCompat.getStringByFormat(R.string.cashbook_assets_info_assets, data.assets)

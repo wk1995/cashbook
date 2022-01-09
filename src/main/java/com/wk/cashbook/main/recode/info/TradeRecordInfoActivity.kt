@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wk.cashbook.R
 import com.wk.cashbook.databinding.CashbookTradeRecordInfoActivityBinding
+import com.wk.cashbook.main.recode.info.account.ChooseAccountShowBean
 import com.wk.cashbook.trade.data.TradeCategory
 import com.wk.cashbook.trade.data.TradeRecode
-import com.wk.cashbook.main.recode.info.account.ChooseAccountDialog
+import com.wk.cashbook.main.recode.info.account.ChooseWalletDialog
 import com.wk.projects.common.BaseProjectsActivity
 import com.wk.projects.common.log.WkLog
 import com.wk.projects.common.time.date.DateTime
@@ -59,6 +60,8 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
     private val rvTradeInfoCategory by lazy {
         mBind.rvTradeInfoCategory
     }
+
+    private var mChooseWalletDialog:ChooseWalletDialog?=null
 
     private val mBind by lazy {
         CashbookTradeRecordInfoActivityBinding.inflate(layoutInflater)
@@ -222,16 +225,24 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
                 }
             }
             R.id.tvTradeInfoAccount -> {
-                val bundle=Bundle()
-                ChooseAccountDialog.create(bundle, mTradeRecordInfoPresent).show(this)
+                showChooseWalletDialog()
             }
             R.id.tvTradeInfoToAccount -> {
                 val bundle=Bundle()
                 bundle.putInt("accountType",1)
-                ChooseAccountDialog.create(bundle, mTradeRecordInfoPresent).show(this)
+                showChooseWalletDialog(bundle)
             }
         }
     }
+
+    private fun showChooseWalletDialog(bundle: Bundle = Bundle()) {
+        if (mChooseWalletDialog?.showsDialog == true) {
+            mChooseWalletDialog?.dismiss()
+        }
+        mChooseWalletDialog = ChooseWalletDialog.create(bundle, mTradeRecordInfoPresent)
+        mChooseWalletDialog?.show(this)
+    }
+
 
     fun showNote(note: String) {
         etTradeInfoNote.setText(note)
@@ -275,4 +286,14 @@ class TradeRecordInfoActivity : BaseProjectsActivity(), TradeInfoCategoryAdapter
         setResult(2, intent1)
         finish()
     }
+
+    fun updateAccountData(tradeAccounts:List<ChooseAccountShowBean>){
+        mChooseWalletDialog?.apply {
+            if(showsDialog){
+                updateAccountData(tradeAccounts)
+            }
+        }
+    }
+
+    
 }
