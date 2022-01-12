@@ -66,7 +66,7 @@ class ChooseWalletDialog : BaseSimpleDialog(), IRvClickListener {
     override fun onItemClick(adapter: RecyclerView.Adapter<*>?, view: View?, position: Int) {
         super.onItemClick(adapter, view, position)
         if (adapter == mChooseWalletAdapter) {
-            val bundle=Bundle()
+            val bundle=Bundle(arguments)
             bundle.putLong(
                 AccountWallet.ACCOUNT_WALLET_ID,
                 mChooseWalletAdapter.getItemId(position)
