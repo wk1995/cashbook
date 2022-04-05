@@ -59,13 +59,17 @@ class ChooseMonthDialog:BaseSimpleDialog() {
     }
 
 
-    private fun continueAdd(string: String,step:Int=NumberConstants.number_int_one):String{
+    private fun continueAdd(string: String,step:Int=NumberConstants.number_int_one,cycle:Int=2100):String{
         val intString =string.toInt()
-        return (intString+step).toString()
+        val target=((intString+step)%cycle)
+        if(target==0){
+            return "12"
+        }
+        return target.toString()
     }
 
-    private fun continueReduce(string: String,step:Int=NumberConstants.number_int_one):String{
-        return continueAdd(string,step)
+    private fun continueReduce(string: String,step:Int=NumberConstants.number_int_one_Negative,cycle:Int=2100):String{
+        return continueAdd(string,step,cycle)
     }
 
     override fun onClick(v: View?) {
@@ -75,13 +79,13 @@ class ChooseMonthDialog:BaseSimpleDialog() {
                 tvYearValue.text=continueAdd(tvYearValue.text.toString())
             }
             R.id.btnAddMonth->{
-                tvMonthValue.text=continueAdd(tvMonthValue.text.toString())
+                tvMonthValue.text=continueAdd(tvMonthValue.text.toString(),cycle=12)
             }
             R.id.btnReduceYear->{
                 tvYearValue.text=continueReduce(tvYearValue.text.toString())
             }
             R.id.btnReduceMonth->{
-                tvMonthValue.text=continueReduce(tvMonthValue.text.toString())
+                tvMonthValue.text=continueReduce(tvMonthValue.text.toString(),cycle=12)
             }
         }
 
