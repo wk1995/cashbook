@@ -3,9 +3,11 @@ package com.wk.cashbook.account.wallet
 import android.content.Intent
 import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.CashBookSql
+import com.wk.cashbook.cache.CashBookCacheManager
 import com.wk.cashbook.initMoneyToString
 import com.wk.cashbook.trade.data.AccountWallet
 import com.wk.cashbook.main.recode.ITradeRecodeShowBean
+import com.wk.cashbook.trade.data.util.TradeCategoryUtils
 import com.wk.projects.common.BaseProjectsPresent
 import com.wk.projects.common.helper.NumberUtil
 import com.wk.projects.common.log.WkLog
@@ -44,9 +46,19 @@ class WalletTradeRecodePresent(private val mWalletTradeRecodeActivity: WalletTra
 
     private fun queryWalletRecodeList(id: Long) {
         mSubscriptions?.add(Observable.create(Observable.OnSubscribe<List<ITradeRecodeShowBean>> { t ->
+            var comeInId = 0L
+            CashBookCacheManager.getRootTradeCategoriesList().forEach {
+                if (TradeCategoryUtils.isRootTradeCategory(it) && TradeCategoryUtils.isComeIn(it)) {
+                    comeInId = it.baseObjId
+                    return@forEach
+                }
+            }
+            if (comeInId <= 0) {
+                return@OnSubscribe
+            }
             val cursor = LitePal.findBySQL(
                 CashBookSql.SQL_QUERY_WALLET_TRADE_RECODE,
-                id.toString(), id.toString(), id.toString(), id.toString()
+                id.toString(), comeInId.toString(), id.toString(), id.toString(), id.toString()
             )
             val showBeans = ArrayList<ITradeRecodeShowBean>()
             var tradeRecodeShowTitleBean = WalletTradeRecodeShowTitleBean()

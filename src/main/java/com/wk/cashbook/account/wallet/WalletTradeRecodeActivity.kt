@@ -18,6 +18,10 @@ import com.wk.projects.common.ui.WkCommonActionBar
 import com.wk.projects.common.ui.recycler.BaseRecyclerViewAdapter
 import com.wk.projects.common.ui.recycler.IRvClickListener
 
+/**
+ *
+ * 钱包详情
+ * */
 class WalletTradeRecodeActivity : BaseProjectsActivity(), IRvClickListener {
 
     private lateinit var rvWalletTradeRecode: RecyclerView

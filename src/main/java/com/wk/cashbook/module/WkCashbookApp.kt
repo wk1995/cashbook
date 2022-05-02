@@ -3,6 +3,7 @@ package com.wk.cashbook.module
 import androidx.annotation.WorkerThread
 import com.wk.cashbook.R
 import com.wk.cashbook.trade.data.TradeCategory
+import com.wk.cashbook.trade.data.util.TradeCategoryUtils
 import com.wk.projects.common.BaseApplication
 import com.wk.projects.common.configuration.WkProjects
 import org.litepal.LitePal
@@ -33,9 +34,7 @@ class WkCashbookApp : BaseApplication() {
             }
 
             override fun onUpgrade(oldVersion: Int, newVersion: Int) {
-                if(oldVersion==1){
 
-                }
             }
         })
     }
@@ -49,7 +48,7 @@ class WkCashbookApp : BaseApplication() {
 
         @WorkerThread
         fun initTradeCategory() {
-            TradeCategory.initCategoryConfig()
+            TradeCategoryUtils.initCategoryConfig()
         }
 
     }

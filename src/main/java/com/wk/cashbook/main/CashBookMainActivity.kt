@@ -114,12 +114,13 @@ class CashBookMainActivity : BaseProjectsActivity(), TabLayout.OnTabSelectedList
     private var selectTime = System.currentTimeMillis()
 
 
-    private lateinit var mCashBookMainPresent: CashBookMainPresent
+    private val mCashBookMainPresent: CashBookMainPresent by lazy {
+        CashBookMainPresent(this)
+    }
 
     override fun beforeSetContentView() {
         super.beforeSetContentView()
         supportActionBar?.hide()
-        mCashBookMainPresent = CashBookMainPresent(this)
     }
 
     override fun initResLayId() = mBind.root
