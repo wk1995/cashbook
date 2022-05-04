@@ -35,5 +35,7 @@
     <string name="cashbook_assets_info_net_assets">净资产：\n %s</string>
     <string name="cashbook_wallet_info">钱包详情</string>
     <string name="cashbook_wallet_info_balance">结余： %s</string>
+    <string name="cashbook_database_sql_storage_no_permission">没有存储权限</string>
+    <string name="cashbook_database_sql_delete_fail">数据库文件删除失败</string>
 
 </resources>
