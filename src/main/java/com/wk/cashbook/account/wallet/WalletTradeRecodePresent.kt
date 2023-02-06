@@ -3,6 +3,7 @@ package com.wk.cashbook.account.wallet
 import android.content.Intent
 import com.wk.cashbook.CashBookConstants
 import com.wk.cashbook.CashBookSql
+import com.wk.cashbook.CashbookLog
 import com.wk.cashbook.cache.CashBookCacheManager
 import com.wk.cashbook.initMoneyToString
 import com.wk.cashbook.trade.data.AccountWallet
@@ -29,6 +30,11 @@ import rx.subscriptions.CompositeSubscription
  * */
 class WalletTradeRecodePresent(private val mWalletTradeRecodeActivity: WalletTradeRecodeActivity) :
     BaseProjectsPresent() {
+
+    companion object {
+        private const val TAG = "WalletTradeRecodePresent"
+    }
+
     private var mSubscriptions: CompositeSubscription? = null
 
     fun initData(intent: Intent) {
@@ -53,6 +59,7 @@ class WalletTradeRecodePresent(private val mWalletTradeRecodeActivity: WalletTra
                     return@forEach
                 }
             }
+            CashbookLog.d(TAG, "comeInId: $comeInId")
             if (comeInId <= 0) {
                 return@OnSubscribe
             }
